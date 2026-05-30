@@ -1,0 +1,134 @@
+/* strided — design tokens
+   Ported from design-tokens v0.3, extended for theme switching.
+
+   Two layers:
+   1. RAW palette values (never change)
+   2. SEMANTIC tokens that map to raw values per theme — sections only ever
+      reference semantic tokens, so the whole page flips by swapping this map.
+
+   Default theme is applied by the inline bootstrap in Base.astro
+   (saved choice -> OS preference -> light fallback). */
+
+:root {
+  /* ---- raw palette (theme-independent) ---- */
+  --amber: #D2801A;
+  --caution: #C9892F;
+  --error: #A32D2D;
+  --success: #3B6D11;
+
+  --paper-light: #F1EFE8;
+  --paper-light-card: #FFFFFF;
+  --paper-light-inset: #EBE9DF;
+  --ink-light: #2C2C2A;
+
+  --paper-dark: #1A1A18;
+  --paper-dark-card: #22221F;
+  --paper-dark-inset: #15151A;
+  --ink-dark: #F1EFE8;
+
+  --theoretical-light: #D8D5C8;
+  --theoretical-dark: #F1EFE8;
+
+  /* ---- type ---- */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Berkeley Mono", "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+
+  /* ---- fluid type scale (clamp: min, preferred, max) ---- */
+  --fs-hero: clamp(2.5rem, 1.5rem + 5vw, 4.5rem);      /* 40 -> 72px */
+  --fs-h2:   clamp(1.75rem, 1.1rem + 3vw, 2.75rem);     /* 28 -> 44px */
+  --fs-h3:   clamp(1.25rem, 1.05rem + 0.9vw, 1.375rem); /* 20 -> 22px */
+  --fs-sub:  clamp(1.0625rem, 0.95rem + 0.6vw, 1.25rem);/* 17 -> 20px */
+
+  /* ---- spacing (4px base) ---- */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+
+  /* fluid section padding — shrinks on small screens automatically */
+  --pad-x: clamp(var(--space-6), 4vw, var(--space-16));
+  --pad-y: clamp(var(--space-12), 7vw, 96px);
+
+  /* ---- motion ---- */
+  --ease-instrument: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.15s;
+  --dur-stream: 0.4s;
+  --dur-theme: 0.3s;
+}
+
+/* ---- SEMANTIC MAP: light ---- */
+:root,
+[data-theme="light"] {
+  --paper: var(--paper-light);
+  --paper-card: var(--paper-light-card);
+  --paper-inset: var(--paper-light-inset);
+  --ink: var(--ink-light);
+
+  --text-primary: #2C2C2A;
+  --text-secondary: #5F5E5A;
+  --text-tertiary: #888780;
+  --text-dim: #B4B2A9;
+
+  --border-primary: #D3D1C7;
+  --border-secondary: #E5E3D9;
+
+  --theoretical: var(--theoretical-light);
+  --header-bg: rgba(241, 239, 232, 0.92);
+}
+
+/* ---- SEMANTIC MAP: dark ---- */
+[data-theme="dark"] {
+  --paper: var(--paper-dark);
+  --paper-card: var(--paper-dark-card);
+  --paper-inset: var(--paper-dark-inset);
+  --ink: var(--ink-dark);
+
+  --text-primary: #F1EFE8;
+  --text-secondary: #B4B2A9;
+  --text-tertiary: #888780;
+  --text-dim: #6B6A65;
+
+  --border-primary: #3A3A36;
+  --border-secondary: #2A2A28;
+
+  --theoretical: var(--theoretical-dark);
+  --header-bg: rgba(26, 26, 24, 0.92);
+}
+
+/* Always-dark surfaces (terminal, status, footer) reference these fixed
+   tokens so they stay dark in BOTH themes — per the design system. */
+:root {
+  --fixed-dark-paper: #1A1A18;
+  --fixed-dark-card: #22221F;
+  --fixed-dark-ink: #F1EFE8;
+  --fixed-dark-border: #3A3A36;
+  --fixed-dark-secondary: #B4B2A9;
+  --fixed-dark-tertiary: #888780;
+  --fixed-dark-dim: #6B6A65;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: background var(--dur-theme) var(--ease-instrument),
+              color var(--dur-theme) var(--ease-instrument);
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

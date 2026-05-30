@@ -1,0 +1,213 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import DumpForm from "../components/DumpForm.tsx";
+---
+
+<Base
+  title="strided — send us a dump"
+  description="Send strided a redacted Nsight or DCGM dump from a real LLM inference workload. We run it through the diagnosis engine and share the result. We do not retain raw data."
+>
+  <Nav />
+  <main class="submit-main">
+    <section class="submit-hero">
+      <a href="/" class="back">← strided</a>
+      <div class="submit-meta">Validation program</div>
+      <h1>Send us a dump.</h1>
+      <p class="submit-sub">
+        We're testing whether a deterministic rule engine can match a senior
+        CUDA engineer on real workloads. If you operate LLM inference at scale,
+        send a redacted Nsight or DCGM dump — we'll run it through strided and
+        share the diagnosis with you.
+      </p>
+    </section>
+
+    <section class="submit-form">
+      <DumpForm client:load />
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style is:global>
+  .submit-main { min-height: 70vh; }
+
+  .submit-hero {
+    padding: var(--pad-y) var(--pad-x) var(--space-12);
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .back {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: var(--space-12);
+    align-self: flex-start;
+    transition: color var(--dur-fast) var(--ease-instrument);
+  }
+  .back:hover { color: var(--amber); }
+  .submit-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
+  }
+  .submit-hero h1 {
+    font-size: var(--fs-h2);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: var(--space-6);
+  }
+  .submit-sub {
+    font-size: var(--fs-sub);
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .submit-form {
+    padding: 0 var(--pad-x) var(--pad-y);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ---- form card ---- */
+  .form-card {
+    background: var(--paper-card);
+    border: 0.5px solid var(--border-primary);
+    border-radius: 12px;
+    padding: clamp(24px, 4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    transition: background var(--dur-theme) var(--ease-instrument),
+                border-color var(--dur-theme) var(--ease-instrument);
+  }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+  .field { display: flex; flex-direction: column; gap: var(--space-2); }
+  .flabel {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
+  }
+  .flabel i { color: var(--amber); font-style: normal; margin-left: 3px; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--text-primary);
+    background: var(--paper);
+    border: 0.5px solid var(--border-primary);
+    border-radius: 7px;
+    padding: 11px 13px;
+    transition: border-color var(--dur-fast) var(--ease-instrument),
+                box-shadow var(--dur-fast) var(--ease-instrument);
+    width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 76px; font-family: var(--font-sans); }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--text-dim); }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 18%, transparent);
+  }
+
+  /* ---- dropzone ---- */
+  .dropzone {
+    position: relative;
+    border: 1px dashed var(--border-primary);
+    border-radius: 9px;
+    padding: 22px;
+    text-align: center;
+    transition: border-color var(--dur-fast) var(--ease-instrument),
+                background var(--dur-fast) var(--ease-instrument);
+    cursor: pointer;
+  }
+  .dropzone:hover { border-color: var(--amber); background: var(--paper-inset); }
+  .dropzone.has-file { border-style: solid; border-color: var(--amber); }
+  .dropzone input[type="file"] {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+  }
+  .dz-text { display: flex; flex-direction: column; gap: 4px; pointer-events: none; }
+  .dz-text strong {
+    font-family: var(--font-mono); font-size: 13px;
+    color: var(--text-primary); font-weight: 500;
+    word-break: break-all;
+  }
+  .dz-sub { font-size: 12px; color: var(--text-tertiary); }
+
+  .ferr { color: var(--error); font-size: 12px; font-family: var(--font-mono); }
+  .ferr.center { text-align: center; }
+
+  /* ---- footer of form ---- */
+  .form-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-6); flex-wrap: wrap;
+    padding-top: var(--space-2);
+  }
+  .privacy {
+    font-size: 12px; line-height: 1.5;
+    color: var(--text-tertiary); max-width: 60%; min-width: 240px;
+  }
+  .submit-btn {
+    font-family: var(--font-mono); font-size: 14px;
+    background: var(--ink); color: var(--paper);
+    border: 0.5px solid var(--ink);
+    border-radius: 7px; padding: 12px 22px; cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-instrument);
+    white-space: nowrap;
+  }
+  .submit-btn:hover:not(:disabled) {
+    background: var(--amber); border-color: var(--amber); color: #2C2C2A;
+  }
+  .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ---- success state ---- */
+  .form-card.success { align-items: flex-start; text-align: left; gap: var(--space-4); }
+  .success-mark {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--success) 16%, transparent);
+    color: var(--success); font-size: 22px;
+    margin-bottom: var(--space-2);
+  }
+  .form-card.success h2 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
+  .form-card.success p { color: var(--text-secondary); line-height: 1.6; }
+  .form-card.success .hl { color: var(--text-primary); font-family: var(--font-mono); font-size: 0.92em; }
+  .btn-ghost {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono); font-size: 13px;
+    color: var(--text-secondary); text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-instrument);
+  }
+  .btn-ghost:hover { color: var(--amber); }
+
+  @media (max-width: 560px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .form-foot { flex-direction: column; align-items: stretch; }
+    .privacy { max-width: 100%; }
+    .submit-btn { width: 100%; }
+  }
+</style>

@@ -1,0 +1,154 @@
+---
+const repo = "https://github.com/your-org/strided"; // TODO: set org repo URL
+const metrics = [
+  { v: "40–60%", l: "typical GPU utilization in production" },
+  { v: "10", l: "deterministic diagnosis rules" },
+  { v: "2–3%", l: "always-on collection overhead" },
+  { v: "0.42s", l: "to parse and diagnose a dump" },
+];
+---
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-meta">v0.1 · Research-stage</div>
+    <h1>
+      Your GPU is slow.<br />
+      <span class="amber">We tell you why.</span>
+    </h1>
+    <p class="hero-sub">
+      strided is a kernel-level causal diagnosis engine for production LLM
+      inference. Feed it a Nsight Compute report or DCGM telemetry; get a
+      ranked, confidence-scored explanation of the bottleneck — and a specific
+      fix.
+    </p>
+    <div class="hero-cta">
+      <a href="#how" class="btn btn-primary">See how it works →</a>
+      <a href={repo} target="_blank" rel="noopener" class="btn">Read on GitHub</a>
+    </div>
+
+    <div class="metrics">
+      {
+        metrics.map((m) => (
+          <div class="metric">
+            <div class="metric-v tnum">{m.v}</div>
+            <div class="metric-l">{m.l}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: var(--pad-y) var(--pad-x) clamp(var(--space-12), 6vw, 80px);
+    border-bottom: 0.5px solid var(--border-primary);
+  }
+  .hero-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: var(--space-6);
+    opacity: 0;
+    animation: rise var(--dur-stream) var(--ease-instrument) 0.05s forwards;
+  }
+  .hero h1 {
+    font-size: var(--fs-hero);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    margin-bottom: var(--space-8);
+    opacity: 0;
+    animation: rise var(--dur-stream) var(--ease-instrument) 0.12s forwards;
+  }
+  .hero h1 .amber { color: var(--amber); }
+  .hero-sub {
+    font-size: var(--fs-sub);
+    line-height: 1.5;
+    color: var(--text-secondary);
+    max-width: 58ch;
+    margin-bottom: var(--space-12);
+    opacity: 0;
+    animation: rise var(--dur-stream) var(--ease-instrument) 0.2s forwards;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    opacity: 0;
+    animation: rise var(--dur-stream) var(--ease-instrument) 0.28s forwards;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: var(--space-3) var(--space-4);
+    border: 0.5px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all var(--dur-fast) var(--ease-instrument);
+  }
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn-primary { background: var(--ink); color: var(--paper); }
+  .btn-primary:hover {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #2C2C2A;
+  }
+
+  /* metrics strip — centered, evenly distributed */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin-top: clamp(var(--space-12), 6vw, 72px);
+    padding-top: var(--space-8);
+    border-top: 0.5px solid var(--border-secondary);
+    width: 100%;
+    max-width: 860px;
+    opacity: 0;
+    animation: rise var(--dur-stream) var(--ease-instrument) 0.36s forwards;
+  }
+  .metric { text-align: center; }
+  .metric-v {
+    font-family: var(--font-mono);
+    font-size: clamp(1.25rem, 1rem + 1.2vw, 1.75rem);
+    font-weight: 500;
+    color: var(--amber);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-2);
+  }
+  .metric-l {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-tertiary);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 720px) {
+    .metrics { grid-template-columns: 1fr 1fr; gap: var(--space-8) var(--space-6); }
+  }
+  @media (max-width: 380px) {
+    .metrics { gap: var(--space-6) var(--space-4); }
+    .hero h1 { letter-spacing: -0.03em; }
+  }
+</style>

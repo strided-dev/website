@@ -1,0 +1,32 @@
+---
+// Mark.astro — the strided mark. Four blocks, vertical zigzag.
+// Top two = theoretical compute (light tone). Bottom two = realized (amber).
+// The descent from light to amber IS the gap strided measures.
+// Order is locked: never reverse. viewBox 0 0 56 68, rx scales proportionally.
+interface Props {
+  size?: number;          // rendered height in px
+  theoretical?: string;   // top-row fill (light on light bg, off-white on dark)
+  class?: string;
+}
+const {
+  size = 32,
+  theoretical = "#D8D5C8",
+  class: className = "",
+} = Astro.props;
+const width = (size * 56) / 68;
+---
+
+<svg
+  width={width}
+  height={size}
+  viewBox="0 0 56 68"
+  xmlns="http://www.w3.org/2000/svg"
+  class={className}
+  role="img"
+  aria-label="strided"
+>
+  <rect x="14" y="0"  width="42" height="14" rx="4" fill={theoretical} />
+  <rect x="0"  y="18" width="42" height="14" rx="4" fill={theoretical} />
+  <rect x="14" y="36" width="42" height="14" rx="4" fill="#D2801A" />
+  <rect x="0"  y="54" width="42" height="14" rx="4" fill="#D2801A" />
+</svg>

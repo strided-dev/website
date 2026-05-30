@@ -1,0 +1,97 @@
+---
+import Mark from "./Mark.astro";
+import ThemeToggle from "./ThemeToggle.tsx";
+const repo = "https://github.com/your-org/strided"; // TODO: set org repo URL
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label="strided home">
+    <Mark size={30} theoretical="var(--theoretical)" />
+    <span class="brand-name">strided</span>
+  </a>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#status">Status</a>
+    <a href={repo} target="_blank" rel="noopener">GitHub ↗</a>
+    <ThemeToggle client:only="react" />
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 0.5px solid var(--border-primary);
+    padding: var(--space-4) var(--pad-x);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--header-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10;
+    transition: background var(--dur-theme) var(--ease-instrument),
+                border-color var(--dur-theme) var(--ease-instrument);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .brand-name {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  nav > a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-instrument);
+  }
+  nav > a:hover { color: var(--text-primary); }
+
+  @media (max-width: 600px) {
+    .brand-name { font-size: 19px; }
+    nav { gap: var(--space-4); font-size: 12px; }
+    /* on the smallest screens, drop the text links, keep GitHub + toggle */
+    nav > a:not([target]) { display: none; }
+  }
+  @media (max-width: 380px) {
+    nav { gap: var(--space-3); }
+  }
+</style>
+
+<!-- Toggle button styles. Global because the island renders its own DOM. -->
+<style is:global>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 0.5px solid var(--border-primary);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    transition: color var(--dur-fast) var(--ease-instrument),
+                border-color var(--dur-fast) var(--ease-instrument),
+                background var(--dur-fast) var(--ease-instrument);
+  }
+  .theme-toggle:hover {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  .theme-toggle svg { display: block; }
+</style>
