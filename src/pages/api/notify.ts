@@ -2,7 +2,9 @@
    Body: { key, token, meta }. Verifies the token issued by /api/upload-url,
    confirms the object actually landed in the bucket within the size limit, then
    emails strided.dev@gmail.com a composed message with a 7-day signed download
-   link. The raw dump is never attached or proxied through the function. */
+   link. The raw dump is never attached or proxied through the function.
+   Best-effort second email confirms receipt to the submitter; that send is not
+   allowed to fail the request, since the internal lead is what matters. */
 
 export const prerender = false;
 
@@ -74,5 +76,23 @@ export const POST: APIRoute = async ({ request }) => {
     console.error("resend error", error);
     return json({ error: "Upload saved, but the notification email failed." }, 502);
   }
+
+  // Confirm receipt to the submitter. Best-effort: a failure here is logged but
+  // does not fail the request, since the lead has already been captured above.
+  const firstName = meta.name.split(/\s+/)[0] || "there";
+  const { error: confirmError } = await resend.emails.send({
+    from: EMAIL_FROM,
+    to: meta.email,
+    replyTo: EMAIL_TO,
+    subject: "We received your dump",
+    text:
+      `Hi ${firstName},\n\n` +
+      `Thanks for sending your ${meta.engine} dump${meta.fileName ? ` (${meta.fileName})` : ""}. ` +
+      `We'll run it through strided and get back to you here with the diagnosis.\n\n` +
+      `We do not retain raw dumps after analysis.\n\n` +
+      `— strided\n`,
+  });
+  if (confirmError) console.error("resend confirmation error", confirmError);
+
   return json({ ok: true });
 };
