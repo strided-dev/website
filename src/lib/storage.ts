@@ -11,6 +11,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -72,6 +73,24 @@ export const headSize = async (key: string): Promise<number | null> => {
 
 export const deleteObject = (key: string) =>
   client().send(new DeleteObjectCommand({ Bucket: BUCKET(), Key: key }));
+
+/** List keys under dumps/ whose objects are older than maxAgeMs. Used by the
+    retention cron to honor the "we don't keep raw dumps" promise + cap storage. */
+export const listExpiredKeys = async (maxAgeMs: number): Promise<string[]> => {
+  const cutoff = Date.now() - maxAgeMs;
+  const expired: string[] = [];
+  let ContinuationToken: string | undefined;
+  do {
+    const r = await client().send(
+      new ListObjectsV2Command({ Bucket: BUCKET(), Prefix: "dumps/", ContinuationToken }),
+    );
+    for (const o of r.Contents ?? []) {
+      if (o.Key && o.LastModified && o.LastModified.getTime() < cutoff) expired.push(o.Key);
+    }
+    ContinuationToken = r.IsTruncated ? r.NextContinuationToken : undefined;
+  } while (ContinuationToken);
+  return expired;
+};
 
 /* --- HMAC token: binds the object key the server issued to the later /notify
    call, so /notify can't be used to trigger emails for arbitrary keys. --- */

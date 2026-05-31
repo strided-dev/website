@@ -3,6 +3,10 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import DumpForm from "../components/DumpForm.tsx";
+
+// Public Turnstile site key (safe to expose). Read at build time on Vercel.
+const turnstileSiteKey =
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? process.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 ---
 
 <Base
@@ -24,10 +28,17 @@ import DumpForm from "../components/DumpForm.tsx";
     </section>
 
     <section class="submit-form">
-      <DumpForm client:load />
+      <DumpForm client:load turnstileSiteKey={turnstileSiteKey} />
     </section>
   </main>
   <Footer />
+
+  <script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer
+    is:inline
+  ></script>
 </Base>
 
 <style is:global>

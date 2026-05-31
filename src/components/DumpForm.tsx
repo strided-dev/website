@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* Dump submission form. Collects contact info + a redacted Nsight/DCGM dump.
-   Flow: ask /api/upload-url for a presigned PUT, upload the file *directly* to
+   Flow: solve the Cloudflare Turnstile bot check, ask /api/upload-url for a
+   presigned PUT (sending the Turnstile token), upload the file *directly* to
    object storage (so the 50 MB payload bypasses Vercel's 4.5 MB body limit),
    then call /api/notify to email strided.dev@gmail.com a composed message with
    a signed download link. */
@@ -34,12 +35,13 @@ function uploadWithProgress(
   });
 }
 
-export default function DumpForm() {
+export default function DumpForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [status, setStatus] = useState<Status>("idle");
   const [fileName, setFileName] = useState<string>("");
   const [fileErr, setFileErr] = useState<string>("");
   const [progress, setProgress] = useState<number>(0);
   const [errMsg, setErrMsg] = useState<string>("");
+  const [token, setToken] = useState<string>(""); // Turnstile token
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -47,6 +49,37 @@ export default function DumpForm() {
     engine: "vllm",
     notes: "",
   });
+
+  // Render the Turnstile widget once its script is on the page. The script loads
+  // async, so poll briefly until window.turnstile exists, then render once.
+  const widgetEl = useRef<HTMLDivElement>(null);
+  const widgetId = useRef<string | null>(null);
+  useEffect(() => {
+    if (!turnstileSiteKey) return;
+    const render = () => {
+      const ts = (window as any).turnstile;
+      if (!ts || !widgetEl.current || widgetId.current !== null) return;
+      widgetId.current = ts.render(widgetEl.current, {
+        sitekey: turnstileSiteKey,
+        callback: (t: string) => setToken(t),
+        "expired-callback": () => setToken(""),
+        "error-callback": () => setToken(""),
+        theme: "auto",
+      });
+    };
+    render();
+    const iv = setInterval(() => {
+      if (widgetId.current !== null) return clearInterval(iv);
+      render();
+    }, 200);
+    return () => clearInterval(iv);
+  }, [turnstileSiteKey]);
+
+  const resetTurnstile = () => {
+    const ts = (window as any).turnstile;
+    if (ts && widgetId.current !== null) ts.reset(widgetId.current);
+    setToken("");
+  };
 
   const set = (k: keyof typeof form) => (e: any) =>
     setForm({ ...form, [k]: e.target.value });
@@ -64,6 +97,12 @@ export default function DumpForm() {
       e.target.value = "";
       return;
     }
+    if (f.size === 0) {
+      setFileErr("That file is empty — pick the actual dump file.");
+      setFileName("");
+      e.target.value = "";
+      return;
+    }
     setFileName(f.name);
   };
 
@@ -71,11 +110,14 @@ export default function DumpForm() {
     form.name.trim() &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
     fileName &&
-    !fileErr;
+    !fileErr &&
+    token;
 
   const fail = (msg: string) => {
     setErrMsg(msg);
     setStatus("error");
+    // The Turnstile token is single-use; force a fresh challenge before retry.
+    resetTurnstile();
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -96,7 +138,7 @@ export default function DumpForm() {
       const signRes = await fetch("/api/upload-url", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(meta),
+        body: JSON.stringify({ ...meta, turnstileToken: token }),
       });
       const sign = await signRes.json().catch(() => ({}));
       if (!signRes.ok) return fail(sign.error ?? "Could not start the upload.");
@@ -222,6 +264,8 @@ export default function DumpForm() {
         />
       </label>
 
+      <div className="turnstile-row" ref={widgetEl} />
+
       <div className="form-foot">
         <p className="privacy">
           We will not retain raw dumps after analysis. We share the diagnosis
@@ -242,8 +286,8 @@ export default function DumpForm() {
 
       {status === "error" && (
         <p className="ferr center">
-          Something went wrong sending that. Email it to hello@strided.dev
-          instead and we'll take a look.
+          {errMsg || "Something went wrong sending that."} If it keeps failing,
+          email it to hello@strided.dev and we'll take a look.
         </p>
       )}
     </form>
