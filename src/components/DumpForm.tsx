@@ -1,21 +1,45 @@
 import { useState } from "react";
 
 /* Dump submission form. Collects contact info + a redacted Nsight/DCGM dump.
-   Submission is currently a stub — wire FORM_ENDPOINT to your handler
-   (email service, S3 presigned upload, Formspree, etc.) when ready.
-   No data leaves the browser until that endpoint is set. */
-
-const FORM_ENDPOINT = ""; // TODO: set to your POST endpoint (e.g. Formspree/API)
+   Flow: ask /api/upload-url for a presigned PUT, upload the file *directly* to
+   object storage (so the 50 MB payload bypasses Vercel's 4.5 MB body limit),
+   then call /api/notify to email strided.dev@gmail.com a composed message with
+   a signed download link. */
 
 type Status = "idle" | "submitting" | "success" | "error";
 
 const ACCEPTED = ".ncu-rep,.json,.csv,.txt,.zip,.gz";
 const MAX_MB = 50;
 
+/** PUT the file to a presigned URL with progress (fetch lacks upload progress). */
+function uploadWithProgress(
+  url: string,
+  file: File,
+  contentType: string,
+  onProgress: (pct: number) => void,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", contentType);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300
+        ? resolve()
+        : reject(new Error(`upload failed (${xhr.status})`));
+    xhr.onerror = () => reject(new Error("upload network error"));
+    xhr.send(file);
+  });
+}
+
 export default function DumpForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [fileName, setFileName] = useState<string>("");
   const [fileErr, setFileErr] = useState<string>("");
+  const [progress, setProgress] = useState<number>(0);
+  const [errMsg, setErrMsg] = useState<string>("");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -49,26 +73,49 @@ export default function DumpForm() {
     fileName &&
     !fileErr;
 
+  const fail = (msg: string) => {
+    setErrMsg(msg);
+    setStatus("error");
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!valid) return;
+    const fileInput = document.getElementById("dump") as HTMLInputElement;
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    setErrMsg("");
+    setProgress(0);
     setStatus("submitting");
 
-    // STUB: no endpoint wired yet. Simulate success so the UI is testable.
-    if (!FORM_ENDPOINT) {
-      setTimeout(() => setStatus("success"), 700);
-      return;
-    }
+    const meta = { ...form, fileName: file.name, fileSize: file.size };
 
     try {
-      const fileInput = document.getElementById("dump") as HTMLInputElement;
-      const data = new FormData();
-      Object.entries(form).forEach(([k, v]) => data.append(k, v));
-      if (fileInput.files?.[0]) data.append("dump", fileInput.files[0]);
-      const res = await fetch(FORM_ENDPOINT, { method: "POST", body: data });
-      setStatus(res.ok ? "success" : "error");
-    } catch {
-      setStatus("error");
+      // 1. Get a presigned upload URL + authorization token.
+      const signRes = await fetch("/api/upload-url", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(meta),
+      });
+      const sign = await signRes.json().catch(() => ({}));
+      if (!signRes.ok) return fail(sign.error ?? "Could not start the upload.");
+
+      // 2. Upload the dump straight to storage.
+      await uploadWithProgress(sign.uploadUrl, file, sign.contentType, setProgress);
+
+      // 3. Trigger the composed email with a download link.
+      const notifyRes = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: sign.key, token: sign.token, meta }),
+      });
+      const notify = await notifyRes.json().catch(() => ({}));
+      if (!notifyRes.ok) return fail(notify.error ?? "Upload saved, but notifying us failed.");
+
+      setStatus("success");
+    } catch (err) {
+      fail("Something went wrong sending that.");
     }
   };
 
@@ -185,7 +232,11 @@ export default function DumpForm() {
           className="submit-btn"
           disabled={!valid || status === "submitting"}
         >
-          {status === "submitting" ? "Sending…" : "Send dump →"}
+          {status === "submitting"
+            ? progress > 0 && progress < 100
+              ? `Uploading ${progress}%`
+              : "Sending…"
+            : "Send dump →"}
         </button>
       </div>
 
