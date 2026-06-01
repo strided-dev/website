@@ -1,5 +1,5 @@
 ---
-const repo = "https://github.com/your-org/strided"; // TODO: set org repo URL
+const repo = "https://github.com/strided-dev/strided"; // private for now, public later
 const metrics = [
   { v: "40–60%", l: "typical GPU utilization in production" },
   { v: "10", l: "deterministic diagnosis rules" },
@@ -12,11 +12,11 @@ const metrics = [
   <div class="hero-inner">
     <div class="hero-meta">v0.1 · Research-stage</div>
     <h1>
-      Your GPU is slow.<br />
-      <span class="amber">We tell you why.</span>
+      Your GPUs are burning money.<br />
+      <span class="amber">Strided tells you where.</span>
     </h1>
     <p class="hero-sub">
-      strided is a kernel-level causal diagnosis engine for production LLM
+      Strided is a kernel-level causal diagnosis engine for production LLM
       inference. Feed it a Nsight Compute report or DCGM telemetry; get a
       ranked, confidence-scored explanation of the bottleneck — and a specific
       fix.
@@ -63,10 +63,13 @@ const metrics = [
     animation: rise var(--dur-stream) var(--ease-instrument) 0.05s forwards;
   }
   .hero h1 {
-    font-size: var(--fs-hero);
+    /* sized to the viewport so the longest line ("Your GPUs are burning
+       money.") stays on one line — the <br> gives us exactly two lines */
+    font-size: clamp(2rem, 5.2vw, 4.25rem);
+    white-space: nowrap;
     font-weight: 600;
     letter-spacing: -0.05em;
-    line-height: 1.05;
+    line-height: 1.1;
     margin-bottom: var(--space-8);
     opacity: 0;
     animation: rise var(--dur-stream) var(--ease-instrument) 0.12s forwards;
@@ -146,6 +149,11 @@ const metrics = [
 
   @media (max-width: 720px) {
     .metrics { grid-template-columns: 1fr 1fr; gap: var(--space-8) var(--space-6); }
+  }
+  /* below this width the longest line can't fit at a readable size, so let
+     the heading wrap naturally instead of overflowing the viewport */
+  @media (max-width: 560px) {
+    .hero h1 { white-space: normal; }
   }
   @media (max-width: 380px) {
     .metrics { gap: var(--space-6) var(--space-4); }

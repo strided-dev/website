@@ -1,7 +1,7 @@
 ---
 const steps = [
   { n: "STEP 01", h: "Capture", p: "Run Nsight Compute, DCGM, or vLLM /metrics against your inference workload. Standard tools, standard outputs." },
-  { n: "STEP 02", h: "Parse", p: "strided normalizes the dump into a canonical schema. Phase timings, layer-level metrics, cluster signals, cache state." },
+  { n: "STEP 02", h: "Parse", p: "Strided normalizes the dump into a canonical schema. Phase timings, layer-level metrics, cluster signals, cache state." },
   { n: "STEP 03", h: "Fire rules", p: "Ten deterministic rules evaluate the schema. KV fragmentation, NCCL dominance, TP imbalance, quantization opportunity, more." },
   { n: "STEP 04", h: "Rank", p: "Each fired rule carries a confidence score and a suggested fix. Ambiguous case → no diagnosis. We don't guess." },
 ];
