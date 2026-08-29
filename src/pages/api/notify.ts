@@ -11,6 +11,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
 import { MAX_BYTES, json, parseMeta } from "../../lib/dump";
+import { clientIp, rateLimit } from "../../lib/ratelimit";
 import { deleteObject, headSize, presignGet, verifyKey } from "../../lib/storage";
 
 const EMAIL_TO = process.env.EMAIL_TO ?? import.meta.env.EMAIL_TO ?? "strided.dev@gmail.com";
@@ -21,6 +22,15 @@ const EMAIL_FROM =
 const mb = (bytes: number) => (bytes / 1e6).toFixed(1);
 
 export const POST: APIRoute = async ({ request }) => {
+  const ip = clientIp(request);
+  const rl = rateLimit(`notify:${ip}`, 8, 60_000);
+  if (!rl.ok) {
+    return new Response(JSON.stringify({ error: "Too many requests. Try again shortly." }), {
+      status: 429,
+      headers: { "content-type": "application/json", "retry-after": String(rl.retryAfter) },
+    });
+  }
+
   let raw: any;
   try {
     raw = await request.json();
