@@ -15,7 +15,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Browser checks cover desktop and mobile navigation, graph controls, CSV export, rack objectives and baseline reset, the Vision page without JavaScript, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Upload services are mocked: tests do not upload customer data or send email. Screenshots are written to `test-results/`.
+Browser checks cover desktop and mobile section navigation, active section state, browser history, legacy Vision links, graph controls, CSV export, rack objectives and baseline reset, the vision without JavaScript, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Upload services are mocked: tests do not upload customer data or send email. Screenshots are written to `test-results/`.
 
 ## Brand source
 
@@ -35,6 +35,8 @@ Newsreader is the selected display and wordmark face. IBM Plex Sans and IBM Plex
 
 The landing page distinguishes the full-stack system vision from today's inference CLI and research program. The architecture illustration is an accessible layer selector. The evidence explorer has two synthetic examples, a keyboard-operable time inspector, a step-time breakdown, a data table, and CSV export. Every trace is explicitly illustrative; it is not live product output or a measured benchmark.
 
+The four main navigation links point to homepage sections in reading order: `#system`, `#vision`, `#approach`, and `#research`. Each section introduces its purpose before its supporting content. The approach contains both the method and the evidence explorer. From the submission page, these links return to the same homepage anchors. A separate button opens the workload submission flow. Native anchors move directly to the section and preserve browser history and interaction state; an IntersectionObserver marks the visible section without a scroll handler or animation loop.
+
 Sections use descriptive headings and spacing instead of decorative numbering. Monospace is reserved for technical readouts. Divider lines belong to charts, tabular data, and controls; editorial content uses typography and surface changes for hierarchy.
 
 Do not use em dashes in site copy, page titles, captions, emails, or brand copy. Use commas, colons, or separate sentences as appropriate.
@@ -45,9 +47,9 @@ Update scenario data and explanations together in `src/components/EvidenceExplor
 
 ### Vision and rack model
 
-`/vision` explains the planned control layer and distinguishes it from the current inference research. `RackExplorer.astro` adapts the supplied `strided-rack-cubes.html` graphic into a prerendered SVG, using the same deterministic 48-GPU sample and four objectives. The original HTML file is not needed at build time or in production.
+`Vision.astro` at `/#vision` explains the planned control layer and distinguishes it from the current inference research. The former `/vision` route redirects there so shared links still work. `RackExplorer.astro` adapts the supplied `strided-rack-cubes.html` graphic into a prerendered SVG, using the same deterministic 48-GPU sample and four objectives. The original HTML file is not needed at build time or in production.
 
-The baseline graphic and metrics are available without JavaScript. When scripting is available, five keyboard-operable buttons select an objective or restore the baseline, and a live status announces the result. The component updates 192 existing SVG paths once per selection. It has no animation loop, timers, observers, 3D library, or React runtime; it adds no dependencies and its script is loaded only on the Vision page. The production rack script is approximately 1.9 KB gzipped.
+The baseline graphic and metrics are available without JavaScript. When scripting is available, five keyboard-operable buttons select an objective or restore the baseline, and a live status announces the result. The component updates 192 existing SVG paths once per selection. It has no animation loop, timers, observers, 3D library, or React runtime; it adds no dependencies. Its script now loads with the homepage, where the graphic lives, and is approximately 1.9 KB gzipped.
 
 Edit allocations and their explanations together in `src/lib/rack-model.ts`. All metrics are derived from those allocations: total GPU draw, a useful-work index relative to baseline 100, and headroom within the assumed 34.08 kW GPU limit. These are synthetic tradeoffs, not telemetry, efficiency measurements, or forecasts of savings and latency. Keep the legend, model disclosure, and expandable assumptions with the graphic.
 

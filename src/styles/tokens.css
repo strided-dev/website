@@ -19,7 +19,7 @@
   --section-space: clamp(72px, 8vw, 120px);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 110px; -webkit-font-smoothing: antialiased; }
+html { scroll-padding-top: 110px; -webkit-font-smoothing: antialiased; }
 body { margin: 0; font: 400 16px/1.65 var(--font-sans); background: var(--paper); color: var(--ink); }
 h1, h2, h3, p, figure { margin: 0; }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 400; font-optical-sizing: auto; }

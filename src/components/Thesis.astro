@@ -9,20 +9,22 @@ const connections = [
   <div class="system-heading">
     <p class="eyebrow">The system</p>
     <h2 id="system-title">The bottleneck rarely<br />stays in one layer.</h2>
+    <p class="system-description">Understand the constraints that shape an inference workload, from the hardware it runs on to the way work is scheduled.</p>
   </div>
   <div class="system-story">
     <p class="story-lead">A slow kernel can be a memory problem. A slow node can be a thermal problem. A slow workload can be a scheduling problem.</p>
-    <p class="story-body">Engineers are left to connect those dots across fragmented tools. strided is being built to treat the data center as one system, with a traceable path from the signal to the cause to the change.</p>
+    <p class="story-body">Engineers are left to connect those dots across fragmented tools. strided is designed to connect the signals to a diagnosis, with its evidence, assumptions, and limits kept visible.</p>
     <dl class="connections">
       {connections.map(item => <div><dt>{item.from}</dt><dd>{item.to}</dd></div>)}
     </dl>
     <p class="scope-note">Our starting point: causal diagnosis for LLM inference.</p>
-    <a href="/vision" class="text-link vision-link">Read our vision <span class="arrow" aria-hidden="true">→</span></a>
+    <a href="#vision" class="text-link vision-link">Explore the vision <span class="arrow" aria-hidden="true">↓</span></a>
   </div>
 </section>
 <style>
   .system-section { padding-block: 64px var(--section-space); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
   .system-heading .eyebrow { margin-bottom: 28px; }
+  .system-description { max-width: 360px; margin-top: 26px; font-size: 14px; line-height: 1.85; color: var(--text-secondary); }
   .system-story { padding-top: 42px; }
   .story-lead { font-family: var(--font-display); font-size: 27px; line-height: 1.45; letter-spacing: -.01em; }
   .story-body { color: var(--text-secondary); font-size: 14px; line-height: 1.85; margin-top: 21px; max-width: 520px; }

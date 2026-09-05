@@ -52,7 +52,7 @@ test('navigation works on both pages and mobile menu supports Escape', async ({ 
   await expect(page.locator('#approach')).toBeInViewport();
 });
 
-for (const path of ['/', '/submit', '/vision']) {
+for (const path of ['/', '/submit']) {
   test(`${path} has no overflow, broken internal links, or WCAG AA violations`, async ({ page }) => {
     await page.goto(path);
     await ready(page);
