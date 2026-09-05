@@ -7,7 +7,7 @@ const connections = [
 ---
 <section class="system-section container" id="system" aria-labelledby="system-title">
   <div class="system-heading">
-    <p class="eyebrow"><span class="index">01 /</span> The whole picture</p>
+    <p class="eyebrow">The system</p>
     <h2 id="system-title">The bottleneck rarely<br />stays in one layer.</h2>
   </div>
   <div class="system-story">
@@ -16,21 +16,20 @@ const connections = [
     <dl class="connections">
       {connections.map(item => <div><dt>{item.from}</dt><dd>{item.to}</dd></div>)}
     </dl>
-    <p class="scope-note"><span aria-hidden="true">↳</span> Our starting point: causal diagnosis for LLM inference.</p>
+    <p class="scope-note">Our starting point: causal diagnosis for LLM inference.</p>
   </div>
 </section>
 <style>
-  .system-section { padding-block: var(--section-space); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .system-section { padding-block: 64px var(--section-space); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
   .system-heading .eyebrow { margin-bottom: 28px; }
   .system-story { padding-top: 42px; }
   .story-lead { font-family: var(--font-display); font-size: 27px; line-height: 1.45; letter-spacing: -.01em; }
   .story-body { color: var(--text-secondary); font-size: 14px; line-height: 1.85; margin-top: 21px; max-width: 520px; }
-  .connections { margin: 30px 0 0; }
-  .connections > div { display: grid; grid-template-columns: 145px 1fr; gap: 20px; padding: 16px 0; border-top: 1px solid var(--line); font-size: 12px; }
+  .connections { display: grid; gap: 24px; margin: 34px 0 0; }
+  .connections > div { display: grid; grid-template-columns: 145px 1fr; gap: 20px; font-size: 12px; }
   dt { font-weight: 500; }
   dd { margin: 0; color: var(--text-secondary); }
-  .scope-note { font: 10px/1.8 var(--font-mono); color: var(--text-secondary); margin-top: 20px; }
-  .scope-note span { margin-right: 8px; }
+  .scope-note { font-size: 12px; color: var(--text-secondary); margin-top: 32px; }
   @media (max-width: 950px) { .system-section { gap: 40px; } .connections > div { grid-template-columns: 120px 1fr; gap: 14px; } }
   @media (max-width: 760px) { .system-section { grid-template-columns: 1fr; gap: 28px; } .system-story { padding-top: 0; } .story-lead { font-size: 25px; } }
 </style>

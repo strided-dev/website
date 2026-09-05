@@ -35,6 +35,8 @@ Newsreader is the selected display and wordmark face. IBM Plex Sans and IBM Plex
 
 The landing page distinguishes the full-stack system vision from today's inference CLI and research program. The architecture illustration is an accessible layer selector. The evidence explorer has two synthetic examples, a keyboard-operable time inspector, a step-time breakdown, a data table, and CSV export. Every trace is explicitly illustrative; it is not live product output or a measured benchmark.
 
+Sections use descriptive headings and spacing instead of decorative numbering. Monospace is reserved for technical readouts. Divider lines belong to charts, tabular data, and controls; editorial content uses typography and surface changes for hierarchy.
+
 Update scenario data and explanations together in `src/components/EvidenceExplorer.tsx`. Keep units, axis bounds, legends, data tables, and the illustrative-data disclosure intact. Changes to the brand selection may also require downloading the corresponding licensed font assets.
 
 ## Submission service

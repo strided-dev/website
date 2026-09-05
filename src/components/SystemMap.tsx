@@ -13,7 +13,7 @@ export default function SystemMap() {
   const [active, setActive] = useState(2);
   return (
     <div className="system-map">
-      <div className="map-heading"><span className="eyebrow">The Strided system</span><span className="map-caption">Architecture / 01</span></div>
+      <div className="map-heading"><span className="eyebrow">The Strided system</span><span className="map-caption">System vision</span></div>
       <div className="map-body">
         <svg className="stack-art" viewBox="0 0 310 377" preserveAspectRatio="none" aria-hidden="true">
           <defs>
@@ -50,10 +50,9 @@ export default function SystemMap() {
         </div>
       </div>
       <div className="map-detail" id="layer-description" aria-live="polite" aria-atomic="true">
-        <span className="map-detail-number">0{active + 1} /</span>
         <div><p className="map-detail-title">{layers[active].title}</p><p className="map-detail-copy">{layers[active].description}</p></div>
       </div>
-      <p className="map-footnote">System vision <span>Choose a layer to explore ↑</span></p>
+      <p className="map-footnote">Select a layer to explore.</p>
     </div>
   );
 }

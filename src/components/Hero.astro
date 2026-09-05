@@ -3,45 +3,30 @@ import SystemMap from './SystemMap.tsx';
 ---
 <section class="hero container" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow hero-label"><span class="small-mark" aria-hidden="true"></span> Deterministic by design</p>
+    <p class="eyebrow hero-label">Deterministic by design</p>
     <h1 id="hero-title">Every layer.<br />One accountable<br /><span>system.</span></h1>
     <p class="hero-description">The optimization and control layer for the data center. From facility power to the kernel, Strided connects the evidence behind every decision.</p>
     <div class="hero-actions">
       <a href="#evidence" class="button">Explore the approach <span class="arrow" aria-hidden="true">↗</span></a>
       <a href="/submit" class="text-link">Bring your workload <span class="arrow" aria-hidden="true">→</span></a>
     </div>
-    <p class="hero-note"><span aria-hidden="true">◌</span> In development. Grounded in real workloads.</p>
+    <p class="hero-note">In development. Grounded in real workloads.</p>
   </div>
   <div class="hero-visual"><SystemMap client:load /></div>
 </section>
-<div class="principle-strip container" aria-label="Product principles">
-  <p class="strip-intro">An engineering discipline.<br /><span>Across the entire stack.</span></p>
-  <p><span class="eyebrow">01</span> Explain the cause.</p>
-  <p><span class="eyebrow">02</span> Reproduce the result.</p>
-  <p><span class="eyebrow">03</span> Verify the change.</p>
-</div>
 <style>
   .hero { display: grid; grid-template-columns: 1.12fr 1fr; gap: clamp(35px, 5vw, 80px); align-items: center; padding-block: 88px 84px; }
-  .hero-label { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
-  .small-mark { width: 7px; height: 7px; border: 1px solid var(--ink); }
+  .hero-label { margin-bottom: 32px; }
   h1 span { color: var(--text-secondary); }
   .hero-description { color: var(--text-secondary); max-width: 445px; font-size: 16px; line-height: 1.8; margin-top: 27px; }
   .hero-actions { display: flex; align-items: center; gap: 24px; margin-top: 30px; flex-wrap: wrap; }
-  .hero-note { display: flex; align-items: center; gap: 8px; font: 10px/1.6 var(--font-mono); color: var(--text-tertiary); margin-top: 23px; }
-  .hero-note span { font-size: 17px; }
+  .hero-note { font-size: 11px; color: var(--text-secondary); margin-top: 23px; }
   .hero-visual { min-width: 0; padding-top: 5px; }
-  .principle-strip { display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; align-items: center; border-block: 1px solid var(--border-primary); padding-block: 25px; gap: 20px; }
-  .principle-strip > p:not(:first-child) { border-left: 1px solid var(--line); padding-left: 28px; font-size: 13px; }
-  .principle-strip .eyebrow { display: inline-block; margin-right: 15px; color: var(--text-tertiary); font-size: 10px; }
-  .strip-intro { font-size: 12px; line-height: 1.65; }
-  .strip-intro span { color: var(--text-tertiary); }
   @media (min-width: 1550px) { .hero { padding-block: 108px; } }
   @media (max-width: 1000px) {
     .hero { gap: 35px; grid-template-columns: 1fr 1fr; }
     h1 { font-size: clamp(50px, 6.5vw, 70px); }
     .hero-actions { gap: 12px; }
-    .principle-strip > p:not(:first-child) { padding-left: 16px; }
-    .principle-strip .eyebrow { display: block; margin-bottom: 6px; }
   }
   @media (max-width: 760px) {
     .hero { grid-template-columns: 1fr; padding-block: 54px; gap: 48px; }
@@ -50,11 +35,5 @@ import SystemMap from './SystemMap.tsx';
     .hero-label { margin-bottom: 26px; }
     .hero-actions { gap: 12px 22px; }
     .hero-visual { max-width: 540px; width: 100%; margin-inline: auto; }
-    .principle-strip { grid-template-columns: repeat(3, 1fr); gap: 10px; padding-block: 24px; }
-    .strip-intro { grid-column: 1/-1; margin-bottom: 16px; }
-    .strip-intro br { display: none; }
-    .strip-intro span { margin-left: 5px; }
-    .principle-strip > p:not(:first-child) { font-size: 11px; padding-left: 12px; }
-    .principle-strip > p:nth-child(2) { border-left: 0; padding-left: 0; }
   }
 </style>

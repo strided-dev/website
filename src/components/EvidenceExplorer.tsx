@@ -44,7 +44,7 @@ export default function EvidenceExplorer() {
     <div className="evidence-explorer">
       <div className="explorer-toolbar">
         <div className="scenario-controls" role="group" aria-label="Example workload">
-          {scenarios.map((item, i) => <button key={item.id} aria-pressed={scenarioIndex === i} onClick={() => setScenarioIndex(i)}><span className="scenario-number">0{i + 1}</span>{item.label}</button>)}
+          {scenarios.map((item, i) => <button key={item.id} aria-pressed={scenarioIndex === i} onClick={() => setScenarioIndex(i)}>{item.label}</button>)}
         </div>
         <span className="example-label">Illustrative trace · not a benchmark</span>
       </div>

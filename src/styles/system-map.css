@@ -1,6 +1,6 @@
 .system-map { width: 100%; }
-.map-heading { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); padding-bottom: 15px; }
-.map-caption { font: 9px/1.8 var(--font-mono); color: var(--text-tertiary); }
+.map-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-bottom: 15px; }
+.map-caption { font-size: 11px; color: var(--text-secondary); }
 .map-body { position: relative; display: grid; grid-template-columns: 62% 38%; align-items: start; padding-top: 22px; }
 .stack-art { width: 100%; height: 360px; overflow: visible; }
 .stack-axis { stroke: var(--border-primary); stroke-dasharray: 3 5; fill: none; }
@@ -26,11 +26,10 @@
 .layer-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); opacity: 0; }
 .is-active .layer-dot { opacity: 1; }
 .layer-signal { display: block; font: 9px/1.6 var(--font-mono); color: var(--text-tertiary); margin-top: 3px; }
-.map-detail { border-block: 1px solid var(--border-primary); padding: 20px 0; display: flex; gap: 20px; min-height: 115px; }
-.map-detail-number { font: 10px/1.8 var(--font-mono); color: var(--text-tertiary); flex-shrink: 0; padding-top: 2px; }
+.map-detail { padding: 24px 0 0; min-height: 115px; }
 .map-detail-title { font-size: 13px; margin-bottom: 5px; }
-.map-detail-copy { font-size: 11px; line-height: 1.7; color: var(--text-secondary); max-width: 370px; }
-.map-footnote { display: flex; justify-content: space-between; gap: 10px; font: 9px/1.6 var(--font-mono); color: var(--text-tertiary); padding-top: 13px; }
+.map-detail-copy { font-size: 12px; line-height: 1.7; color: var(--text-secondary); max-width: 410px; }
+.map-footnote { font-size: 11px; color: var(--text-secondary); padding-top: 8px; }
 @media (max-width: 1100px) and (min-width: 761px) {
   .map-body { grid-template-columns: 58% 42%; }
   .stack-art { height: 310px; }

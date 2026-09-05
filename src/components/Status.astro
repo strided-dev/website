@@ -3,13 +3,13 @@
 <section class="research" id="research" aria-labelledby="research-title">
   <div class="container research-inner">
     <div class="research-copy">
-      <p class="eyebrow"><span class="index">04 /</span> Built with engineers</p>
+      <p class="eyebrow">Research</p>
       <h2 id="research-title">Bring a difficult<br />workload.</h2>
       <p>Good engineering starts with real constraints. We're working with inference teams to put Strided's diagnosis engine to the test.</p>
       <a href="/submit" class="button">Share your workload <span class="arrow" aria-hidden="true">↗</span></a>
     </div>
     <div class="research-details">
-      <div class="research-status"><span class="status-square" aria-hidden="true"></span> Research preview <span>Accepting workloads</span></div>
+      <div class="research-status">Research preview <span>Accepting workloads</span></div>
       <div class="research-row"><span class="eyebrow">Today</span><p>A CLI for causal diagnosis, with evidence-backed rules and a reviewed path to a verified fix.</p></div>
       <div class="research-row"><span class="eyebrow">Next</span><p>A connected optimization and control layer across the data center stack.</p></div>
       <div class="research-row"><span class="eyebrow">Together</span><p>Send a redacted Nsight or DCGM capture. We'll review the workload and share the diagnosis with you.</p></div>
@@ -20,20 +20,19 @@
 <style>
   .research { background: var(--ink); color: var(--paper); padding-block: 84px; }
   .research-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
-  .research .eyebrow, .research .eyebrow .index { color: var(--strided-bezel-dark); }
+  .research .eyebrow { color: var(--strided-bezel-dark); }
   .research-copy .eyebrow { margin-bottom: 28px; }
   .research h2 { font-size: clamp(48px, 4.6vw, 66px); }
   .research-copy > p:not(.eyebrow) { font-size: 14px; color: var(--strided-bezel-dark); margin-top: 23px; max-width: 390px; line-height: 1.85; }
   .research .button { background: var(--paper); color: var(--ink); border-color: var(--paper); margin-top: 30px; }
   .research .button:hover { background: var(--strided-bezel-dark); border-color: var(--strided-bezel-dark); }
   .research-details { padding-top: 8px; }
-  .research-status { display: flex; align-items: center; gap: 9px; padding-bottom: 24px; font-size: 12px; border-bottom: 1px solid var(--text-secondary); }
-  .status-square { width: 6px; height: 6px; border: 1px solid var(--paper); }
-  .research-status > span:last-child { font: 9px/1.5 var(--font-mono); margin-left: auto; color: var(--strided-bezel-dark); }
-  .research-row { display: grid; grid-template-columns: 72px 1fr; gap: 24px; padding-block: 24px; border-bottom: 1px solid var(--text-secondary); }
-  .research-row .eyebrow { padding-top: 3px; font-size: 10px; }
+  .research-status { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; font-size: 12px; }
+  .research-status > span { font-size: 11px; margin-left: auto; color: var(--strided-bezel-dark); }
+  .research-row { display: grid; grid-template-columns: 72px 1fr; gap: 24px; margin-top: 28px; }
+  .research-row .eyebrow { padding-top: 2px; font-size: 12px; }
   .research-row p { font-size: 13px; line-height: 1.8; color: var(--strided-bezel-dark); }
-  .contact-link { font-size: 11px; margin-top: 17px; gap: 15px; }
+  .contact-link { font-size: 11px; margin-top: 28px; gap: 15px; }
   .research :focus-visible { outline-color: var(--paper); }
   @media (max-width: 950px) { .research-inner { gap: 50px; } }
   @media (max-width: 760px) { .research { padding-block: 65px; } .research-inner { grid-template-columns: 1fr; gap: 50px; } .research-row { gap: 15px; } }

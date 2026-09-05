@@ -1,19 +1,17 @@
 .submit-main { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(45px, 7vw, 110px); padding-block: 60px 100px; }
 .back-link { color: var(--text-secondary); font-size: 11px; gap: 10px; margin-bottom: 46px; }
-.submit-intro > .eyebrow { margin-bottom: 22px; font-size: 10px; }
+.submit-intro > .eyebrow { margin-bottom: 22px; }
 .submit-intro h1 { font-size: clamp(44px, 4.8vw, 66px); line-height: 1.07; }
 .submit-description { font-size: 15px; color: var(--text-secondary); max-width: 430px; margin-top: 25px; line-height: 1.85; }
 .submission-guide { margin-top: 42px; }
 .submission-guide h2 { font: 500 12px/1.6 var(--font-sans); margin-bottom: 20px; }
-.submission-guide ol { list-style: none; margin: 0; padding: 0; }
-.submission-guide li { display: flex; gap: 20px; padding-block: 17px; border-top: 1px solid var(--line); }
-.submission-guide li > span { font: 10px/1.8 var(--font-mono); color: var(--text-tertiary); padding-top: 3px; }
+.submission-guide ul { display: grid; gap: 24px; list-style: none; margin: 0; padding: 0; }
 .submission-guide strong { font-size: 12px; font-weight: 500; }
 .submission-guide li p { color: var(--text-secondary); font-size: 12px; line-height: 1.75; margin-top: 4px; max-width: 330px; }
 .submit-contact { color: var(--text-secondary); font-size: 12px; line-height: 1.85; margin-top: 26px; }
 .submit-contact a { display: inline-block; margin-top: 5px; color: var(--ink); }
 .submit-form { align-self: start; margin-top: 66px; border: 1px solid var(--border-primary); background: var(--paper-card); padding: clamp(24px, 3vw, 40px); box-shadow: 0 1px 0 var(--strided-bezel-light) inset; }
-.form-heading { padding-bottom: 25px; margin-bottom: 28px; border-bottom: 1px solid var(--line); }
+.form-heading { margin-bottom: 34px; }
 .form-heading h2 { font-size: 30px; letter-spacing: -.02em; }
 .form-heading p { font-size: 11px; color: var(--text-secondary); margin-top: 9px; }
 .form-card { display: flex; flex-direction: column; gap: 24px; }
@@ -35,7 +33,7 @@
 .dz-icon { font-size: 23px; margin-bottom: 4px; color: var(--text-secondary); }
 .dz-text strong { font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
 .dz-sub { font-size: 10px; color: var(--text-secondary); line-height: 1.75; }
-.form-foot { border-top: 1px solid var(--line); padding-top: 23px; display: flex; flex-direction: column; align-items: stretch; gap: 18px; }
+.form-foot { padding-top: 8px; display: flex; flex-direction: column; align-items: stretch; gap: 18px; }
 .privacy { font-size: 10px; color: var(--text-secondary); line-height: 1.8; }
 .submit-btn { display: flex; justify-content: space-between; min-height: 48px; align-items: center; padding: 12px 18px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper-card); border-radius: 2px; font-size: 12px; }
 .submit-btn:hover:not(:disabled) { background: var(--strided-accent); }
