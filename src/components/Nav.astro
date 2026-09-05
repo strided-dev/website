@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
-const home = Astro.url.pathname === '/';
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const home = currentPath === '/';
 const section = (id: string) => `${home ? '' : '/'}#${id}`;
 ---
 <header class="site-header">
@@ -8,14 +9,16 @@ const section = (id: string) => `${home ? '' : '/'}#${id}`;
     <a class="brand" href="/" aria-label="Strided home"><Logo /></a>
     <nav aria-label="Main navigation">
       <a class="section-link" href={section('system')}>The system</a>
+      <a class="section-link" href="/vision" aria-current={currentPath === '/vision' ? 'page' : undefined}>Vision</a>
       <a class="section-link" href={section('approach')}>Our approach</a>
       <a class="section-link" href={section('research')}>Research</a>
-      <a href="/submit" class="nav-cta" aria-current={!home ? 'page' : undefined}>Share a workload <span class="arrow" aria-hidden="true">↗</span></a>
+      <a href="/submit" class="nav-cta" aria-current={currentPath === '/submit' ? 'page' : undefined}>Share a workload <span class="arrow" aria-hidden="true">↗</span></a>
     </nav>
     <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
   </div>
   <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>
     <a href={section('system')}>The system <span aria-hidden="true">↗</span></a>
+    <a href="/vision" aria-current={currentPath === '/vision' ? 'page' : undefined}>Vision <span aria-hidden="true">↗</span></a>
     <a href={section('approach')}>Our approach <span aria-hidden="true">↗</span></a>
     <a href={section('research')}>Research <span aria-hidden="true">↗</span></a>
   </nav>
@@ -46,9 +49,10 @@ const section = (id: string) => `${home ? '' : '/'}#${id}`;
   .site-header { background: var(--paper); position: sticky; top: 0; z-index: 20; border-bottom: 1px solid var(--line); }
   .header-inner { height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
   .brand { display: flex; text-decoration: none; }
-  nav { display: flex; align-items: center; gap: 34px; }
+  nav { display: flex; align-items: center; gap: 28px; }
   nav a { font-size: 12px; color: var(--text-secondary); text-decoration: none; }
   nav a:hover { color: var(--ink); }
+  nav a[aria-current='page'] { color: var(--ink); text-decoration: underline; text-underline-offset: 6px; }
   .nav-cta { display: flex; align-items: center; gap: 25px; color: var(--ink); padding: 10px 0 10px 32px; margin-left: 6px; }
   .menu-toggle { display: none; width: 44px; height: 44px; border: 1px solid var(--line); background: transparent; padding: 12px; }
   .menu-toggle span { display: block; height: 1px; background: var(--ink); margin-block: 5px; transition: transform .2s; }
@@ -58,6 +62,7 @@ const section = (id: string) => `${home ? '' : '/'}#${id}`;
   .mobile-nav[hidden] { display: none; }
   .mobile-nav a { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); }
   @media (min-width: 761px) { .mobile-nav { display: none; } }
+  @media (min-width: 761px) and (max-width: 1000px) { nav { gap: 20px; } .nav-cta { padding-left: 12px; } }
   @media (max-width: 760px) {
     .header-inner { height: 78px; gap: 15px; }
     .section-link { display: none; }

@@ -1,0 +1,111 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import RackExplorer from '../components/RackExplorer.astro';
+---
+<Base
+  title="Our vision — Strided"
+  description="A data center that works as one. Explore Strided's vision for accountable optimization across power, hardware, kernels, runtimes, and scheduling."
+>
+  <Nav />
+  <main id="main">
+    <section class="vision-hero container" aria-labelledby="vision-title">
+      <div>
+        <p class="eyebrow">Our vision</p>
+        <h1 id="vision-title">A data center<br />that works as one.</h1>
+      </div>
+      <div class="vision-intro">
+        <p class="vision-lead">Every watt has a constraint.<br />Every workload has a purpose.</p>
+        <p>We're building toward a control layer that connects them. Strided will bring facility power, hardware, kernels, runtimes, and scheduling into one accountable system, so every decision can be traced from its cause to its outcome.</p>
+        <a href="#rack" class="text-link">Explore the rack <span class="arrow" aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    <section class="rack-section" id="rack" aria-labelledby="rack-heading">
+      <div class="container">
+        <div class="rack-heading">
+          <div><p class="eyebrow">An objective changes the decision</p><h2 id="rack-heading">Same rack.<br />Different priorities.</h2></div>
+          <p>Throughput, power, cost, and latency ask different things of the same hardware. Choose an objective to see an illustrative allocation, and the tradeoff that comes with it.</p>
+        </div>
+        <RackExplorer />
+      </div>
+    </section>
+
+    <section class="control-section container" aria-labelledby="control-title">
+      <div class="control-heading">
+        <p class="eyebrow">The system we're building</p>
+        <h2 id="control-title">From a diagnosis<br />to a control loop.</h2>
+        <p>The ambition is to connect the explanation to the decision, and the decision to a verified result.</p>
+      </div>
+      <dl class="control-capabilities">
+        <div><dt>Observe across layers.</dt><dd>A thermal limit can change a GPU's behavior. A runtime choice can change memory pressure. Strided will connect these signals to the workload they affect, building a common view of cause and effect.</dd></div>
+        <div><dt>Choose with context.</dt><dd>The right change depends on the objective and its boundaries. A power budget, a latency target, and the cost of completed work should be explicit inputs to a decision, with the tradeoffs visible.</dd></div>
+        <div><dt>Act with a record.</dt><dd>We want changes to be bounded, reviewable, and reversible. Each action should retain its evidence, its expected effect, and a comparison against the baseline. Insufficient evidence should lead to abstention.</dd></div>
+      </dl>
+    </section>
+
+    <section class="vision-close" aria-labelledby="vision-close-title">
+      <div class="container vision-close-inner">
+        <div>
+          <p class="eyebrow">Built from real constraints</p>
+          <h2 id="vision-close-title">The vision is broad.<br />The work starts here.</h2>
+          <a href="/submit" class="button">Bring your workload <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+        <div class="vision-now">
+          <h3>Starting with inference.</h3>
+          <p>Today, Strided is a research-stage CLI for causal diagnosis of LLM inference, with evidence-backed rules and a reviewed path to a verified fix.</p>
+          <p>Control across the full data center is the direction we're building toward. We're working with engineers to test the foundations on real workloads.</p>
+          <a href="/#approach" class="text-link">See our approach today <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .vision-hero { display: grid; grid-template-columns: 1.35fr 1fr; gap: 80px; align-items: end; padding-block: 90px 96px; }
+  .vision-hero .eyebrow { margin-bottom: 30px; }
+  .vision-hero h1 { font-size: clamp(52px, 5.7vw, 80px); line-height: 1.055; }
+  .vision-intro { padding-bottom: 5px; max-width: 460px; }
+  .vision-lead { font: 400 27px/1.35 var(--font-display); letter-spacing: -.01em; }
+  .vision-intro > p:not(.vision-lead) { font-size: 14px; color: var(--text-secondary); line-height: 1.85; margin-top: 22px; }
+  .vision-intro .text-link { font-size: 12px; margin-top: 18px; }
+  .rack-section { background: var(--paper-card); padding-block: var(--section-space); }
+  .rack-heading { display: flex; justify-content: space-between; align-items: end; gap: 60px; margin-bottom: 40px; }
+  .rack-heading .eyebrow { margin-bottom: 24px; }
+  .rack-heading > p { max-width: 380px; font-size: 14px; line-height: 1.85; color: var(--text-secondary); padding-bottom: 5px; }
+  .control-section { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; padding-block: var(--section-space); }
+  .control-heading .eyebrow { margin-bottom: 26px; }
+  .control-heading > p { max-width: 370px; font-size: 14px; line-height: 1.85; color: var(--text-secondary); margin-top: 26px; }
+  .control-capabilities { display: grid; gap: 38px; margin: 0; padding-top: 42px; }
+  .control-capabilities dt { font: 400 29px/1.2 var(--font-display); letter-spacing: -.015em; }
+  .control-capabilities dd { font-size: 14px; color: var(--text-secondary); line-height: 1.85; margin: 14px 0 0; }
+  .vision-close { background: var(--ink); color: var(--paper); padding-block: 84px; }
+  .vision-close-inner { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 100px; }
+  .vision-close .eyebrow { color: var(--strided-bezel-dark); margin-bottom: 26px; }
+  .vision-close .button { background: var(--paper); color: var(--ink); border-color: var(--paper); margin-top: 32px; }
+  .vision-close .button:hover { background: var(--strided-bezel-dark); border-color: var(--strided-bezel-dark); }
+  .vision-close :focus-visible { outline-color: var(--paper); }
+  .vision-now { max-width: 430px; }
+  .vision-now h3 { font-size: 30px; margin-bottom: 20px; }
+  .vision-now p { font-size: 14px; color: var(--strided-bezel-dark); line-height: 1.85; margin-top: 16px; }
+  .vision-now .text-link { font-size: 12px; margin-top: 17px; }
+  @media (max-width: 1050px) {
+    .vision-hero { gap: 45px; }
+    .vision-hero h1 { font-size: 62px; }
+    .control-section, .vision-close-inner { gap: 50px; }
+  }
+  @media (max-width: 760px) {
+    .vision-hero { grid-template-columns: 1fr; gap: 32px; padding-block: 54px 65px; }
+    .vision-hero h1 { font-size: clamp(49px, 9.2vw, 68px); }
+    .vision-hero .eyebrow { margin-bottom: 25px; }
+    .vision-lead { font-size: 25px; }
+    .rack-heading { display: block; margin-bottom: 30px; }
+    .rack-heading > p { max-width: 500px; margin-top: 22px; }
+    .control-section, .vision-close-inner { grid-template-columns: 1fr; gap: 38px; }
+    .control-capabilities { padding-top: 0; gap: 32px; }
+    .vision-close { padding-block: 65px; }
+  }
+</style>

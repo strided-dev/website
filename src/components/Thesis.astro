@@ -17,6 +17,7 @@ const connections = [
       {connections.map(item => <div><dt>{item.from}</dt><dd>{item.to}</dd></div>)}
     </dl>
     <p class="scope-note">Our starting point: causal diagnosis for LLM inference.</p>
+    <a href="/vision" class="text-link vision-link">Read our vision <span class="arrow" aria-hidden="true">→</span></a>
   </div>
 </section>
 <style>
@@ -30,6 +31,7 @@ const connections = [
   dt { font-weight: 500; }
   dd { margin: 0; color: var(--text-secondary); }
   .scope-note { font-size: 12px; color: var(--text-secondary); margin-top: 32px; }
+  .vision-link { font-size: 12px; margin-top: 10px; }
   @media (max-width: 950px) { .system-section { gap: 40px; } .connections > div { grid-template-columns: 120px 1fr; gap: 14px; } }
   @media (max-width: 760px) { .system-section { grid-template-columns: 1fr; gap: 28px; } .system-story { padding-top: 0; } .story-lead { font-size: 25px; } }
 </style>
