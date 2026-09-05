@@ -13,7 +13,7 @@ export default function SystemMap() {
   const [active, setActive] = useState(2);
   return (
     <div className="system-map">
-      <div className="map-heading"><span className="eyebrow">The Strided system</span><span className="map-caption">System vision</span></div>
+      <div className="map-heading"><span className="eyebrow">The strided system</span><span className="map-caption">System vision</span></div>
       <div className="map-body">
         <svg className="stack-art" viewBox="0 0 310 377" preserveAspectRatio="none" aria-hidden="true">
           <defs>

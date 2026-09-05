@@ -90,7 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
       `Thanks for sending your ${meta.engine} dump${meta.fileName ? ` (${meta.fileName})` : ""}. ` +
       `We'll run it through strided and get back to you here with the diagnosis.\n\n` +
       `We do not retain raw dumps after analysis.\n\n` +
-      `The Strided team\n`,
+      `The strided team\n`,
   });
   if (confirmError) console.error("resend confirmation error", confirmError);
 

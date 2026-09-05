@@ -2,8 +2,8 @@
 import '../styles/tokens.css';
 interface Props { title?: string; description?: string; }
 const {
-  title = 'Strided: Every layer. One accountable system.',
-  description = 'The deterministic optimization and control layer for the data center. Strided connects evidence across the stack, starting with causal diagnosis for LLM inference.',
+  title = 'strided: Every layer. One accountable system.',
+  description = 'The deterministic optimization and control layer for the data center. strided connects evidence across the stack, starting with causal diagnosis for LLM inference.',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -20,7 +20,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="preload" href="/fonts/newsreader-0.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Strided" />
+    <meta property="og:site_name" content="strided" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

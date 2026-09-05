@@ -11,4 +11,4 @@ const logo = selected.logo;
 const { x, y, width, height } = logo.viewBox;
 const bars = logo.bars.map(bar => `<rect x="${bar.offset}" y="${bar.y}" width="${bar.width}" height="${bar.height}" rx="${logo.radius}" fill="${bar.fill}" opacity="${bar.opacity}" stroke="${bar.outline}" stroke-width="${bar.outlineWidth}"/>`).join('');
 writeFileSync(new URL('public/favicon.svg', root), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x} ${y} ${width} ${height}">${bars}</svg>\n`);
-console.log('Synced the selected Strided palette, typography, and logo.');
+console.log('Synced the selected strided palette, typography, and logo.');

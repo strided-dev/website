@@ -232,7 +232,7 @@ export default function DumpForm() {
 
       <div className="form-foot">
         <p className="privacy">
-          By sending a capture, you agree to let the Strided team review it and
+          By sending a capture, you agree to let the strided team review it and
           contact you about the diagnosis. Please redact sensitive data first.
         </p>
         <button

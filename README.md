@@ -1,4 +1,4 @@
-# Strided website
+# strided website
 
 Astro marketing site and workload submission flow. Pages are prerendered; the two upload endpoints run through the Vercel adapter.
 
@@ -38,6 +38,8 @@ The landing page distinguishes the full-stack system vision from today's inferen
 Sections use descriptive headings and spacing instead of decorative numbering. Monospace is reserved for technical readouts. Divider lines belong to charts, tabular data, and controls; editorial content uses typography and surface changes for hierarchy.
 
 Do not use em dashes in site copy, page titles, captions, emails, or brand copy. Use commas, colons, or separate sentences as appropriate.
+
+Always write the brand name as `strided`, including at the start of a sentence, in page titles, metadata, accessible labels, and emails.
 
 Update scenario data and explanations together in `src/components/EvidenceExplorer.tsx`. Keep units, axis bounds, legends, data tables, and the illustrative-data disclosure intact. Changes to the brand selection may also require downloading the corresponding licensed font assets.
 
