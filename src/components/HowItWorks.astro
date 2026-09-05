@@ -1,38 +1,43 @@
 ---
 const steps = [
-  { n: "STEP 01", h: "Capture", p: "Run Nsight Compute, DCGM, or vLLM /metrics against your inference workload. Standard tools, standard outputs." },
-  { n: "STEP 02", h: "Parse", p: "Strided normalizes the dump into a canonical schema. Phase timings, layer-level metrics, cluster signals, cache state." },
-  { n: "STEP 03", h: "Fire rules", p: "Ten deterministic rules evaluate the schema. KV fragmentation, NCCL dominance, TP imbalance, quantization opportunity, more." },
-  { n: "STEP 04", h: "Rank", p: "Each fired rule carries a confidence score and a suggested fix. Ambiguous case → no diagnosis. We don't guess." },
+  { n: '01', title: 'Observe the workload.', body: 'Start with the tools your engineers already use. Bring Nsight, DCGM, or vLLM telemetry into a common view.', detail: 'Existing signals. Shared context.' },
+  { n: '02', title: 'Explain the constraint.', body: 'Evaluate explicit rules against the evidence. Every diagnosis includes a cause, a confidence score, and the signals behind it.', detail: 'Inspectable reasoning. Clear limits.' },
+  { n: '03', title: 'Verify the change.', body: 'Review a proposed fix, compare the result with the baseline, and keep a path back. A recommendation is only the beginning.', detail: 'Measured outcomes. Reversible steps.' },
 ];
 ---
-
-<section class="how" id="how">
-  <div class="how-content">
-    <h2>Parse. Diagnose. <span class="amber">Done.</span></h2>
-    <div class="steps">
-      {steps.map((s) => (
-        <div class="step">
-          <div class="step-num">{s.n}</div>
-          <h4>{s.h}</h4>
-          <p>{s.p}</p>
-        </div>
-      ))}
-    </div>
+<section class="approach container" id="approach" aria-labelledby="approach-title">
+  <div class="approach-heading">
+    <p class="eyebrow"><span class="index">03 /</span> The engineering standard</p>
+    <h2 id="approach-title">Performance you can<br />account for.</h2>
+  </div>
+  <div class="steps">
+    {steps.map(step => <article class="step">
+      <div class="step-top"><span>{step.n}</span><span aria-hidden="true">↗</span></div>
+      <h3>{step.title}</h3>
+      <p>{step.body}</p>
+      <div class="step-detail">{step.detail}</div>
+    </article>)}
+  </div>
+  <div class="accountability">
+    <span class="accountability-symbol" aria-hidden="true">[ = ]</span>
+    <p>Same evidence. Same rules. Same diagnosis.</p>
+    <span class="accountability-note">When the evidence is insufficient, abstain.</span>
   </div>
 </section>
-
 <style>
-  .how { padding: var(--pad-y) var(--pad-x); border-bottom: 0.5px solid var(--border-primary); }
-  .how-content { max-width: 1080px; margin: 0 auto; }
-  .how h2 { font-size: var(--fs-h2); font-weight: 600; letter-spacing: -2px; margin-bottom: clamp(var(--space-8), 5vw, 56px); max-width: 720px; line-height: 1.1; }
-  .how h2 .amber { color: var(--amber); }
-  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
-  .step { border-top: 0.5px solid var(--border-primary); padding-top: var(--space-4); }
-  .step-num { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 1.5px; margin-bottom: var(--space-3); }
-  .step h4 { font-size: 16px; font-weight: 500; margin-bottom: var(--space-2); }
-  .step p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
-
-  @media (max-width: 760px) { .steps { grid-template-columns: 1fr 1fr; gap: var(--space-8) var(--space-6); } }
-  @media (max-width: 420px) { .steps { grid-template-columns: 1fr; gap: var(--space-6); } }
+  .approach { padding-block: var(--section-space); }
+  .approach-heading .eyebrow { margin-bottom: 26px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 54px; }
+  .step { border-top: 1px solid var(--border-primary); padding-top: 16px; }
+  .step-top { display: flex; justify-content: space-between; font: 11px/1.5 var(--font-mono); color: var(--text-secondary); margin-bottom: 35px; }
+  .step-top span:last-child { font-family: var(--font-sans); font-size: 18px; }
+  .step h3 { font-size: 29px; margin-bottom: 18px; }
+  .step > p { font-size: 14px; color: var(--text-secondary); line-height: 1.85; }
+  .step-detail { font: 10px/1.7 var(--font-mono); color: var(--text-secondary); margin-top: 28px; }
+  .accountability { margin-top: 60px; border: 1px solid var(--border-primary); padding: 26px 28px; display: flex; align-items: center; gap: 25px; }
+  .accountability-symbol { font: 16px/1.5 var(--font-mono); color: var(--text-secondary); }
+  .accountability p { font-size: 14px; }
+  .accountability-note { margin-left: auto; font: 10px/1.7 var(--font-mono); color: var(--text-secondary); }
+  @media (max-width: 950px) { .steps { gap: 25px; } .accountability { flex-wrap: wrap; gap: 15px 25px; } .accountability-note { margin-left: 0; } }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; gap: 35px; margin-top: 36px; } .step-top { margin-bottom: 22px; } .step-detail { margin-top: 18px; } .accountability { padding: 24px; margin-top: 38px; } .accountability-symbol { display: none; } }
 </style>

@@ -9,7 +9,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "brand:sync": "node scripts/sync-design-system.mjs",
+    "check": "astro check",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.6",
@@ -22,5 +25,12 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "resend": "^6.12.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.20.1",
+    "typescript": "^6.0.3"
   }
 }

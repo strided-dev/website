@@ -1,100 +1,69 @@
 ---
-import Mark from "./Mark.astro";
-import ThemeToggle from "./ThemeToggle.tsx";
-const repo = "https://github.com/strided-dev/strided"; // private for now, public later
+import Logo from './Logo.astro';
+const home = Astro.url.pathname === '/';
+const section = (id: string) => `${home ? '' : '/'}#${id}`;
 ---
-
 <header class="site-header">
-  <a class="brand" href="/" aria-label="strided home">
-    <Mark size={30} theoretical="var(--theoretical)" />
-    <span class="brand-name">strided</span>
-  </a>
-  <nav>
-    <a href="#how">How it works</a>
-    <a href="#status">Status</a>
-    <a href="/submit" class="nav-cta">Send us a log →</a>
-    <a href={repo} target="_blank" rel="noopener">GitHub ↗</a>
-    <ThemeToggle client:only="react" />
+  <div class="header-inner container">
+    <a class="brand" href="/" aria-label="Strided home"><Logo /></a>
+    <nav aria-label="Main navigation">
+      <a class="section-link" href={section('system')}>The system</a>
+      <a class="section-link" href={section('approach')}>Our approach</a>
+      <a class="section-link" href={section('research')}>Research</a>
+      <a href="/submit" class="nav-cta" aria-current={!home ? 'page' : undefined}>Share a workload <span class="arrow" aria-hidden="true">↗</span></a>
+    </nav>
+    <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+  </div>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>
+    <a href={section('system')}>The system <span aria-hidden="true">↗</span></a>
+    <a href={section('approach')}>Our approach <span aria-hidden="true">↗</span></a>
+    <a href={section('research')}>Research <span aria-hidden="true">↗</span></a>
   </nav>
 </header>
-
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const menu = document.querySelector<HTMLElement>('#mobile-nav');
+  function closeMenu() {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open navigation');
+    menu.hidden = true;
+  }
+  toggle?.addEventListener('click', () => {
+    if (!menu) return;
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    menu.hidden = !open;
+  });
+  menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') { closeMenu(); toggle.focus(); }
+  });
+  window.matchMedia('(min-width: 761px)').addEventListener('change', closeMenu);
+</script>
 <style>
-  .site-header {
-    border-bottom: 0.5px solid var(--border-primary);
-    padding: var(--space-4) var(--pad-x);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: var(--header-bg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 10;
-    transition: background var(--dur-theme) var(--ease-instrument),
-                border-color var(--dur-theme) var(--ease-instrument);
+  .site-header { background: var(--paper); position: sticky; top: 0; z-index: 20; border-bottom: 1px solid var(--line); }
+  .header-inner { height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: flex; text-decoration: none; }
+  nav { display: flex; align-items: center; gap: 34px; }
+  nav a { font-size: 12px; color: var(--text-secondary); text-decoration: none; }
+  nav a:hover { color: var(--ink); }
+  .nav-cta { display: flex; align-items: center; gap: 25px; color: var(--ink); border-left: 1px solid var(--border-primary); padding: 10px 0 10px 32px; margin-left: 6px; }
+  .menu-toggle { display: none; width: 44px; height: 44px; border: 1px solid var(--line); background: transparent; padding: 12px; }
+  .menu-toggle span { display: block; height: 1px; background: var(--ink); margin-block: 5px; transition: transform .2s; }
+  .menu-toggle[aria-expanded='true'] span:first-child { transform: translateY(3px) rotate(45deg); }
+  .menu-toggle[aria-expanded='true'] span:last-child { transform: translateY(-3px) rotate(-45deg); }
+  .mobile-nav { padding: 8px var(--gutter) 22px; border-top: 1px solid var(--line); }
+  .mobile-nav[hidden] { display: none; }
+  .mobile-nav a { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  @media (min-width: 761px) { .mobile-nav { display: none; } }
+  @media (max-width: 760px) {
+    .header-inner { height: 78px; gap: 15px; }
+    .section-link { display: none; }
+    .header-inner nav { margin-left: auto; }
+    .nav-cta { padding: 10px 0; border: 0; margin: 0; gap: 12px; }
+    .menu-toggle { display: block; flex-shrink: 0; }
   }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    text-decoration: none;
-    color: var(--text-primary);
-  }
-  .brand-name {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -1px;
-  }
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-  nav > a {
-    color: inherit;
-    text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-instrument);
-  }
-  nav > a:hover { color: var(--text-primary); }
-
-  .nav-cta { white-space: nowrap; }
-
-  @media (max-width: 600px) {
-    .brand-name { font-size: 19px; }
-    nav { gap: var(--space-4); font-size: 12px; }
-    /* on the smallest screens, drop the text links, keep GitHub + CTA + toggle */
-    nav > a:not([target]):not(.nav-cta) { display: none; }
-  }
-  @media (max-width: 380px) {
-    nav { gap: var(--space-3); }
-  }
-</style>
-
-<!-- Toggle button styles. Global because the island renders its own DOM. -->
-<style is:global>
-  .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border: 0.5px solid var(--border-primary);
-    border-radius: 6px;
-    background: transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 0;
-    transition: color var(--dur-fast) var(--ease-instrument),
-                border-color var(--dur-fast) var(--ease-instrument),
-                background var(--dur-fast) var(--ease-instrument);
-  }
-  .theme-toggle:hover {
-    color: var(--amber);
-    border-color: var(--amber);
-  }
-  .theme-toggle svg { display: block; }
+  @media (max-width: 380px) { .nav-cta { font-size: 11px; gap: 6px; } .header-inner { gap: 10px; } }
 </style>

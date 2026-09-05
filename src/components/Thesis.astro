@@ -1,37 +1,36 @@
 ---
-const cards = [
-  { num: "01 / WHAT", h: "A diagnosis engine, not a profiler.", p: "Existing tools tell you your GPU is slow. strided tells you <em>why</em> it's slow, what to do about it, and how confident we are in the answer." },
-  { num: "02 / WHO", h: "For people who can't keep ten senior CUDA engineers on staff.", p: "A senior engineer with two days of Nsight can find the bottleneck. strided turns that capability into a CLI you can run on every dump." },
-  { num: "03 / WHY", h: "The gap is the business.", p: "You bought H100-hours. Your workload only used 60% of theoretical FLOPS. The gap between rental rate and realized compute is real money. strided measures it." },
+const connections = [
+  { from: 'Facility & hardware', to: 'Power, thermals, and the limits of the machine.' },
+  { from: 'Kernels & runtimes', to: 'How the workload turns resources into useful work.' },
+  { from: 'Scheduling', to: 'Where work runs, when it runs, and what it waits for.' },
 ];
 ---
-
-<section class="thesis">
-  <div class="thesis-grid">
-    {cards.map((c) => (
-      <div class="thesis-card">
-        <div class="thesis-num">{c.num}</div>
-        <h3>{c.h}</h3>
-        <p set:html={c.p} />
-      </div>
-    ))}
+<section class="system-section container" id="system" aria-labelledby="system-title">
+  <div class="system-heading">
+    <p class="eyebrow"><span class="index">01 /</span> The whole picture</p>
+    <h2 id="system-title">The bottleneck rarely<br />stays in one layer.</h2>
+  </div>
+  <div class="system-story">
+    <p class="story-lead">A slow kernel can be a memory problem. A slow node can be a thermal problem. A slow workload can be a scheduling problem.</p>
+    <p class="story-body">Engineers are left to connect those dots across fragmented tools. Strided is being built to treat the data center as one system, with a traceable path from the signal to the cause to the change.</p>
+    <dl class="connections">
+      {connections.map(item => <div><dt>{item.from}</dt><dd>{item.to}</dd></div>)}
+    </dl>
+    <p class="scope-note"><span aria-hidden="true">↳</span> Our starting point: causal diagnosis for LLM inference.</p>
   </div>
 </section>
-
 <style>
-  .thesis {
-    padding: var(--pad-y) var(--pad-x);
-    border-bottom: 0.5px solid var(--border-primary);
-    background: var(--paper-inset);
-    transition: background var(--dur-theme) var(--ease-instrument);
-  }
-  .thesis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-12); max-width: 1200px; margin: 0 auto; }
-  .thesis-num { font-family: var(--font-mono); font-size: 11px; color: var(--amber); letter-spacing: 1.5px; margin-bottom: var(--space-4); }
-  .thesis-card h3 { font-size: var(--fs-h3); font-weight: 500; letter-spacing: -0.5px; line-height: 1.3; margin-bottom: var(--space-4); }
-  .thesis-card p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
-  .thesis-card :global(em) { font-style: italic; color: var(--text-primary); }
-
-  @media (max-width: 860px) {
-    .thesis-grid { grid-template-columns: 1fr; gap: var(--space-8); max-width: 60ch; }
-  }
+  .system-section { padding-block: var(--section-space); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .system-heading .eyebrow { margin-bottom: 28px; }
+  .system-story { padding-top: 42px; }
+  .story-lead { font-family: var(--font-display); font-size: 27px; line-height: 1.45; letter-spacing: -.01em; }
+  .story-body { color: var(--text-secondary); font-size: 14px; line-height: 1.85; margin-top: 21px; max-width: 520px; }
+  .connections { margin: 30px 0 0; }
+  .connections > div { display: grid; grid-template-columns: 145px 1fr; gap: 20px; padding: 16px 0; border-top: 1px solid var(--line); font-size: 12px; }
+  dt { font-weight: 500; }
+  dd { margin: 0; color: var(--text-secondary); }
+  .scope-note { font: 10px/1.8 var(--font-mono); color: var(--text-secondary); margin-top: 20px; }
+  .scope-note span { margin-right: 8px; }
+  @media (max-width: 950px) { .system-section { gap: 40px; } .connections > div { grid-template-columns: 120px 1fr; gap: 14px; } }
+  @media (max-width: 760px) { .system-section { grid-template-columns: 1fr; gap: 28px; } .system-story { padding-top: 0; } .story-lead { font-size: 25px; } }
 </style>

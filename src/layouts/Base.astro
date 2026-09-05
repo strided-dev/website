@@ -1,63 +1,35 @@
 ---
-// Base.astro — page shell. Imports tokens, loads Inter + JetBrains Mono,
-// sets SEO/social meta. Everything renders through this.
-import "../styles/tokens.css";
-
-interface Props {
-  title?: string;
-  description?: string;
-}
+import '../styles/tokens.css';
+interface Props { title?: string; description?: string; }
 const {
-  title = "strided | kernel-level causal diagnosis for LLM inference",
-  description = "strided is a kernel-level causal diagnosis engine for production LLM inference. Feed it a Nsight Compute report or DCGM telemetry; get a ranked, confidence-scored explanation of the bottleneck — and a specific fix.",
+  title = 'Strided — Every layer. One accountable system.',
+  description = 'The deterministic optimization and control layer for the data center. Strided connects evidence across the stack, starting with causal diagnosis for LLM inference.',
 } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
-
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-
+    <meta name="theme-color" content="#F7F7F5" />
     <title>{title}</title>
     <meta name="description" content={description} />
-
-    <!-- Open Graph / social -->
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/newsreader-0.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Strided" />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-
-    <!-- Fonts: Inter (display+body), JetBrains Mono (the default voice) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- No-flash theme bootstrap. Runs before paint: reads saved choice,
-         else falls back to the OS preference. Sets data-theme on <html>. -->
-    <script is:inline>
-      (function () {
-        try {
-          var saved = localStorage.getItem("strided-theme");
-          var os = window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
-          var theme = saved || os;
-          document.documentElement.setAttribute("data-theme", theme);
-        } catch (e) {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      })();
-    </script>
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to content</a>
     <slot />
   </body>
 </html>

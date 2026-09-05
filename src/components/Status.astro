@@ -1,34 +1,40 @@
 ---
-const repo = "https://github.com/strided-dev/strided"; // private for now, public later
 ---
-
-<section class="status" id="status">
-  <div class="status-content">
-    <div class="status-label">Project status</div>
-    <h2>Strided is in the 90-day validation window.</h2>
-    <p>We're testing one question: can a deterministic rule engine match a senior CUDA engineer with two days of Nsight, on real customer dumps?</p>
-    <p>If you operate LLM inference at scale and have a redacted Nsight or DCGM dump from a real workload, we want to test against it. We will not retain raw data. We will share the diagnosis with you.</p>
-    <div class="status-cta">
-      <a href="/submit" class="btn-dark">Send us a log →</a>
-      <a href={repo} target="_blank" rel="noopener" class="btn-dark">Read the spec on GitHub</a>
+<section class="research" id="research" aria-labelledby="research-title">
+  <div class="container research-inner">
+    <div class="research-copy">
+      <p class="eyebrow"><span class="index">04 /</span> Built with engineers</p>
+      <h2 id="research-title">Bring a difficult<br />workload.</h2>
+      <p>Good engineering starts with real constraints. We're working with inference teams to put Strided's diagnosis engine to the test.</p>
+      <a href="/submit" class="button">Share your workload <span class="arrow" aria-hidden="true">↗</span></a>
+    </div>
+    <div class="research-details">
+      <div class="research-status"><span class="status-square" aria-hidden="true"></span> Research preview <span>Accepting workloads</span></div>
+      <div class="research-row"><span class="eyebrow">Today</span><p>A CLI for causal diagnosis, with evidence-backed rules and a reviewed path to a verified fix.</p></div>
+      <div class="research-row"><span class="eyebrow">Next</span><p>A connected optimization and control layer across the data center stack.</p></div>
+      <div class="research-row"><span class="eyebrow">Together</span><p>Send a redacted Nsight or DCGM capture. We'll review the workload and share the diagnosis with you.</p></div>
+      <a class="text-link contact-link" href="mailto:hello@strided.dev">Prefer a conversation? Get in touch <span class="arrow" aria-hidden="true">↗</span></a>
     </div>
   </div>
 </section>
-
 <style>
-  .status { padding: var(--pad-y) var(--pad-x); background: var(--fixed-dark-paper); color: var(--fixed-dark-ink); }
-  .status-content { max-width: 1080px; margin: 0 auto; }
-  .status-label { font-family: var(--font-mono); font-size: 11px; color: var(--amber); letter-spacing: 1.5px; margin-bottom: var(--space-4); text-transform: uppercase; }
-  .status h2 { font-size: var(--fs-h2); font-weight: 500; letter-spacing: -1.5px; line-height: 1.3; max-width: 760px; margin-bottom: var(--space-8); }
-  .status p { color: var(--fixed-dark-secondary); font-size: 16px; line-height: 1.6; max-width: 680px; margin-bottom: var(--space-4); }
-  .status-cta { margin-top: var(--space-12); display: flex; gap: 14px; font-family: var(--font-mono); font-size: 13px; flex-wrap: wrap; }
-  .btn-dark {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: var(--space-3) var(--space-4);
-    border: 0.5px solid var(--fixed-dark-ink); background: transparent;
-    color: var(--fixed-dark-ink); text-decoration: none; border-radius: 4px;
-    transition: all var(--dur-fast) var(--ease-instrument);
-  }
-  .btn-dark:hover { background: var(--amber); color: #2C2C2A; border-color: var(--amber); }
-  @media (max-width: 480px) { .status-cta { flex-direction: column; } .status-cta .btn-dark { justify-content: center; } }
+  .research { background: var(--ink); color: var(--paper); padding-block: 84px; }
+  .research-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
+  .research .eyebrow, .research .eyebrow .index { color: var(--strided-bezel-dark); }
+  .research-copy .eyebrow { margin-bottom: 28px; }
+  .research h2 { font-size: clamp(48px, 4.6vw, 66px); }
+  .research-copy > p:not(.eyebrow) { font-size: 14px; color: var(--strided-bezel-dark); margin-top: 23px; max-width: 390px; line-height: 1.85; }
+  .research .button { background: var(--paper); color: var(--ink); border-color: var(--paper); margin-top: 30px; }
+  .research .button:hover { background: var(--strided-bezel-dark); border-color: var(--strided-bezel-dark); }
+  .research-details { padding-top: 8px; }
+  .research-status { display: flex; align-items: center; gap: 9px; padding-bottom: 24px; font-size: 12px; border-bottom: 1px solid var(--text-secondary); }
+  .status-square { width: 6px; height: 6px; border: 1px solid var(--paper); }
+  .research-status > span:last-child { font: 9px/1.5 var(--font-mono); margin-left: auto; color: var(--strided-bezel-dark); }
+  .research-row { display: grid; grid-template-columns: 72px 1fr; gap: 24px; padding-block: 24px; border-bottom: 1px solid var(--text-secondary); }
+  .research-row .eyebrow { padding-top: 3px; font-size: 10px; }
+  .research-row p { font-size: 13px; line-height: 1.8; color: var(--strided-bezel-dark); }
+  .contact-link { font-size: 11px; margin-top: 17px; gap: 15px; }
+  .research :focus-visible { outline-color: var(--paper); }
+  @media (max-width: 950px) { .research-inner { gap: 50px; } }
+  @media (max-width: 760px) { .research { padding-block: 65px; } .research-inner { grid-template-columns: 1fr; gap: 50px; } .research-row { gap: 15px; } }
 </style>

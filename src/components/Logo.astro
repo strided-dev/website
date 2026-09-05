@@ -1,0 +1,14 @@
+---
+import Mark from './Mark.astro';
+import { selected } from '../design-system.json';
+interface Props { size?: number; }
+const { size = 42 } = Astro.props;
+const scale = size / selected.logo.markSize;
+---
+<span class="logo" style={`gap:${selected.logo.lockupGap * scale}px;font-size:${selected.logo.wordSize * scale}px`}>
+  <Mark size={size} />
+  <span>{selected.logo.text}</span>
+</span>
+<style>
+  .logo { display: inline-flex; align-items: center; font-family: var(--font-display); font-weight: 400; line-height: 1; letter-spacing: normal; color: var(--ink); }
+</style>

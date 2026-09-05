@@ -1,0 +1,19 @@
+---
+import EvidenceExplorer from './EvidenceExplorer.tsx';
+---
+<section class="evidence-section" id="evidence" aria-labelledby="evidence-title">
+  <div class="container">
+    <div class="evidence-heading">
+      <div><p class="eyebrow"><span class="index">02 /</span> From signals to understanding</p><h2 id="evidence-title">See the constraint.<br />Understand the cause.</h2></div>
+      <p>A utilization number is a starting point. The relationship between signals tells you where to look next. Explore two examples from the inference stack.</p>
+    </div>
+    <EvidenceExplorer client:load />
+  </div>
+</section>
+<style>
+  .evidence-section { padding-block: var(--section-space); border-block: 1px solid var(--line); background: var(--paper-card); }
+  .evidence-heading { display: flex; justify-content: space-between; align-items: end; gap: 60px; margin-bottom: 44px; }
+  .evidence-heading .eyebrow { margin-bottom: 26px; }
+  .evidence-heading > p { max-width: 355px; font-size: 14px; color: var(--text-secondary); line-height: 1.85; padding-bottom: 5px; }
+  @media (max-width: 760px) { .evidence-heading { display: block; margin-bottom: 32px; } .evidence-heading > p { margin-top: 23px; max-width: 500px; } }
+</style>

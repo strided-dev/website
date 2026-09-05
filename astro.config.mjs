@@ -9,5 +9,6 @@ export default defineConfig({
   output: "static",
   adapter: vercel(),
   integrations: [react()],
+  devToolbar: { enabled: false },
   site: "https://strided.dev", // TODO: confirm production domain
 });

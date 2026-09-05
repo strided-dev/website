@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_BYTES } from "../lib/dump";
 
 /* Dump submission form. Collects contact info + a redacted Nsight/DCGM dump.
    Flow: ask /api/upload-url for a presigned PUT, upload the file *directly* to
@@ -9,7 +10,7 @@ import { useState } from "react";
 type Status = "idle" | "submitting" | "success" | "error";
 
 const ACCEPTED = ".ncu-rep,.json,.csv,.txt,.zip,.gz";
-const MAX_MB = 50;
+const MAX_MB = MAX_BYTES / (1024 * 1024);
 
 /** PUT the file to a presigned URL with progress (fetch lacks upload progress). */
 function uploadWithProgress(
@@ -48,8 +49,8 @@ export default function DumpForm() {
     notes: "",
   });
 
-  const set = (k: keyof typeof form) => (e: any) =>
-    setForm({ ...form, [k]: e.target.value });
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm(previous => ({ ...previous, [k]: e.target.value }));
 
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileErr("");
@@ -58,8 +59,8 @@ export default function DumpForm() {
       setFileName("");
       return;
     }
-    if (f.size > MAX_MB * 1024 * 1024) {
-      setFileErr(`File exceeds ${MAX_MB} MB. Compress or trim the dump.`);
+    if (f.size === 0 || f.size > MAX_BYTES || !ACCEPTED.split(',').some(extension => f.name.toLowerCase().endsWith(extension))) {
+      setFileErr(f.size === 0 ? 'This file is empty. Choose a capture with data.' : f.size > MAX_BYTES ? `File exceeds ${MAX_MB} MB. Compress or trim the capture.` : 'Choose a .ncu-rep, .json, .csv, .txt, .zip, or .gz file.');
       setFileName("");
       e.target.value = "";
       return;
@@ -78,9 +79,9 @@ export default function DumpForm() {
     setStatus("error");
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!valid) return;
+    if (!valid || status === "submitting") return;
     const fileInput = document.getElementById("dump") as HTMLInputElement;
     const file = fileInput.files?.[0];
     if (!file) return;
@@ -121,13 +122,12 @@ export default function DumpForm() {
 
   if (status === "success") {
     return (
-      <div className="form-card success">
+      <div className="form-card success" role="status" tabIndex={-1} ref={element => { element?.focus(); }}>
         <div className="success-mark" aria-hidden="true">✓</div>
-        <h2>Dump received.</h2>
+        <h2>Workload received.</h2>
         <p>
           Thanks — we'll run it through strided and get back to you at{" "}
-          <span className="hl">{form.email}</span> with the diagnosis. We do not
-          retain raw dumps after analysis.
+          <span className="hl">{form.email}</span> with the diagnosis.
         </p>
         <a href="/" className="btn-ghost">← Back to home</a>
       </div>
@@ -135,7 +135,9 @@ export default function DumpForm() {
   }
 
   return (
-    <form className="form-card" onSubmit={onSubmit} noValidate>
+    <form className="form-card" onSubmit={onSubmit} aria-busy={status === 'submitting'}>
+      <fieldset className="form-fields" disabled={status === 'submitting'}>
+      <legend className="sr-only">Your contact details and workload</legend>
       <div className="grid2">
         <label className="field">
           <span className="flabel">Name<i>*</i></span>
@@ -184,16 +186,19 @@ export default function DumpForm() {
       </div>
 
       <label className="field">
-        <span className="flabel">Dump file<i>*</i></span>
+        <span className="flabel">Workload capture<i>*</i></span>
         <div className={`dropzone ${fileName ? "has-file" : ""}`}>
           <input
             id="dump"
             type="file"
             accept={ACCEPTED}
             onChange={onFile}
+            aria-describedby={fileErr ? 'file-error file-help' : 'file-help'}
+            aria-invalid={!!fileErr}
             required
           />
           <span className="dz-text">
+            <span className="dz-icon" aria-hidden="true">{fileName ? '✓' : '↥'}</span>
             {fileName ? (
               <>
                 <strong>{fileName}</strong>
@@ -201,15 +206,16 @@ export default function DumpForm() {
               </>
             ) : (
               <>
-                <strong>Choose a dump or drop it here</strong>
+                <strong>Choose a capture or drop it here</strong>
                 <span className="dz-sub">
-                  Nsight (.ncu-rep), DCGM (.json), or archive · max {MAX_MB} MB
+                  .ncu-rep, .json, .csv, .txt, .zip, .gz · max {MAX_MB} MB
                 </span>
               </>
             )}
           </span>
         </div>
-        {fileErr && <span className="ferr">{fileErr}</span>}
+        <span id="file-help" className="sr-only">Accepted formats: .ncu-rep, .json, .csv, .txt, .zip, .gz. Maximum {MAX_MB} MB.</span>
+        {fileErr && <span id="file-error" className="ferr" role="alert">{fileErr}</span>}
       </label>
 
       <label className="field">
@@ -222,10 +228,12 @@ export default function DumpForm() {
         />
       </label>
 
+      </fieldset>
+
       <div className="form-foot">
         <p className="privacy">
-          We will not retain raw dumps after analysis. We share the diagnosis
-          back with you. Redact anything sensitive before sending.
+          By sending a capture, you agree to let the Strided team review it and
+          contact you about the diagnosis. Please redact sensitive data first.
         </p>
         <button
           type="submit"
@@ -236,14 +244,14 @@ export default function DumpForm() {
             ? progress > 0 && progress < 100
               ? `Uploading ${progress}%`
               : "Sending…"
-            : "Send dump →"}
+            : "Send workload"}
+          <span aria-hidden="true">↗</span>
         </button>
       </div>
 
       {status === "error" && (
-        <p className="ferr center">
-          Something went wrong sending that. Email it to hello@strided.dev
-          instead and we'll take a look.
+        <p className="ferr" role="alert">
+          {errMsg} You can try again or contact <a href="mailto:hello@strided.dev">hello@strided.dev</a>.
         </p>
       )}
     </form>
