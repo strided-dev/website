@@ -126,7 +126,7 @@ export default function DumpForm() {
         <div className="success-mark" aria-hidden="true">✓</div>
         <h2>Workload received.</h2>
         <p>
-          Thanks — we'll run it through strided and get back to you at{" "}
+          Thanks. We'll run it through strided and get back to you at{" "}
           <span className="hl">{form.email}</span> with the diagnosis.
         </p>
         <a href="/" className="btn-ghost">← Back to home</a>

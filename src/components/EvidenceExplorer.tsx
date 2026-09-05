@@ -100,7 +100,7 @@ export default function EvidenceExplorer() {
       <details className="trace-data">
         <summary>View sample data</summary>
         <div className="trace-table-wrap"><table>
-          <caption>{scenario.label} — illustrative values, sampled every 5 seconds</caption>
+          <caption>{scenario.label}: illustrative values, sampled every 5 seconds</caption>
           <thead><tr><th scope="col">Time (s)</th><th scope="col">{scenario.primaryLabel} (%)</th><th scope="col">{scenario.secondaryLabel} (%)</th></tr></thead>
           <tbody>{scenario.primary.map((value, i) => <tr key={i}><th scope="row">{i * 5}</th><td>{value}</td><td>{scenario.secondary[i]}</td></tr>)}</tbody>
         </table></div>
