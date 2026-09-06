@@ -31,6 +31,8 @@ The sync script writes `src/design-system.json`, `src/styles/brand.css`, and the
 
 Newsreader is the selected display and wordmark face. IBM Plex Sans and IBM Plex Mono, both from the handoff's typography catalog, support body copy, controls, and instrument labels. Fonts are self-hosted as WOFF2 with their OFL licenses in `public/fonts`. The palette's `inkSoft` is used for small text because `inkFaint` does not reach AA contrast against Porcelain. The exact canonical color tokens are preserved.
 
+The logo's exact purple (`#4a0081`, exported as `--strided-purple`) highlights strided's role in automatic tuning: the hero promise, the runtime layer, key control-loop copy, and the model example's adjustment notes. The runtime keeps its purple identification when another layer is selected, and has a visible strided label; selection also uses a dot, weight, and `aria-pressed`. Keep neutral colors for surrounding infrastructure and data series. Use purple for meaningful product emphasis, with text explaining its role.
+
 ## Content and diagrams
 
 The site leads with local model hosting and automatic runtime tuning. Here, local means models running on hardware the customer controls. Memory allocation, context limits, batching, and concurrency adapt to the workload within configured boundaries. The product is described as in development; the website does not start a model host or claim that these examples are released product output.

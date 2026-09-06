@@ -1,7 +1,7 @@
 ---
 const steps = [
   { title: 'Bring a model.', body: 'Start with the model you want to host and the hardware available to run it. Establish a memory budget and the workload you need to serve.', detail: 'Your model. Your machine.' },
-  { title: 'Let the runtime adjust.', body: 'As prompts and request volume change, strided will adjust batching, concurrency, and cache use within your configured limits.', detail: 'Automatic adjustments. Explicit boundaries.' },
+  { title: 'Let the runtime adjust.', body: 'As prompts and request volume change, strided will adjust batching, concurrency, and cache use within your configured limits.', detail: 'Automatic adjustments. Explicit boundaries.', automatic: true },
   { title: 'Check what changed.', body: 'See the settings before and after an adjustment, along with the signals that prompted it. Compare the result and return to the previous configuration when needed.', detail: 'Visible decisions. A way back.' },
 ];
 ---
@@ -12,7 +12,7 @@ const steps = [
   </div>
   <div class="steps">
     {steps.map(step => <article class="step">
-      <h3>{step.title}</h3>
+      <h3 class:list={{ 'strided-emphasis': step.automatic }}>{step.title}</h3>
       <p>{step.body}</p>
       <div class="step-detail">{step.detail}</div>
     </article>)}

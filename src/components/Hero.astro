@@ -4,7 +4,7 @@ import SystemMap from './SystemMap.tsx';
 <section class="hero container" aria-labelledby="hero-title">
   <div class="hero-copy">
     <p class="eyebrow hero-label">Local hosting. Automatic tuning.</p>
-    <h1 id="hero-title">Local models.<br />Tuned to<br /><span>your machine.</span></h1>
+    <h1 id="hero-title">Local models.<br /><span class="strided-emphasis">Tuned to<br />your machine.</span></h1>
     <p class="hero-description">Host models on your own hardware. strided is being built to adjust memory use, batching, and concurrency as your workload changes, so you spend less time tuning and more time using your models.</p>
     <div class="hero-actions">
       <a href="#approach" class="button">Explore the approach <span class="arrow" aria-hidden="true">↓</span></a>
@@ -17,7 +17,6 @@ import SystemMap from './SystemMap.tsx';
 <style>
   .hero { display: grid; grid-template-columns: 1.12fr 1fr; gap: clamp(35px, 5vw, 80px); align-items: center; padding-block: 88px 84px; }
   .hero-label { margin-bottom: 32px; }
-  h1 span { color: var(--text-secondary); }
   .hero-description { color: var(--text-secondary); max-width: 445px; font-size: 16px; line-height: 1.8; margin-top: 27px; }
   .hero-actions { display: flex; align-items: center; gap: 24px; margin-top: 30px; flex-wrap: wrap; }
   .hero-note { font-size: 11px; color: var(--text-secondary); margin-top: 23px; }

@@ -25,7 +25,7 @@ export default function SystemMap() {
             const y = i * 62 + 5;
             const selected = i === active;
             return (
-              <g key={layer.name} className={selected ? 'slab selected' : 'slab'}>
+              <g key={layer.name} className={`slab${selected ? ' selected' : ''}${layer.name === 'Runtime' ? ' strided-layer' : ''}`}>
                 <path className="slab-side" d={`M35 ${y + 42} L153 ${y + 76} L271 ${y + 42} V${y + 55} L153 ${y + 89} L35 ${y + 55} Z`} />
                 <path className="slab-top" d={`M35 ${y + 42} L153 ${y + 8} L271 ${y + 42} L153 ${y + 76} Z`} />
                 <path fill="url(#etch)" d={`M35 ${y + 42} L153 ${y + 8} L271 ${y + 42} L153 ${y + 76} Z`} />
@@ -42,8 +42,8 @@ export default function SystemMap() {
         </svg>
         <div className="layer-controls" role="group" aria-label="Explore system layers">
           {layers.map((layer, i) => (
-            <button key={layer.name} className={`layer-button ${i === active ? 'is-active' : ''}`} aria-label={`${layer.name}: ${layer.signal}`} aria-pressed={i === active} aria-controls="layer-description" onClick={() => setActive(i)}>
-              <span className="layer-name">{layer.name}<span className="layer-dot" aria-hidden="true" /></span>
+            <button key={layer.name} className={`layer-button${i === active ? ' is-active' : ''}${layer.name === 'Runtime' ? ' strided-control' : ''}`} aria-label={`${layer.name}${layer.name === 'Runtime' ? ' strided' : ''}: ${layer.signal}`} aria-pressed={i === active} aria-controls="layer-description" onClick={() => setActive(i)}>
+              <span className="layer-name">{layer.name}{layer.name === 'Runtime' && <span className="layer-owner">strided</span>}<span className="layer-dot" aria-hidden="true" /></span>
               <span className="layer-signal">{layer.signal}</span>
             </button>
           ))}
@@ -52,7 +52,7 @@ export default function SystemMap() {
       <div className="map-detail" id="layer-description" aria-live="polite" aria-atomic="true">
         <div><p className="map-detail-title">{layers[active].title}</p><p className="map-detail-copy">{layers[active].description}</p></div>
       </div>
-      <p className="map-footnote">Select a layer to explore.</p>
+      <p className="map-footnote">strided tuning is shown in purple. Select a layer to explore.</p>
     </div>
   );
 }
