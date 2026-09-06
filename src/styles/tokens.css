@@ -37,6 +37,8 @@ svg { display: block; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; }
 .container { width: min(var(--page-width), calc(100% - var(--gutter) * 2)); margin-inline: auto; }
 .eyebrow { font: 500 12px/1.5 var(--font-sans); letter-spacing: .01em; color: var(--text-secondary); }
+.strided-emphasis { color: var(--strided-purple); }
+strong.strided-emphasis { font-weight: 500; }
 .button { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 48px; padding: 12px 20px; border: 1px solid var(--ink); border-radius: 2px; font: 500 13px/1.5 var(--font-sans); text-decoration: none; background: var(--ink); color: var(--paper-card); transition: background .18s, border-color .18s; }
 .button:hover { background: var(--strided-accent); border-color: var(--strided-accent); }
 .text-link { display: inline-flex; align-items: center; gap: 24px; font-size: 13px; font-weight: 500; text-decoration: none; padding-block: 10px; }

@@ -10,7 +10,7 @@
       "Powerful, not theatrical",
       "Human, not cute"
     ],
-    "visualRule": "Premium comes from proportion, typography, material contrast, and restraint. Color behaves like an instrument state, never campaign art.",
+    "visualRule": "Premium comes from proportion, typography, material contrast, and restraint. Color behaves like an instrument state, never campaign art. Logo purple highlights strided's role in automatic tuning and accountable control.",
     "sampleCopy": {
       "headline": "Local models. Tuned to your machine.",
       "body": "strided is being built to host models on hardware you control and automatically adjust runtime settings as your workload changes. The longer-term ambition is to extend this foundation to shared model serving and coordinated control of data center systems. Every adjustment should stay within your limits and keep a way back.",
@@ -144,8 +144,9 @@
       "--strided-logo-radius": "8px",
       "--strided-lockup-gap": "24px",
       "--strided-mark-size": "96px",
-      "--strided-wordmark-size": "64px"
+      "--strided-wordmark-size": "64px",
+      "--strided-purple": "#4a0081"
     },
-    "cssText": ":root {\n  --strided-bench: #F7F7F5;\n  --strided-panel: #FFFFFF;\n  --strided-bezel-dark: #C8CBC9;\n  --strided-bezel-light: #FFFFFF;\n  --strided-ink: #0B0D0C;\n  --strided-ink-soft: #4D524F;\n  --strided-ink-faint: #727774;\n  --strided-accent: #242826;\n  --strided-logo-row-gap: 12px;\n  --strided-logo-radius: 8px;\n  --strided-lockup-gap: 24px;\n  --strided-mark-size: 96px;\n  --strided-wordmark-size: 64px;\n}"
+    "cssText": ":root {\n  --strided-bench: #F7F7F5;\n  --strided-panel: #FFFFFF;\n  --strided-bezel-dark: #C8CBC9;\n  --strided-bezel-light: #FFFFFF;\n  --strided-ink: #0B0D0C;\n  --strided-ink-soft: #4D524F;\n  --strided-ink-faint: #727774;\n  --strided-accent: #242826;\n  --strided-logo-row-gap: 12px;\n  --strided-logo-radius: 8px;\n  --strided-lockup-gap: 24px;\n  --strided-mark-size: 96px;\n  --strided-wordmark-size: 64px;\n  --strided-purple: #4a0081;\n}"
   }
 }

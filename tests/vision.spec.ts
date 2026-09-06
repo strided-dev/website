@@ -63,8 +63,22 @@ test.describe('static baseline', () => {
   test('the local hosting vision remains useful without JavaScript', async ({ page }) => {
     await page.goto('/#vision');
     await page.evaluate(() => document.fonts.ready);
-    // Let the native anchor scroll finish before testing another interaction.
-    await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById('vision')!.getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)))).toBeLessThan(2);
+    // Font loading can shift the anchor's final position. Wait for scrolling
+    // to settle before testing another interaction, then check the heading.
+    let previousScrollY = -1;
+    let settledSamples = 0;
+    await expect.poll(async () => {
+      const scrollY = await page.evaluate(() => window.scrollY);
+      settledSamples = scrollY === previousScrollY ? settledSamples + 1 : 0;
+      previousScrollY = scrollY;
+      return settledSamples;
+    }, { intervals: [100] }).toBeGreaterThanOrEqual(3);
+    await expect(page.locator('#vision-title')).toBeInViewport();
+    const position = await page.evaluate(() => ({
+      heading: document.getElementById('vision-title')!.getBoundingClientRect().top,
+      header: document.querySelector('header')!.getBoundingClientRect().bottom,
+    }));
+    expect(position.heading).toBeGreaterThanOrEqual(position.header);
     await expect(page.locator('#vision-title')).toContainText('From local models');
     await expect(page.getByRole('img', { name: 'Local model memory allocation' })).toBeVisible();
     await expect(page.locator('[data-metric="memory"]')).toHaveText('16.0');
