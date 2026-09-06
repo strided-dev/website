@@ -1,5 +1,38 @@
 import { test, expect } from '@playwright/test';
 
+test('departing cubes fade before removal and return fully opaque', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#local-model');
+  await page.evaluate(() => document.fonts.ready);
+  const diagram = page.locator('[data-model-explorer]');
+  const graphic = diagram.getByRole('img', { name: 'Local model memory allocation' });
+  await diagram.evaluate(root => root.scrollIntoView({ behavior: 'instant', block: 'start' }));
+  await diagram.getByRole('button', { name: 'Long context', exact: true }).click();
+  await expect(diagram.locator('[data-metric="memory"]')).toHaveText('20.0');
+  const outlines = await diagram.locator('[data-face="wire"]').evaluateAll(paths => paths.map(path => path.getAttribute('d')));
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.clock.install({ time: new Date('2026-09-06T01:00:00Z') });
+  await page.clock.pauseAt(new Date('2026-09-06T01:00:01Z'));
+  await diagram.getByRole('button', { name: 'Idle', exact: true }).click();
+  await page.clock.runFor(1200);
+  await expect(graphic).toHaveAttribute('aria-busy', 'true');
+  const departing = await diagram.locator('[data-solid]').evaluateAll(groups => groups.slice(17, 40).map(group => ({
+    opacity: Number(getComputedStyle(group).opacity),
+    hasGeometry: Boolean(group.querySelector('[data-face="top"]')!.getAttribute('d')),
+  })));
+  expect(departing.every(cube => cube.hasGeometry && cube.opacity < 0.01)).toBe(true);
+
+  await page.clock.runFor(250);
+  await expect(graphic).toHaveAttribute('aria-busy', 'false');
+  expect(await diagram.locator('[data-face="top"]').evaluateAll(paths => paths.slice(17).every(path => !path.getAttribute('d')))).toBe(true);
+  await diagram.getByRole('button', { name: 'Long context', exact: true }).click();
+  await page.clock.runFor(1450);
+  await expect(graphic).toHaveAttribute('aria-busy', 'false');
+  expect(await diagram.locator('[data-solid]').evaluateAll(groups => groups.slice(0, 40).every(group => getComputedStyle(group).opacity === '1'))).toBe(true);
+  expect(await diagram.locator('[data-face="wire"]').evaluateAll(paths => paths.map(path => path.getAttribute('d')))).toEqual(outlines);
+});
+
 test('memory blocks animate, accept a new selection mid-transition, and settle', async ({ page }) => {
   await page.goto('/#vision');
   await page.evaluate(() => document.fonts.ready);
