@@ -17,7 +17,7 @@ const baseline = scenario('baseline');
         <span><i class="solid-key" aria-hidden="true"></i>Allocated memory</span>
         <span><i class="wire-key" aria-hidden="true"></i>Available capacity</span>
       </div>
-      <svg class="model-view" viewBox="0 0 780 452" role="img" aria-labelledby="model-title" aria-describedby="model-description">
+      <svg class="model-view" viewBox="0 0 780 452" role="img" aria-labelledby="model-title" aria-describedby="model-description" aria-busy="false">
         <title id="model-title">Local model memory allocation</title>
         <desc id="model-description">Forty-eight blocks represent 24 GiB of GPU memory on one local host. Each block is half a GiB. Filled blocks show allocated memory; open blocks show available capacity. Aggregate values appear below.</desc>
         {cells.map((cell, index) => {
@@ -57,7 +57,7 @@ const baseline = scenario('baseline');
 </div>
 
 <script>
-  import { cells, scenario, workloads, cubePaths, type Workload } from '../lib/local-model';
+  import { cells, scenario, workloads, cubeSolidPaths, BLOCK_GIB, CAPACITY_GIB, type Workload } from '../lib/local-model';
 
   document.querySelectorAll<HTMLElement>('[data-model-explorer]').forEach(root => {
     const controls = root.querySelector<HTMLFieldSetElement>('[data-workloads]')!;
@@ -76,32 +76,85 @@ const baseline = scenario('baseline');
     const context = root.querySelector<HTMLElement>('[data-metric="context"]')!;
     const headroom = root.querySelector<HTMLElement>('[data-metric="headroom"]')!;
     const announcement = root.querySelector<HTMLElement>('[data-model-announcement]')!;
+    const view = root.querySelector<SVGSVGElement>('.model-view')!;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let active: Workload = 'baseline';
+    let target = scenario(active);
+    let displayed = target.allocation;
+    let frame = 0;
 
-    // The SVG is prerendered. Update only 144 existing solid paths per input;
-    // the capacity outlines stay fixed. No animation loop or background work.
+    function draw(allocation: number[]) {
+      cubes.forEach((cube, index) => {
+        if (allocation[index] === displayed[index]) return;
+        const paths = cubeSolidPaths(cells[index], allocation[index]);
+        cube.left.setAttribute('d', paths.left);
+        cube.right.setAttribute('d', paths.right);
+        cube.top.setAttribute('d', paths.top);
+      });
+      displayed = allocation;
+      const used = allocation.reduce((total, value) => total + value * BLOCK_GIB, 0);
+      memory.textContent = used.toFixed(1);
+      headroom.textContent = (CAPACITY_GIB - used).toFixed(1);
+    }
+
+    function finish() {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      draw(target.allocation);
+      view.setAttribute('aria-busy', 'false');
+      announcement.textContent = `${target.label}. Allocated GPU memory ${target.usedGiB.toFixed(1)} GiB, ${target.requests} request slots, context limit ${target.context} tokens, memory headroom ${target.headroom.toFixed(1)} GiB. ${target.constraint}`;
+    }
+
+    function animate() {
+      cancelAnimationFrame(frame);
+      const bounds = view.getBoundingClientRect();
+      if (reducedMotion.matches || document.hidden || bounds.bottom <= 0 || bounds.top >= window.innerHeight || target.allocation.every((value, index) => value === displayed[index])) {
+        finish();
+        return;
+      }
+      const from = displayed.slice();
+      const started = performance.now();
+      view.setAttribute('aria-busy', 'true');
+      announcement.textContent = '';
+      // One finite transition. Only changing faces are redrawn; capacity
+      // outlines stay fixed, and no frames are scheduled once settled.
+      function step(now: number) {
+        const progress = Math.min(1, (now - started) / 1400);
+        if (progress === 1) {
+          finish();
+          return;
+        }
+        const eased = 1 - Math.pow(1 - progress, 3);
+        draw(from.map((value, index) => value + (target.allocation[index] - value) * eased));
+        frame = requestAnimationFrame(step);
+      }
+      frame = requestAnimationFrame(step);
+    }
+
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches && frame) finish();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && frame) finish();
+    });
+    new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting && frame) finish();
+    }).observe(view);
+
     controls.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-workload]');
       const workload = workloads.find(item => item.key === button?.dataset.workload);
       if (!workload || workload.key === active) return;
       active = workload.key;
-      const state = scenario(active);
-      cubes.forEach((cube, index) => {
-        const paths = cubePaths(cells[index], state.allocation[index]);
-        cube.left.setAttribute('d', paths.left);
-        cube.right.setAttribute('d', paths.right);
-        cube.top.setAttribute('d', paths.top);
-      });
+      target = scenario(active);
       buttons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
       name.textContent = workload.label;
       title.textContent = workload.title;
       description.textContent = workload.description;
       constraint.textContent = workload.constraint;
-      memory.textContent = state.usedGiB.toFixed(1);
-      requests.textContent = String(state.requests);
-      context.textContent = state.context.toLocaleString('en-US');
-      headroom.textContent = state.headroom.toFixed(1);
-      announcement.textContent = `${workload.label}. Allocated GPU memory ${state.usedGiB.toFixed(1)} GiB, ${state.requests} request slots, context limit ${state.context} tokens, memory headroom ${state.headroom.toFixed(1)} GiB. ${workload.constraint}`;
+      requests.textContent = String(target.requests);
+      context.textContent = target.context.toLocaleString('en-US');
+      animate();
     });
     controls.disabled = false;
   });

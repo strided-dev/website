@@ -1,5 +1,62 @@
 import { test, expect } from '@playwright/test';
 
+test('memory blocks animate, accept a new selection mid-transition, and settle', async ({ page }) => {
+  await page.goto('/#vision');
+  await page.evaluate(() => document.fonts.ready);
+  const diagram = page.locator('[data-model-explorer]');
+  const graphic = diagram.getByRole('img', { name: 'Local model memory allocation' });
+  await diagram.evaluate(root => root.scrollIntoView({ behavior: 'instant', block: 'start' }));
+  await expect(graphic).toBeInViewport();
+  const memory = diagram.locator('[data-metric="memory"]');
+  const paths = diagram.locator('[data-face="top"]');
+  const baselinePaths = await paths.evaluateAll(items => items.map(item => item.getAttribute('d')));
+  await expect(diagram.getByRole('button', { name: 'Long context', exact: true })).toBeEnabled();
+  await diagram.getByRole('button', { name: 'Long context', exact: true }).click();
+  await expect(graphic).toHaveAttribute('aria-busy', 'true');
+  await expect.poll(async () => Number(await memory.textContent())).toBeGreaterThan(16);
+  expect(Number(await memory.textContent())).toBeLessThan(20);
+  expect(await paths.evaluateAll(items => items.map(item => item.getAttribute('d')))).not.toEqual(baselinePaths);
+
+  await diagram.getByRole('button', { name: 'Idle', exact: true }).click();
+  await expect(diagram.getByRole('button', { name: 'Idle', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(graphic).toHaveAttribute('aria-busy', 'false');
+  await expect(memory).toHaveText('8.5');
+  await expect(diagram.locator('[data-metric="headroom"]')).toHaveText('15.5');
+  await expect(diagram.getByRole('status')).toContainText('Idle. Allocated GPU memory 8.5 GiB');
+  expect(await paths.evaluateAll(items => items.filter(item => item.getAttribute('d')).length)).toBe(17);
+
+  // Once settled, no geometry or readout updates should keep running.
+  const mutations = await diagram.evaluate(root => new Promise<number>(resolve => {
+    let count = 0;
+    const observer = new MutationObserver(records => { count += records.length; });
+    observer.observe(root, { subtree: true, childList: true, attributes: true, characterData: true });
+    setTimeout(() => { observer.disconnect(); resolve(count); }, 250);
+  }));
+  expect(mutations).toBe(0);
+});
+
+test('motion settles immediately when reduced motion is enabled or the graphic leaves view', async ({ page }) => {
+  await page.goto('/#vision');
+  await page.evaluate(() => document.fonts.ready);
+  const diagram = page.locator('[data-model-explorer]');
+  const graphic = diagram.getByRole('img', { name: 'Local model memory allocation' });
+  await diagram.evaluate(root => root.scrollIntoView({ behavior: 'instant', block: 'start' }));
+  await expect(graphic).toBeInViewport();
+  await diagram.getByRole('button', { name: 'Long context', exact: true }).click();
+  await expect(graphic).toHaveAttribute('aria-busy', 'true');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(graphic).toHaveAttribute('aria-busy', 'false');
+  await expect(diagram.locator('[data-metric="memory"]')).toHaveText('20.0');
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await diagram.getByRole('button', { name: 'Idle', exact: true }).click();
+  await expect(graphic).toHaveAttribute('aria-busy', 'true');
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(graphic).not.toBeInViewport();
+  await expect(graphic).toHaveAttribute('aria-busy', 'false');
+  await expect(diagram.locator('[data-metric="memory"]')).toHaveText('8.5');
+});
+
 test('previously shared Vision URLs lead to the homepage section', async ({ page }) => {
   await page.goto('/vision');
   await expect(page).toHaveURL(/\/#vision$/);
