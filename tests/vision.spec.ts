@@ -62,6 +62,9 @@ test.describe('static baseline', () => {
   test.use({ javaScriptEnabled: false });
   test('the local hosting vision remains useful without JavaScript', async ({ page }) => {
     await page.goto('/#vision');
+    await page.evaluate(() => document.fonts.ready);
+    // Let the native anchor scroll finish before testing another interaction.
+    await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById('vision')!.getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)))).toBeLessThan(2);
     await expect(page.locator('#vision-title')).toContainText('Models that adapt');
     await expect(page.getByRole('img', { name: 'Local model memory allocation' })).toBeVisible();
     await expect(page.locator('[data-metric="memory"]')).toHaveText('16.0');
