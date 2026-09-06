@@ -1,0 +1,57 @@
+.submit-main { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(45px, 7vw, 110px); padding-block: 60px 100px; }
+.back-link { color: var(--text-secondary); font-size: 11px; gap: 10px; margin-bottom: 46px; }
+.submit-intro > .eyebrow { margin-bottom: 22px; }
+.submit-intro h1 { font-size: clamp(44px, 4.8vw, 66px); line-height: 1.07; }
+.submit-description { font-size: 15px; color: var(--text-secondary); max-width: 430px; margin-top: 25px; line-height: 1.85; }
+.submission-guide { margin-top: 42px; }
+.submission-guide h2 { font: 500 12px/1.6 var(--font-sans); margin-bottom: 20px; }
+.submission-guide ul { display: grid; gap: 24px; list-style: none; margin: 0; padding: 0; }
+.submission-guide strong { font-size: 12px; font-weight: 500; }
+.submission-guide li p { color: var(--text-secondary); font-size: 12px; line-height: 1.75; margin-top: 4px; max-width: 330px; }
+.submit-contact { color: var(--text-secondary); font-size: 12px; line-height: 1.85; margin-top: 26px; }
+.submit-contact a { display: inline-block; margin-top: 5px; color: var(--ink); }
+.submit-form { align-self: start; margin-top: 66px; border: 1px solid var(--border-primary); background: var(--paper-card); padding: clamp(24px, 3vw, 40px); box-shadow: 0 1px 0 var(--strided-bezel-light) inset; }
+.form-heading { margin-bottom: 34px; }
+.form-heading h2 { font-size: 30px; letter-spacing: -.02em; }
+.form-heading p { font-size: 11px; color: var(--text-secondary); margin-top: 9px; }
+.form-card { display: flex; flex-direction: column; gap: 24px; }
+.form-fields { display: flex; flex-direction: column; gap: 24px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.flabel { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+.flabel i { font-style: normal; margin-left: 3px; }
+.field input, .field select, .field textarea { width: 100%; min-height: 46px; border: 1px solid var(--border-primary); border-radius: 2px; background: var(--paper-card); color: var(--ink); padding: 11px 12px; font-size: 13px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--text-tertiary); }
+.field textarea { min-height: 110px; resize: vertical; line-height: 1.7; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: 1px solid var(--ink); outline-offset: 1px; }
+.dropzone { position: relative; border: 1px dashed var(--border-primary); background: var(--paper); padding: 25px 15px; text-align: center; min-height: 137px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.dropzone:hover, .dropzone:focus-within, .dropzone.has-file { border-color: var(--ink); }
+.dropzone:focus-within { outline: 2px solid var(--ink); outline-offset: 3px; }
+.dropzone.has-file { border-style: solid; }
+.dropzone input[type='file'] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.dz-text { display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: none; width: 100%; }
+.dz-icon { font-size: 23px; margin-bottom: 4px; color: var(--text-secondary); }
+.dz-text strong { font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
+.dz-sub { font-size: 10px; color: var(--text-secondary); line-height: 1.75; }
+.form-foot { padding-top: 8px; display: flex; flex-direction: column; align-items: stretch; gap: 18px; }
+.privacy { font-size: 10px; color: var(--text-secondary); line-height: 1.8; }
+.submit-btn { display: flex; justify-content: space-between; min-height: 48px; align-items: center; padding: 12px 18px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper-card); border-radius: 2px; font-size: 12px; }
+.submit-btn:hover:not(:disabled) { background: var(--strided-accent); }
+.submit-btn:disabled { opacity: .48; }
+.ferr { font-size: 11px; color: var(--ink); line-height: 1.75; }
+.ferr[role='alert'] { border-left: 2px solid var(--ink); padding-left: 12px; }
+.success-mark { width: 44px; height: 44px; border: 1px solid var(--border-primary); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.form-card.success h2 { font-size: 36px; }
+.form-card.success p { font-size: 14px; color: var(--text-secondary); line-height: 1.8; overflow-wrap: anywhere; }
+.hl { color: var(--ink); }
+.btn-ghost { font-size: 12px; margin-top: 8px; }
+.no-script { font-size: 12px; margin-top: 20px; }
+@media (max-width: 1000px) { .submit-main { gap: 40px; } .grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .submit-main { grid-template-columns: 1fr; padding-block: 25px 65px; gap: 35px; }
+  .back-link { margin-bottom: 30px; }
+  .submission-guide { margin-top: 30px; }
+  .submit-form { margin-top: 0; }
+  .submit-description { font-size: 14px; }
+  .field input, .field select, .field textarea { font-size: 16px; }
+}

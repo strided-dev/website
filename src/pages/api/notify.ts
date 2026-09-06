@@ -64,10 +64,10 @@ export const POST: APIRoute = async ({ request }) => {
       `New dump submission\n\n` +
       `Name:    ${meta.name}\n` +
       `Email:   ${meta.email}\n` +
-      `Company: ${meta.company || "—"}\n` +
+      `Company: ${meta.company || "Not provided"}\n` +
       `Engine:  ${meta.engine}\n` +
       `File:    ${meta.fileName} (${mb(size)} MB)\n\n` +
-      `Notes:\n${meta.notes || "—"}\n\n` +
+      `Notes:\n${meta.notes || "Not provided"}\n\n` +
       `Download (expires in 7 days):\n${downloadUrl}\n\n` +
       `Object key: ${key}\n`,
   });
@@ -88,9 +88,9 @@ export const POST: APIRoute = async ({ request }) => {
     text:
       `Hi ${firstName},\n\n` +
       `Thanks for sending your ${meta.engine} dump${meta.fileName ? ` (${meta.fileName})` : ""}. ` +
-      `We'll run it through strided and get back to you here with the diagnosis.\n\n` +
+      `We'll review your local workload and get back to you here to discuss your setup.\n\n` +
       `We do not retain raw dumps after analysis.\n\n` +
-      `— strided\n`,
+      `The strided team\n`,
   });
   if (confirmError) console.error("resend confirmation error", confirmError);
 

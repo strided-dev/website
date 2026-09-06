@@ -1,0 +1,151 @@
+{
+  "schema": "strided.design-system/v1",
+  "brand": {
+    "name": "strided",
+    "positioning": "Starting with local model hosting and automatic runtime tuning, with the ambition to expand into shared model serving and coordinated control of data center systems.",
+    "origin": "Built around the practical work of hosting models locally: fitting memory, handling requests, and adjusting runtime settings.",
+    "principles": [
+      "Rigorous, not sterile",
+      "Technical, not nostalgic",
+      "Powerful, not theatrical",
+      "Human, not cute"
+    ],
+    "visualRule": "Premium comes from proportion, typography, material contrast, and restraint. Color behaves like an instrument state, never campaign art.",
+    "sampleCopy": {
+      "headline": "Local models. Tuned to your machine.",
+      "body": "strided is being built to host models on hardware you control and automatically adjust runtime settings as your workload changes. The longer-term ambition is to extend this foundation to shared model serving and coordinated control of data center systems. Every adjustment should stay within your limits and keep a way back.",
+      "terminal": "Local host / illustrative configuration\n  gpu_memory_budget     24 GiB\n  context_limit         8192 tokens\n  request_slots         4"
+    }
+  },
+  "selected": {
+    "palette": {
+      "id": "porcelain",
+      "name": "Porcelain",
+      "category": "achromatic",
+      "colorScheme": "light",
+      "tokens": {
+        "bench": "#F7F7F5",
+        "panel": "#FFFFFF",
+        "bezelDark": "#C8CBC9",
+        "bezelLight": "#FFFFFF",
+        "ink": "#0B0D0C",
+        "inkSoft": "#4D524F",
+        "inkFaint": "#727774",
+        "accent": "#242826"
+      }
+    },
+    "surface": {
+      "finish": "etched",
+      "density": "balanced",
+      "tracking": "natural",
+      "lettercase": "lower",
+      "accent": "mark"
+    },
+    "typography": {
+      "id": "type-12",
+      "index": 12,
+      "label": "12 Newsreader",
+      "cssText": "font-family:'newsreader'",
+      "css": {
+        "font-family": "'newsreader'"
+      }
+    },
+    "logo": {
+      "text": "strided",
+      "fontIndex": 11,
+      "layout": "horizontal",
+      "markSize": 96,
+      "wordSize": 64,
+      "lockupGap": 24,
+      "rowGap": 12,
+      "radius": 8,
+      "preset": "",
+      "bars": [
+        {
+          "width": 112,
+          "height": 37,
+          "offset": 38,
+          "opacity": 1,
+          "source": "custom",
+          "custom": "#4a0081",
+          "outlineSource": "none",
+          "outlineCustom": "#191d1b",
+          "outlineWidth": 0,
+          "index": 1,
+          "y": 0,
+          "fill": "#4a0081",
+          "outline": "none"
+        },
+        {
+          "width": 112,
+          "height": 37,
+          "offset": 0,
+          "opacity": 1,
+          "source": "custom",
+          "custom": "#4a0081",
+          "outlineSource": "none",
+          "outlineCustom": "#191d1b",
+          "outlineWidth": 0,
+          "index": 2,
+          "y": 49,
+          "fill": "#4a0081",
+          "outline": "none"
+        },
+        {
+          "width": 112,
+          "height": 37,
+          "offset": 38,
+          "opacity": 1,
+          "source": "ink",
+          "custom": "#191d1b",
+          "outlineSource": "none",
+          "outlineCustom": "#191d1b",
+          "outlineWidth": 0,
+          "index": 3,
+          "y": 98,
+          "fill": "#0B0D0C",
+          "outline": "none"
+        },
+        {
+          "width": 112,
+          "height": 37,
+          "offset": 0,
+          "opacity": 1,
+          "source": "ink",
+          "custom": "#191d1b",
+          "outlineSource": "none",
+          "outlineCustom": "#191d1b",
+          "outlineWidth": 0,
+          "index": 4,
+          "y": 147,
+          "fill": "#0B0D0C",
+          "outline": "none"
+        }
+      ],
+      "viewBox": {
+        "x": 0,
+        "y": 0,
+        "width": 150,
+        "height": 184
+      }
+    }
+  },
+  "tokens": {
+    "cssVariables": {
+      "--strided-bench": "#F7F7F5",
+      "--strided-panel": "#FFFFFF",
+      "--strided-bezel-dark": "#C8CBC9",
+      "--strided-bezel-light": "#FFFFFF",
+      "--strided-ink": "#0B0D0C",
+      "--strided-ink-soft": "#4D524F",
+      "--strided-ink-faint": "#727774",
+      "--strided-accent": "#242826",
+      "--strided-logo-row-gap": "12px",
+      "--strided-logo-radius": "8px",
+      "--strided-lockup-gap": "24px",
+      "--strided-mark-size": "96px",
+      "--strided-wordmark-size": "64px"
+    },
+    "cssText": ":root {\n  --strided-bench: #F7F7F5;\n  --strided-panel: #FFFFFF;\n  --strided-bezel-dark: #C8CBC9;\n  --strided-bezel-light: #FFFFFF;\n  --strided-ink: #0B0D0C;\n  --strided-ink-soft: #4D524F;\n  --strided-ink-faint: #727774;\n  --strided-accent: #242826;\n  --strided-logo-row-gap: 12px;\n  --strided-logo-radius: 8px;\n  --strided-lockup-gap: 24px;\n  --strided-mark-size: 96px;\n  --strided-wordmark-size: 64px;\n}"
+  }
+}
