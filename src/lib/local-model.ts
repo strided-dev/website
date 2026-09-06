@@ -68,6 +68,13 @@ export function cubeSolidPaths(cell: Cell, allocation: number) {
   return faces(x0, x0 + 0.6, z0, z0 + 0.6, 38 * allocation);
 }
 
+// A collapsing top face keeps its footprint even at nearly zero height.
+// Fade the complete solid near the base so no opaque tile snaps away.
+export function cubeOpacity(allocation: number) {
+  const fraction = Math.min(1, Math.max(0, allocation / 0.25));
+  return fraction * fraction * (3 - 2 * fraction);
+}
+
 export function cubePaths(cell: Cell, allocation: number) {
   const x0 = cell.x + 0.2, z0 = cell.z + 0.2;
   const wire = faces(x0, x0 + 0.6, z0, z0 + 0.6, 38);

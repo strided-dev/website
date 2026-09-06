@@ -1,5 +1,5 @@
 ---
-import { cells, scenario, workloads, cubePaths, CAPACITY_GIB, BLOCK_GIB, MODEL_GIB } from '../lib/local-model';
+import { cells, scenario, workloads, cubePaths, cubeOpacity, CAPACITY_GIB, BLOCK_GIB, MODEL_GIB } from '../lib/local-model';
 const baseline = scenario('baseline');
 ---
 <div class="model-explorer" data-model-explorer>
@@ -24,9 +24,11 @@ const baseline = scenario('baseline');
           const paths = cubePaths(cell, baseline.allocation[index]);
           return <g data-cube>
             <path class="cube-wire" data-face="wire" d={paths.wire} />
-            <path class="cube-left" data-face="left" d={paths.left} />
-            <path class="cube-right" data-face="right" d={paths.right} />
-            <path class="cube-top" data-face="top" d={paths.top} />
+            <g data-solid opacity={cubeOpacity(baseline.allocation[index])}>
+              <path class="cube-left" data-face="left" d={paths.left} />
+              <path class="cube-right" data-face="right" d={paths.right} />
+              <path class="cube-top" data-face="top" d={paths.top} />
+            </g>
           </g>;
         })}
       </svg>
@@ -57,12 +59,13 @@ const baseline = scenario('baseline');
 </div>
 
 <script>
-  import { cells, scenario, workloads, cubeSolidPaths, BLOCK_GIB, CAPACITY_GIB, type Workload } from '../lib/local-model';
+  import { cells, scenario, workloads, cubeSolidPaths, cubeOpacity, BLOCK_GIB, CAPACITY_GIB, type Workload } from '../lib/local-model';
 
   document.querySelectorAll<HTMLElement>('[data-model-explorer]').forEach(root => {
     const controls = root.querySelector<HTMLFieldSetElement>('[data-workloads]')!;
     const buttons = [...controls.querySelectorAll<HTMLButtonElement>('[data-workload]')];
     const cubes = [...root.querySelectorAll<SVGGElement>('[data-cube]')].map(cube => ({
+      solid: cube.querySelector<SVGGElement>('[data-solid]')!,
       left: cube.querySelector<SVGPathElement>('[data-face="left"]')!,
       right: cube.querySelector<SVGPathElement>('[data-face="right"]')!,
       top: cube.querySelector<SVGPathElement>('[data-face="top"]')!,
@@ -90,6 +93,8 @@ const baseline = scenario('baseline');
         cube.left.setAttribute('d', paths.left);
         cube.right.setAttribute('d', paths.right);
         cube.top.setAttribute('d', paths.top);
+        const opacity = String(cubeOpacity(allocation[index]));
+        if (cube.solid.getAttribute('opacity') !== opacity) cube.solid.setAttribute('opacity', opacity);
       });
       displayed = allocation;
       const used = allocation.reduce((total, value) => total + value * BLOCK_GIB, 0);
