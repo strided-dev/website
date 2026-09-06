@@ -2,18 +2,18 @@ import { useState } from 'react';
 import '../styles/system-map.css';
 
 const layers = [
-  { name: 'Scheduling', signal: 'Placement · queueing', title: 'The right work, in the right place.', description: 'Connect workload placement and queueing to the resources each job actually needs.' },
-  { name: 'Runtimes', signal: 'Batching · cache', title: 'Make the execution path visible.', description: 'Relate batching, cache pressure, and request behavior to the latency a user experiences.' },
-  { name: 'Kernels', signal: 'Compute · memory', title: 'Find the constraint behind the trace.', description: 'Separate compute, memory, and communication limits using evidence from the workload.' },
-  { name: 'Hardware', signal: 'GPU · fabric · node', title: 'Read the machine as a system.', description: 'Connect node behavior, interconnect traffic, and device health to application performance.' },
-  { name: 'Facility', signal: 'Power · thermals', title: 'Account for the physical limits.', description: 'Bring power budgets and thermal headroom into the same picture as the software stack.' },
+  { name: 'Workload', signal: 'Context · requests', title: 'Make room for the work arriving now.', description: 'Longer prompts and simultaneous requests place different demands on a local model host.' },
+  { name: 'Model', signal: 'Weights · format', title: 'Start with the model you need.', description: 'Account for model weights and their memory requirements before choosing runtime settings.' },
+  { name: 'Runtime', signal: 'Batching · execution', title: 'Let the settings follow the workload.', description: 'strided will adjust batching and concurrency as demand changes, within the limits you set.' },
+  { name: 'Memory', signal: 'Weights · KV cache', title: 'Keep enough room to respond.', description: 'Balance resident model weights, the KV cache for active requests, and runtime buffers.' },
+  { name: 'Hardware', signal: 'GPU · CPU · RAM', title: 'Work with the machine you have.', description: 'Use the available GPU, CPU, and memory to establish a practical budget for local hosting.' },
 ];
 
 export default function SystemMap() {
   const [active, setActive] = useState(2);
   return (
     <div className="system-map">
-      <div className="map-heading"><span className="eyebrow">The strided system</span><span className="map-caption">System vision</span></div>
+      <div className="map-heading"><span className="eyebrow">A local model host</span><span className="map-caption">Design direction</span></div>
       <div className="map-body">
         <svg className="stack-art" viewBox="0 0 310 377" preserveAspectRatio="none" aria-hidden="true">
           <defs>

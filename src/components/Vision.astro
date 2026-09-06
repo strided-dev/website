@@ -1,33 +1,33 @@
 ---
-import RackExplorer from './RackExplorer.astro';
+import ModelExplorer from './ModelExplorer.astro';
 ---
 <section class="vision-section" id="vision" aria-labelledby="vision-title">
   <div class="container">
     <div class="vision-heading">
       <div>
         <p class="eyebrow">Vision</p>
-        <h2 id="vision-title">A data center<br />that works as one.</h2>
+        <h2 id="vision-title">Models that adapt<br />as your work changes.</h2>
       </div>
       <div class="vision-intro">
-        <p class="vision-lead">Every watt has a constraint.<br />Every workload has a purpose.</p>
-        <p>We're building toward a control layer that connects them. strided will bring power, hardware, kernels, runtimes, and scheduling into one system, with decisions guided by the workload and its limits.</p>
+        <p class="vision-lead">Choose the model.<br />Set the boundaries.</p>
+        <p>strided will take care of the runtime adjustments: making room for longer prompts, managing concurrent requests, and releasing unused cache. You should be able to see what changed, why it changed, and how to return to the previous settings.</p>
       </div>
     </div>
 
-    <div class="vision-rack" id="rack">
-      <div class="rack-heading">
-        <h3>Same rack. Different priorities.</h3>
-        <p>Throughput, power, cost, and latency ask different things of the same hardware. Choose an objective to explore an illustrative allocation and its tradeoffs.</p>
+    <div class="vision-model" id="local-model">
+      <div class="model-heading">
+        <h3>The workload changes. The settings follow.</h3>
+        <p>Explore a local host with 24 GiB of GPU memory. Choose a workload to see an example of how context limits, request slots, and memory allocation could adapt.</p>
       </div>
-      <RackExplorer />
+      <ModelExplorer />
     </div>
 
     <dl class="vision-capabilities">
-      <div><dt>Observe across layers.</dt><dd>Connect power, thermal, and runtime signals to the workload they affect. Build a shared view of cause and effect.</dd></div>
-      <div><dt>Choose with context.</dt><dd>Make power budgets, response-time limits, and cost per outcome explicit. Show what each decision improves and what it gives up.</dd></div>
-      <div><dt>Act with a record.</dt><dd>Keep changes bounded, reviewable, and reversible. Retain the evidence and compare the outcome with a reproducible baseline.</dd></div>
+      <div><dt>Host where you work.</dt><dd>Run your chosen models on hardware you control. Keep model selection and the machine's resource limits visible.</dd></div>
+      <div><dt>Adjust as demand changes.</dt><dd>Adapt batching, concurrency, and cache allocation to the requests arriving now, within the boundaries you set.</dd></div>
+      <div><dt>Keep every change accountable.</dt><dd>Record the settings and the signals behind each adjustment. Compare the result and keep a way back.</dd></div>
     </dl>
-    <p class="vision-direction">This is the system we're working toward. Our research today starts with causal diagnosis for LLM inference.</p>
+    <p class="vision-direction">This is the local hosting experience we're building. The examples explain the direction; they are not output from a released host.</p>
   </div>
 </section>
 
@@ -38,21 +38,21 @@ import RackExplorer from './RackExplorer.astro';
   .vision-intro { padding-top: 42px; max-width: 520px; }
   .vision-lead { font: 400 27px/1.45 var(--font-display); letter-spacing: -.01em; }
   .vision-intro > p:not(.vision-lead) { font-size: 14px; color: var(--text-secondary); line-height: 1.85; margin-top: 21px; }
-  .vision-rack { margin-top: 64px; }
-  .rack-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; margin-bottom: 28px; }
-  .rack-heading h3 { font-size: 29px; }
-  .rack-heading > p { max-width: 520px; font-size: 13px; line-height: 1.85; color: var(--text-secondary); }
+  .vision-model { margin-top: 64px; }
+  .model-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; margin-bottom: 28px; }
+  .model-heading h3 { font-size: 29px; }
+  .model-heading > p { max-width: 520px; font-size: 13px; line-height: 1.85; color: var(--text-secondary); }
   .vision-capabilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; margin: 64px 0 0; }
   .vision-capabilities dt { font: 400 27px/1.2 var(--font-display); letter-spacing: -.015em; }
   .vision-capabilities dd { margin: 18px 0 0; font-size: 13px; color: var(--text-secondary); line-height: 1.85; }
   .vision-direction { max-width: 720px; margin-top: 36px; font-size: 12px; color: var(--text-secondary); }
-  @media (max-width: 950px) { .vision-heading, .rack-heading { gap: 40px; } .vision-capabilities { gap: 32px; } }
+  @media (max-width: 950px) { .vision-heading, .model-heading { gap: 40px; } .vision-capabilities { gap: 32px; } }
   @media (max-width: 760px) {
-    .vision-heading, .rack-heading { grid-template-columns: 1fr; gap: 28px; }
+    .vision-heading, .model-heading { grid-template-columns: 1fr; gap: 28px; }
     .vision-intro { padding-top: 0; }
     .vision-lead { font-size: 25px; }
-    .vision-rack { margin-top: 44px; }
-    .rack-heading { gap: 16px; }
+    .vision-model { margin-top: 44px; }
+    .model-heading { gap: 16px; }
     .vision-capabilities { grid-template-columns: 1fr; gap: 30px; margin-top: 44px; }
     .vision-capabilities dd { margin-top: 12px; }
   }

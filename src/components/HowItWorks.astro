@@ -1,14 +1,14 @@
 ---
 const steps = [
-  { title: 'Observe the workload.', body: 'Start with the tools your engineers already use. Bring Nsight, DCGM, or vLLM telemetry into a common view.', detail: 'Existing signals. Shared context.' },
-  { title: 'Explain the constraint.', body: 'Evaluate explicit rules against the evidence. Every diagnosis includes a cause, a confidence score, and the signals behind it.', detail: 'Inspectable reasoning. Clear limits.' },
-  { title: 'Verify the change.', body: 'Review a proposed fix, compare the result with the baseline, and keep a path back. A recommendation is only the beginning.', detail: 'Measured outcomes. Reversible steps.' },
+  { title: 'Bring a model.', body: 'Start with the model you want to host and the hardware available to run it. Establish a memory budget and the workload you need to serve.', detail: 'Your model. Your machine.' },
+  { title: 'Let the runtime adjust.', body: 'As prompts and request volume change, strided will adjust batching, concurrency, and cache use within your configured limits.', detail: 'Automatic adjustments. Explicit boundaries.' },
+  { title: 'Check what changed.', body: 'See the settings before and after an adjustment, along with the signals that prompted it. Compare the result and return to the previous configuration when needed.', detail: 'Visible decisions. A way back.' },
 ];
 ---
 <div class="approach container">
   <div class="approach-heading">
-    <div><p class="eyebrow">Our approach</p><h2 id="approach-title">Performance you can<br />account for.</h2></div>
-    <p class="approach-description">Start with a real capture. Explain the constraint through explicit rules, then verify a proposed change against the baseline. Every conclusion should be inspectable and every limitation visible.</p>
+    <div><p class="eyebrow">Our approach</p><h2 id="approach-title">Less manual tuning.<br />Clearer control.</h2></div>
+    <p class="approach-description">The aim is simple: host a model, give it sensible limits, and let strided adjust the runtime as conditions change. Automation should make local hosting easier to understand and operate.</p>
   </div>
   <div class="steps">
     {steps.map(step => <article class="step">
@@ -18,8 +18,8 @@ const steps = [
     </article>)}
   </div>
   <div class="accountability">
-    <p>Same evidence. Same rules. Same diagnosis.</p>
-    <span class="accountability-note">When the evidence is insufficient, abstain.</span>
+    <p>Automatic adjustments. Visible decisions.</p>
+    <span class="accountability-note">When a change cannot be justified, keep the current settings.</span>
   </div>
 </div>
 <style>

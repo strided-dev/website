@@ -88,7 +88,7 @@ export const POST: APIRoute = async ({ request }) => {
     text:
       `Hi ${firstName},\n\n` +
       `Thanks for sending your ${meta.engine} dump${meta.fileName ? ` (${meta.fileName})` : ""}. ` +
-      `We'll run it through strided and get back to you here with the diagnosis.\n\n` +
+      `We'll review your local workload and get back to you here to discuss your setup.\n\n` +
       `We do not retain raw dumps after analysis.\n\n` +
       `The strided team\n`,
   });

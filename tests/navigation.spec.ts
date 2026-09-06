@@ -4,9 +4,9 @@ test('all section links stay on the homepage, preserve the graphic, and support 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#vision');
   await page.evaluate(() => document.fonts.ready);
-  const power = page.locator('[data-rack-explorer]').getByRole('button', { name: 'Power', exact: true });
-  await expect(power).toBeEnabled();
-  await power.click();
+  const idle = page.locator('[data-model-explorer]').getByRole('button', { name: 'Idle', exact: true });
+  await expect(idle).toBeEnabled();
+  await idle.click();
   const documentRequests: string[] = [];
   page.on('request', request => {
     if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentRequests.push(request.url());
@@ -34,7 +34,7 @@ test('all section links stay on the homepage, preserve the graphic, and support 
   await expect(navigation.locator('[data-section-link="approach"]')).toHaveAttribute('aria-current', 'location');
   await page.locator('#vision').evaluate(section => section.scrollIntoView());
   await expect(navigation.locator('[data-section-link="vision"]')).toHaveAttribute('aria-current', 'location');
-  await expect(power).toHaveAttribute('aria-pressed', 'true');
+  await expect(idle).toHaveAttribute('aria-pressed', 'true');
   expect(documentRequests).toEqual([]);
 
   await page.goto('/submit');

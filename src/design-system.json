@@ -2,8 +2,8 @@
   "schema": "strided.design-system/v1",
   "brand": {
     "name": "strided",
-    "positioning": "The deterministic optimization and control layer for the data center, from facility power and node behavior through kernels, runtimes, and scheduling.",
-    "origin": "Built from the frustration of CUDA, GPU, and data-center engineers working through dated profiler interfaces, fragmented point tools, and manual correlation.",
+    "positioning": "Local model hosting with automatic runtime tuning, adapting memory allocation, batching, and concurrency to the model, hardware, and workload.",
+    "origin": "Built around the practical work of hosting models locally: fitting memory, handling requests, and adjusting runtime settings.",
     "principles": [
       "Rigorous, not sterile",
       "Technical, not nostalgic",
@@ -12,9 +12,9 @@
     ],
     "visualRule": "Premium comes from proportion, typography, material contrast, and restraint. Color behaves like an instrument state, never campaign art.",
     "sampleCopy": {
-      "headline": "Every layer. One accountable system.",
-      "body": "strided treats facility power, hardware, kernels, runtimes, and scheduling as one deterministic system. It changes only what it can explain, reproduce, and verify.",
-      "terminal": "$ strided explain run/7f31\n  facility_headroom       12.4%\n  kernel_efficiency        0.81\n  scheduler_confidence     0.94"
+      "headline": "Local models. Tuned to your machine.",
+      "body": "strided is being built to host models on hardware you control and automatically adjust runtime settings as your workload changes. Every adjustment should stay within your limits and keep a way back.",
+      "terminal": "Local host / illustrative configuration\n  gpu_memory_budget     24 GiB\n  context_limit         8192 tokens\n  request_slots         4"
     }
   },
   "selected": {

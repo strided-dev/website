@@ -5,19 +5,19 @@ import Footer from '../components/Footer.astro';
 import DumpForm from '../components/DumpForm.tsx';
 import '../styles/submit.css';
 ---
-<Base title="Share a workload | strided" description="Bring a real inference workload to strided. Share a redacted Nsight or DCGM capture and get a diagnosis from the team.">
+<Base title="Share a workload | strided" description="Help shape local model hosting with automatic tuning. Share your hardware, model, and workload with the strided team.">
   <Nav />
   <main id="main" class="submit-main container">
     <div class="submit-intro">
       <a href="/" class="text-link back-link"><span aria-hidden="true">←</span> Back to strided</a>
-      <p class="eyebrow">Workload review</p>
-      <h1>Better evidence.<br />Better answers.</h1>
-      <p class="submit-description">Bring us the workload that's hard to explain. We'll run your capture through strided and share what the evidence tells us.</p>
+      <p class="eyebrow">Local workload research</p>
+      <h1>Your model.<br />Your real workload.</h1>
+      <p class="submit-description">Tell us how you run models locally and where the settings need attention. A capture from your current setup helps us build a host that adjusts to real workloads.</p>
       <div class="submission-guide">
         <h2>What makes a useful capture</h2>
         <ul role="list">
-          <li><strong>A real workload</strong><p>A Nsight or DCGM capture from an inference run.</p></li>
-          <li><strong>A little context</strong><p>The model, hardware, and behavior you're investigating.</p></li>
+          <li><strong>A local run</strong><p>A runtime log or performance capture from a model running on your hardware.</p></li>
+          <li><strong>A little context</strong><p>The model, available memory, context length, and number of simultaneous requests.</p></li>
           <li><strong>Only what you can share</strong><p>Remove credentials, customer data, and sensitive information before uploading.</p></li>
         </ul>
       </div>

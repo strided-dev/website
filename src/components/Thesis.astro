@@ -1,23 +1,23 @@
 ---
 const connections = [
-  { from: 'Facility & hardware', to: 'Power, thermals, and the limits of the machine.' },
-  { from: 'Kernels & runtimes', to: 'How the workload turns resources into useful work.' },
-  { from: 'Scheduling', to: 'Where work runs, when it runs, and what it waits for.' },
+  { from: 'Your model', to: 'The weights, context length, and memory it needs.' },
+  { from: 'Your hardware', to: 'The GPU, CPU, and memory available to run it.' },
+  { from: 'Your workload', to: 'Interactive replies, longer prompts, or work waiting in a queue.' },
 ];
 ---
 <section class="system-section container" id="system" aria-labelledby="system-title">
   <div class="system-heading">
     <p class="eyebrow">The system</p>
-    <h2 id="system-title">The bottleneck rarely<br />stays in one layer.</h2>
-    <p class="system-description">Understand the constraints that shape an inference workload, from the hardware it runs on to the way work is scheduled.</p>
+    <h2 id="system-title">A model host that<br />knows its limits.</h2>
+    <p class="system-description">Local hosting brings the model, machine, and workload together. The settings need to make sense for all three.</p>
   </div>
   <div class="system-story">
-    <p class="story-lead">A slow kernel can be a memory problem. A slow node can be a thermal problem. A slow workload can be a scheduling problem.</p>
-    <p class="story-body">Engineers are left to connect those dots across fragmented tools. strided is designed to connect the signals to a diagnosis, with its evidence, assumptions, and limits kept visible.</p>
+    <p class="story-lead">A longer prompt needs more memory. More requests compete for the same resources. Yesterday's settings may not fit today's work.</p>
+    <p class="story-body">strided is designed to host local models and adjust how they run. It will use the machine's available resources and live workload signals to choose runtime settings within the limits you set.</p>
     <dl class="connections">
       {connections.map(item => <div><dt>{item.from}</dt><dd>{item.to}</dd></div>)}
     </dl>
-    <p class="scope-note">Our starting point: causal diagnosis for LLM inference.</p>
+    <p class="scope-note">The goal: useful models on your hardware, with less manual tuning.</p>
     <a href="#vision" class="text-link vision-link">Explore the vision <span class="arrow" aria-hidden="true">↓</span></a>
   </div>
 </section>

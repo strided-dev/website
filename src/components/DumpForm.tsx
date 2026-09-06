@@ -126,8 +126,8 @@ export default function DumpForm() {
         <div className="success-mark" aria-hidden="true">✓</div>
         <h2>Workload received.</h2>
         <p>
-          Thanks. We'll run it through strided and get back to you at{" "}
-          <span className="hl">{form.email}</span> with the diagnosis.
+          Thanks. We'll review your local workload and get back to you at{" "}
+          <span className="hl">{form.email}</span> to discuss your setup.
         </p>
         <a href="/" className="btn-ghost">← Back to home</a>
       </div>
@@ -224,7 +224,7 @@ export default function DumpForm() {
           value={form.notes}
           onChange={set("notes")}
           rows={3}
-          placeholder="Model, GPU config, the symptom you're chasing…"
+          placeholder="Model, hardware, context length, simultaneous requests, and what you'd like to improve."
         />
       </label>
 
@@ -233,7 +233,7 @@ export default function DumpForm() {
       <div className="form-foot">
         <p className="privacy">
           By sending a capture, you agree to let the strided team review it and
-          contact you about the diagnosis. Please redact sensitive data first.
+          contact you about your local setup. Please redact sensitive data first.
         </p>
         <button
           type="submit"

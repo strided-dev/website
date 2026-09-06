@@ -2,36 +2,36 @@ import { useState } from 'react';
 import '../styles/evidence.css';
 
 // Educational, synthetic traces. These are not telemetry, benchmark results,
-// measured improvements, or output from a live diagnosis service.
+// measured improvements, or output from a released local model host.
 const scenarios = [
   {
-    id: 'memory', label: 'Decode memory', rule: 'r01 / Decode memory-bound',
-    heading: 'Memory is busy.\nCompute is waiting.',
-    explanation: 'High memory bandwidth use alongside low SM occupancy suggests the decode workload is constrained by moving data, rather than arithmetic.',
-    next: 'Check batch size and KV cache headroom. Compare throughput and latency against the same workload before keeping a change.',
-    primaryLabel: 'HBM bandwidth use', secondaryLabel: 'SM occupancy',
-    primary: [72, 79, 83, 81, 88, 91, 86, 89, 92, 87, 90, 89],
-    secondary: [31, 28, 24, 27, 21, 18, 22, 20, 17, 22, 19, 18],
-    annotation: 'Bandwidth stays high as occupancy falls',
-    segments: [18, 67, 15],
+    id: 'context', label: 'Longer prompts', rule: 'Context pressure',
+    heading: 'Longer prompts.\nMore memory in use.',
+    explanation: 'In this example, GPU memory use rises as a request fills more of its configured context window. A growing KV cache leaves less room for other requests.',
+    next: 'strided would reserve more cache within the memory budget and reduce concurrent request slots when needed. The configured context boundaries remain explicit.',
+    primaryLabel: 'GPU memory used', secondaryLabel: 'Context budget used',
+    primary: [48, 50, 54, 58, 62, 67, 71, 76, 80, 83, 85, 86],
+    secondary: [12, 18, 25, 32, 40, 48, 55, 63, 70, 78, 84, 88],
+    annotation: 'Memory use rises as the request fills its context window',
+    segments: [44, 44, 12],
   },
   {
-    id: 'communication', label: 'Collective wait', rule: 'r05 / NCCL-dominated step',
-    heading: 'The GPUs are ready.\nThe data is in transit.',
-    explanation: 'When collective communication takes a large share of each step, adding compute may leave the real constraint untouched.',
-    next: 'Inspect the interconnect path, rank placement, and collective timings. Compare against the expected behavior for this topology.',
-    primaryLabel: 'NCCL share of step', secondaryLabel: 'SM occupancy',
-    primary: [32, 38, 45, 54, 48, 61, 57, 64, 58, 62, 55, 60],
-    secondary: [62, 54, 46, 39, 43, 31, 36, 27, 32, 29, 37, 31],
-    annotation: 'Communication grows while compute waits',
-    segments: [32, 16, 52],
+    id: 'requests', label: 'More requests', rule: 'Request pressure',
+    heading: 'More requests.\nLess memory headroom.',
+    explanation: 'Here, memory use grows as more of the host\'s request slots are occupied. Taking on more simultaneous work can leave too little room for each request.',
+    next: 'strided would adjust batching and cap concurrency within the memory budget, queuing additional work until capacity is available.',
+    primaryLabel: 'GPU memory used', secondaryLabel: 'Request slots used',
+    primary: [54, 57, 62, 66, 72, 78, 83, 87, 84, 80, 75, 71],
+    secondary: [25, 25, 50, 50, 75, 100, 100, 100, 75, 75, 50, 50],
+    annotation: 'Memory use grows as available request slots fill',
+    segments: [40, 46, 14],
   },
 ];
 
 const x = (i: number) => 48 + i * (590 / 11);
 const y = (value: number) => 230 - value * 1.75;
 const points = (values: number[]) => values.map((value, i) => `${x(i)},${y(value)}`).join(' ');
-const segmentNames = ['Compute', 'Memory wait', 'Communication'];
+const segmentNames = ['Model weights', 'KV cache', 'Runtime buffers'];
 
 export default function EvidenceExplorer() {
   const [scenarioIndex, setScenarioIndex] = useState(0);
@@ -77,7 +77,7 @@ export default function EvidenceExplorer() {
             <figcaption className="sample-readout"><span>{scenario.primaryLabel}: <b>{scenario.primary[sample]}%</b></span><span>{scenario.secondaryLabel}: <b>{scenario.secondary[sample]}%</b></span></figcaption>
           </figure>
           <figure className="step-figure">
-            <figcaption>Where the step time goes <span>Illustrative breakdown</span></figcaption>
+            <figcaption>Where allocated memory goes <span>Illustrative share by purpose</span></figcaption>
             <div className="step-bar" role="img" aria-label={scenario.segments.map((value, i) => `${segmentNames[i]} ${value} percent`).join(', ')}>
               {scenario.segments.map((value, i) => <div key={i} className={`step-segment segment-${i}`} style={{ width: `${value}%` }}><span>{value}%</span></div>)}
             </div>
@@ -89,12 +89,12 @@ export default function EvidenceExplorer() {
           <div className="reading-rule">{scenario.rule}</div>
           <h3>{scenario.heading.split('\n').map((line, i) => <span key={i}>{line}</span>)}</h3>
           <p>{scenario.explanation}</p>
-          <div className="reading-next"><span>What to check next</span><p>{scenario.next}</p></div>
-          <div className="reading-footnote"><span aria-hidden="true">↳</span> A signal is evidence.<br />A diagnosis needs context.</div>
+          <div className="reading-next"><span>How the host could respond</span><p>{scenario.next}</p></div>
+          <div className="reading-footnote"><span aria-hidden="true">↳</span> The workload changes.<br />The settings should follow.</div>
         </aside>
       </div>
       <div className="explorer-footer">
-        <p>Example data explains the method. Real diagnoses depend on your workload and available evidence.</p>
+        <p>Synthetic examples explain the approach. Actual settings depend on your model, hardware, and workload.</p>
         <a href={`data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`} download={`strided-illustrative-${scenario.id}.csv`}>Download trace <span aria-hidden="true">↓</span></a>
       </div>
       <details className="trace-data">

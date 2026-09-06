@@ -15,7 +15,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Browser checks cover desktop and mobile section navigation, active section state, browser history, legacy Vision links, graph controls, CSV export, rack objectives and baseline reset, the vision without JavaScript, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Upload services are mocked: tests do not upload customer data or send email. Screenshots are written to `test-results/`.
+Browser checks cover desktop and mobile section navigation, active section state, browser history, legacy Vision links, graph controls, CSV export, local workload allocations and baseline reset, the vision without JavaScript, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Upload services are mocked: tests do not upload customer data or send email. Screenshots are written to `test-results/`.
 
 ## Brand source
 
@@ -33,7 +33,9 @@ Newsreader is the selected display and wordmark face. IBM Plex Sans and IBM Plex
 
 ## Content and diagrams
 
-The landing page distinguishes the full-stack system vision from today's inference CLI and research program. The architecture illustration is an accessible layer selector. The evidence explorer has two synthetic examples, a keyboard-operable time inspector, a step-time breakdown, a data table, and CSV export. Every trace is explicitly illustrative; it is not live product output or a measured benchmark.
+The site describes local model hosting with automatic runtime tuning. Here, local means models running on hardware the customer controls. Memory allocation, context limits, batching, and concurrency adapt to the workload within configured boundaries. The product is described as in development; the website does not start a model host or claim that these examples are released product output.
+
+The architecture illustration is an accessible selector for workload, model, runtime, memory, and hardware. The evidence explorer shows synthetic context and request pressure, with a keyboard-operable time inspector, an allocated-memory breakdown, a data table, and CSV export. Every trace is illustrative, not telemetry or a measured benchmark. The submission flow collects research captures from local workloads.
 
 The four main navigation links point to homepage sections in reading order: `#system`, `#vision`, `#approach`, and `#research`. Each section introduces its purpose before its supporting content. The approach contains both the method and the evidence explorer. From the submission page, these links return to the same homepage anchors. A separate button opens the workload submission flow. Native anchors move directly to the section and preserve browser history and interaction state; an IntersectionObserver marks the visible section without a scroll handler or animation loop.
 
@@ -45,13 +47,13 @@ Always write the brand name as `strided`, including at the start of a sentence, 
 
 Update scenario data and explanations together in `src/components/EvidenceExplorer.tsx`. Keep units, axis bounds, legends, data tables, and the illustrative-data disclosure intact. Changes to the brand selection may also require downloading the corresponding licensed font assets.
 
-### Vision and rack model
+### Vision and local model example
 
-`Vision.astro` at `/#vision` explains the planned control layer and distinguishes it from the current inference research. The former `/vision` route redirects there so shared links still work. `RackExplorer.astro` adapts the supplied `strided-rack-cubes.html` graphic into a prerendered SVG, using the same deterministic 48-GPU sample and four objectives. The original HTML file is not needed at build time or in production.
+`Vision.astro` at `/#vision` explains how the host would adjust as work changes. The former `/vision` route redirects there so shared links still work. `ModelExplorer.astro` retains the isometric language of the supplied `strided-rack-cubes.html` graphic, now representing memory on a single local host. Its 48 blocks each represent 0.5 GiB, totaling 24 GiB. Solid blocks show allocated memory and open blocks show headroom. The original HTML file is not needed at build time or in production.
 
-The baseline graphic and metrics are available without JavaScript. When scripting is available, five keyboard-operable buttons select an objective or restore the baseline, and a live status announces the result. The component updates 192 existing SVG paths once per selection. It has no animation loop, timers, observers, 3D library, or React runtime; it adds no dependencies. Its script now loads with the homepage, where the graphic lives, and is approximately 1.9 KB gzipped.
+The baseline graphic and metrics are available without JavaScript. Five keyboard-operable controls select baseline, chat, long context, batch jobs, or idle; a live status announces each change. The component updates 144 existing solid SVG paths once per selection and leaves the capacity outlines fixed. It has no animation loop, timers, observers, 3D library, or React runtime, and adds no dependencies.
 
-Edit allocations and their explanations together in `src/lib/rack-model.ts`. All metrics are derived from those allocations: total GPU draw, a useful-work index relative to baseline 100, and headroom within the assumed 34.08 kW GPU limit. These are synthetic tradeoffs, not telemetry, efficiency measurements, or forecasts of savings and latency. Keep the legend, model disclosure, and expandable assumptions with the graphic.
+Edit example settings and their explanations together in `src/lib/local-model.ts`. Each workload assumes 8 GiB of resident weights plus a KV cache reservation and runtime buffers. Allocated memory and headroom are derived from those values. Request slots and context limits illustrate the planned adjustments; cache size is not calculated from a specific architecture. Keep the legend, disclosure, and expandable assumptions with the graphic. Do not present these synthetic settings as compatibility guarantees or measured speed and latency improvements.
 
 ## Submission service
 

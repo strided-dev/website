@@ -12,17 +12,17 @@ test('system map, graph scenarios, keyboard inspection, and data export work', a
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await ready(page);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('One accountable');
-  await page.getByRole('button', { name: /Facility:/ }).click();
-  await expect(page.locator('#layer-description')).toContainText('physical limits');
-  await expect(page.getByRole('button', { name: /Facility:/ })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Collective wait' }).click();
-  await expect(page.locator('.evidence-reading h3')).toContainText('data is in transit');
-  await expect(page.locator('.plot-metrics')).toContainText('NCCL share of step');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Local models');
+  await page.getByRole('button', { name: /Hardware:/ }).click();
+  await expect(page.locator('#layer-description')).toContainText('practical budget');
+  await expect(page.getByRole('button', { name: /Hardware:/ })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'More requests' }).click();
+  await expect(page.locator('.evidence-reading h3')).toContainText('Less memory headroom');
+  await expect(page.locator('.plot-metrics')).toContainText('GPU memory used');
   const slider = page.getByRole('slider', { name: 'Inspect time' });
   await slider.focus();
   await slider.press('Home');
-  await expect(slider).toHaveAttribute('aria-valuetext', /0 seconds: NCCL share of step 32 percent/);
+  await expect(slider).toHaveAttribute('aria-valuetext', /0 seconds: GPU memory used 54 percent/);
   await slider.press('ArrowRight');
   await expect(page.locator('.sample-control output')).toHaveText('05 s');
   await page.getByText('View sample data', { exact: true }).click();
@@ -30,7 +30,7 @@ test('system map, graph scenarios, keyboard inspection, and data export work', a
   await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(12);
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Download trace' }).click();
-  expect((await downloadPromise).suggestedFilename()).toBe('strided-illustrative-communication.csv');
+  expect((await downloadPromise).suggestedFilename()).toBe('strided-illustrative-requests.csv');
   expect(errors).toEqual([]);
 });
 
