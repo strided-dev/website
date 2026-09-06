@@ -2,18 +2,48 @@ import { useState } from 'react';
 import '../styles/system-map.css';
 
 const layers = [
-  { name: 'Workload', signal: 'Context · requests', title: 'Make room for the work arriving now.', description: 'Longer prompts and simultaneous requests place different demands on a local model host.' },
-  { name: 'Model', signal: 'Weights · format', title: 'Start with the model you need.', description: 'Account for model weights and their memory requirements before choosing runtime settings.' },
-  { name: 'Runtime', signal: 'Batching · execution', title: 'Let the settings follow the workload.', description: 'strided will adjust batching and concurrency as demand changes, within the limits you set.' },
-  { name: 'Memory', signal: 'Weights · KV cache', title: 'Keep enough room to respond.', description: 'Balance resident model weights, the KV cache for active requests, and runtime buffers.' },
-  { name: 'Hardware', signal: 'GPU · CPU · RAM', title: 'Work with the machine you have.', description: 'Use the available GPU, CPU, and memory to establish a practical budget for local hosting.' },
+  { id: 'workload', name: 'Workload', signal: 'Requests · context' },
+  { id: 'model', name: 'Model', signal: 'Hyperparameters' },
+  { id: 'runtime', name: 'Runtime', signal: 'Kernels · execution' },
+  { id: 'memory', name: 'Memory', signal: 'Cache · layout' },
+  { id: 'hardware', name: 'Hardware', signal: 'GPU · CPU · RAM' },
+] as const;
+type Layer = typeof layers[number]['id'];
+
+const adjustments: { label: string; layers: Layer[]; title: string; description: string }[] = [
+  {
+    label: 'Overview', layers: ['workload', 'model', 'runtime', 'memory', 'hardware'],
+    title: 'One control loop, across the stack.',
+    description: 'strided is being built to coordinate kernel choices, hyperparameters, memory, and scheduling, then verify their combined effect on the workload.',
+  },
+  {
+    label: 'Kernels', layers: ['model', 'runtime', 'memory', 'hardware'],
+    title: 'Match execution to the model and machine.',
+    description: 'Kernel choices connect model operations to execution, memory layout, and the processor. strided will tune those choices together and check the workload result.',
+  },
+  {
+    label: 'Hyperparameters', layers: ['workload', 'model', 'runtime', 'memory'],
+    title: 'Tune settings against the whole workload.',
+    description: 'Model and serving hyperparameters change the work the runtime executes and the memory it needs. strided will evaluate them together, within your quality and resource limits.',
+  },
+  {
+    label: 'Scheduling', layers: ['workload', 'runtime', 'memory', 'hardware'],
+    title: 'Place work where capacity can support it.',
+    description: 'Batching, concurrency, and placement connect incoming requests to execution, memory capacity, and hardware. strided will coordinate them as demand changes.',
+  },
 ];
 
 export default function SystemMap() {
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(0);
+  const adjustment = adjustments[active];
+  const affected = (id: Layer) => adjustment.layers.includes(id);
+
   return (
     <div className="system-map">
-      <div className="map-heading"><span className="eyebrow">A local model host</span><span className="map-caption">Design direction</span></div>
+      <div className="map-heading">
+        <p className="control-heading"><span className="control-name">strided</span><span>Coordinates the stack</span></p>
+        <span className="map-caption">Design direction</span>
+      </div>
       <div className="map-body">
         <svg className="stack-art" viewBox="0 0 310 377" preserveAspectRatio="none" aria-hidden="true">
           <defs>
@@ -21,11 +51,9 @@ export default function SystemMap() {
           </defs>
           <path className="stack-axis" d="M153 7 V360" />
           {[...layers].reverse().map((layer, reversed) => {
-            const i = layers.length - 1 - reversed;
-            const y = i * 62 + 5;
-            const selected = i === active;
+            const y = (layers.length - 1 - reversed) * 62 + 5;
             return (
-              <g key={layer.name} className={`slab${selected ? ' selected' : ''}${layer.name === 'Runtime' ? ' strided-layer' : ''}`}>
+              <g key={layer.id} className={`slab${affected(layer.id) ? ' is-affected' : ''}`}>
                 <path className="slab-side" d={`M35 ${y + 42} L153 ${y + 76} L271 ${y + 42} V${y + 55} L153 ${y + 89} L35 ${y + 55} Z`} />
                 <path className="slab-top" d={`M35 ${y + 42} L153 ${y + 8} L271 ${y + 42} L153 ${y + 76} Z`} />
                 <path fill="url(#etch)" d={`M35 ${y + 42} L153 ${y + 8} L271 ${y + 42} L153 ${y + 76} Z`} />
@@ -33,26 +61,41 @@ export default function SystemMap() {
                 {Array.from({ length: 5 }, (_, j) => <path key={j} className="slab-slot" d={`M${53 + j * 15} ${y + 54 + j * 4.3} l8 2.3`} />)}
                 <path className="slab-joint" d={`M153 ${y + 77} V${y + 88}`} />
                 <path className="slab-leader" d={`M272 ${y + 43} H305`} />
-                <circle className="slab-port" cx="278" cy={y + 43} r={selected ? 3 : 2} />
-                {selected && <g className="chip"><path d={`M127 ${y + 38} L153 ${y + 30} L179 ${y + 38} L153 ${y + 46} Z`} /><path d={`M127 ${y + 38} v7 l26 8 26 -8 v-7 M153 ${y + 46} v7`} /></g>}
+                <circle className="slab-port" cx="278" cy={y + 43} r="2" />
               </g>
             );
           })}
+          <g className="control-rail">
+            <path className="control-spine" d="M13 0 V295" />
+            {layers.map((layer, i) => (
+              <g key={layer.id} className={`control-connection${affected(layer.id) ? ' is-affected' : ''}`}>
+                <path d={`M13 ${i * 62 + 47} H35`} />
+                <circle cx="13" cy={i * 62 + 47} r="3" />
+              </g>
+            ))}
+          </g>
           <path className="stack-base" d="M17 321 L153 360 L289 321 M17 333 L153 372 L289 333" />
         </svg>
-        <div className="layer-controls" role="group" aria-label="Explore system layers">
-          {layers.map((layer, i) => (
-            <button key={layer.name} className={`layer-button${i === active ? ' is-active' : ''}${layer.name === 'Runtime' ? ' strided-control' : ''}`} aria-label={`${layer.name}${layer.name === 'Runtime' ? ' strided' : ''}: ${layer.signal}`} aria-pressed={i === active} aria-controls="layer-description" onClick={() => setActive(i)}>
-              <span className="layer-name">{layer.name}{layer.name === 'Runtime' && <span className="layer-owner">strided</span>}<span className="layer-dot" aria-hidden="true" /></span>
+        <ul className="stack-labels" role="list" aria-label="Model hosting stack">
+          {layers.map(layer => (
+            <li key={layer.id} className={`layer-label${affected(layer.id) ? ' is-affected' : ''}`}>
+              <span className="layer-name">{layer.name}<span className="layer-dot" aria-hidden="true" /></span>
               <span className="layer-signal">{layer.signal}</span>
-            </button>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
-      <div className="map-detail" id="layer-description" aria-live="polite" aria-atomic="true">
-        <div><p className="map-detail-title">{layers[active].title}</p><p className="map-detail-copy">{layers[active].description}</p></div>
+      <div className="adjustment-controls" role="group" aria-label="Explore coordinated adjustments">
+        {adjustments.map((item, i) => (
+          <button key={item.label} type="button" aria-pressed={i === active} aria-controls="control-description" onClick={() => setActive(i)}>{item.label}</button>
+        ))}
       </div>
-      <p className="map-footnote">strided tuning is shown in purple. Select a layer to explore.</p>
+      <div className="map-detail" id="control-description" aria-live="polite" aria-atomic="true">
+        <p className="map-detail-title">{adjustment.title}</p>
+        <p className="map-detail-copy">{adjustment.description}</p>
+        <p className="map-scope"><span>Spans </span>{layers.filter(layer => affected(layer.id)).map(layer => layer.name).join(' · ')}</p>
+      </div>
+      <p className="map-footnote">Select an adjustment to see which parts work together.</p>
     </div>
   );
 }
