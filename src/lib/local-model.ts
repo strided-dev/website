@@ -62,12 +62,17 @@ function faces(x0: number, x1: number, z0: number, z1: number, height: number) {
 
 // Keep the supplied graphic's isometric language. Each cube now represents
 // a fixed memory block, rather than a device or a power measurement.
+export function cubeSolidPaths(cell: Cell, allocation: number) {
+  if (!allocation) return { left: '', right: '', top: '' };
+  const x0 = cell.x + 0.2, z0 = cell.z + 0.2;
+  return faces(x0, x0 + 0.6, z0, z0 + 0.6, 38 * allocation);
+}
+
 export function cubePaths(cell: Cell, allocation: number) {
   const x0 = cell.x + 0.2, z0 = cell.z + 0.2;
-  const solid = faces(x0, x0 + 0.6, z0, z0 + 0.6, 38 * allocation);
   const wire = faces(x0, x0 + 0.6, z0, z0 + 0.6, 38);
   return {
     wire: wire.left + wire.right + wire.top,
-    left: allocation ? solid.left : '', right: allocation ? solid.right : '', top: allocation ? solid.top : '',
+    ...cubeSolidPaths(cell, allocation),
   };
 }
