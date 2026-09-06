@@ -2,7 +2,7 @@
   "schema": "strided.design-system/v1",
   "brand": {
     "name": "strided",
-    "positioning": "Local model hosting with automatic runtime tuning, adapting memory allocation, batching, and concurrency to the model, hardware, and workload.",
+    "positioning": "Starting with local model hosting and automatic runtime tuning, with the ambition to expand into shared model serving and coordinated control of data center systems.",
     "origin": "Built around the practical work of hosting models locally: fitting memory, handling requests, and adjusting runtime settings.",
     "principles": [
       "Rigorous, not sterile",
@@ -13,7 +13,7 @@
     "visualRule": "Premium comes from proportion, typography, material contrast, and restraint. Color behaves like an instrument state, never campaign art.",
     "sampleCopy": {
       "headline": "Local models. Tuned to your machine.",
-      "body": "strided is being built to host models on hardware you control and automatically adjust runtime settings as your workload changes. Every adjustment should stay within your limits and keep a way back.",
+      "body": "strided is being built to host models on hardware you control and automatically adjust runtime settings as your workload changes. The longer-term ambition is to extend this foundation to shared model serving and coordinated control of data center systems. Every adjustment should stay within your limits and keep a way back.",
       "terminal": "Local host / illustrative configuration\n  gpu_memory_budget     24 GiB\n  context_limit         8192 tokens\n  request_slots         4"
     }
   },

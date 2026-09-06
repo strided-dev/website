@@ -33,7 +33,9 @@ Newsreader is the selected display and wordmark face. IBM Plex Sans and IBM Plex
 
 ## Content and diagrams
 
-The site describes local model hosting with automatic runtime tuning. Here, local means models running on hardware the customer controls. Memory allocation, context limits, batching, and concurrency adapt to the workload within configured boundaries. The product is described as in development; the website does not start a model host or claim that these examples are released product output.
+The site leads with local model hosting and automatic runtime tuning. Here, local means models running on hardware the customer controls. Memory allocation, context limits, batching, and concurrency adapt to the workload within configured boundaries. The product is described as in development; the website does not start a model host or claim that these examples are released product output.
+
+The Vision section explains the intended growth path before showing the local-host example: local model hosting as the current focus, shared model serving as an expansion path, and data center systems as the long-term ambition. It connects these stages through a common observe-adjust-verify loop and names the additional coordination, isolation, reliability, and operator controls broader deployments would require. This is a product direction, not a release schedule or a claim of deployed capabilities. The progression uses static HTML and existing typography, with no extra scripts, images, or decorative numbering.
 
 The architecture illustration is an accessible selector for workload, model, runtime, memory, and hardware. The evidence explorer shows synthetic context and request pressure, with a keyboard-operable time inspector, an allocated-memory breakdown, a data table, and CSV export. Every trace is illustrative, not telemetry or a measured benchmark. The submission flow collects research captures from local workloads.
 

@@ -4,7 +4,7 @@ test('previously shared Vision URLs lead to the homepage section', async ({ page
   await page.goto('/vision');
   await expect(page).toHaveURL(/\/#vision$/);
   await expect(page.locator('#vision-title')).toBeInViewport();
-  await expect(page.locator('#vision-title')).toContainText('Models that adapt');
+  await expect(page.locator('#vision-title')).toContainText('From local models');
 });
 
 test('local workloads change memory and request settings and restore the baseline', async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe('static baseline', () => {
     await page.evaluate(() => document.fonts.ready);
     // Let the native anchor scroll finish before testing another interaction.
     await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById('vision')!.getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)))).toBeLessThan(2);
-    await expect(page.locator('#vision-title')).toContainText('Models that adapt');
+    await expect(page.locator('#vision-title')).toContainText('From local models');
     await expect(page.getByRole('img', { name: 'Local model memory allocation' })).toBeVisible();
     await expect(page.locator('[data-metric="memory"]')).toHaveText('16.0');
     await expect(page.locator('[data-metric="requests"]')).toHaveText('4');

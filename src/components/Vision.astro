@@ -6,28 +6,41 @@ import ModelExplorer from './ModelExplorer.astro';
     <div class="vision-heading">
       <div>
         <p class="eyebrow">Vision</p>
-        <h2 id="vision-title">Models that adapt<br />as your work changes.</h2>
+        <h2 id="vision-title">From local models<br />to data center systems.</h2>
       </div>
       <div class="vision-intro">
-        <p class="vision-lead">Choose the model.<br />Set the boundaries.</p>
-        <p>strided will take care of the runtime adjustments: making room for longer prompts, managing concurrent requests, and releasing unused cache. You should be able to see what changed, why it changed, and how to return to the previous settings.</p>
+        <p class="vision-lead">Local hosting is our starting point.</p>
+        <p>We're building automatic runtime tuning for models on your own hardware. Our longer-term ambition is to extend that control to model serving across shared compute and, eventually, the data center.</p>
       </div>
     </div>
 
+    <ol class="growth-stages" role="list" aria-label="Our intended expansion path">
+      <li>
+        <p class="growth-stage-label">Current focus · In development</p>
+        <h3>Local model hosting</h3>
+        <p class="growth-description">Host models on one machine and automatically adjust memory, batching, and concurrency. Start by making that control loop useful, observable, and reliable.</p>
+      </li>
+      <li>
+        <p class="growth-stage-label">Expansion path</p>
+        <h3>Shared model serving</h3>
+        <p class="growth-description">Extend the foundation to teams running multiple models across multiple machines. Coordinate workload placement, request queues, and capacity across shared compute.</p>
+      </li>
+      <li>
+        <p class="growth-stage-label">Long-term ambition</p>
+        <h3>Data center systems</h3>
+        <p class="growth-description">Connect model serving and runtime decisions to scheduling, hardware, networking, power, and thermal constraints. Work toward coordinated control of the full system.</p>
+      </li>
+    </ol>
+    <p class="growth-foundation">What carries forward is the control loop: observe the workload, adjust within limits, and verify the result. Expanding its scope will require shared scheduling, workload isolation, production reliability, and operator controls.</p>
+
     <div class="vision-model" id="local-model">
       <div class="model-heading">
-        <h3>The workload changes. The settings follow.</h3>
+        <div><p class="eyebrow">Starting with local hosting</p><h3>The workload changes.<br />The settings follow.</h3></div>
         <p>Explore a local host with 24 GiB of GPU memory. Choose a workload to see an example of how context limits, request slots, and memory allocation could adapt.</p>
       </div>
       <ModelExplorer />
     </div>
 
-    <dl class="vision-capabilities">
-      <div><dt>Host where you work.</dt><dd>Run your chosen models on hardware you control. Keep model selection and the machine's resource limits visible.</dd></div>
-      <div><dt>Adjust as demand changes.</dt><dd>Adapt batching, concurrency, and cache allocation to the requests arriving now, within the boundaries you set.</dd></div>
-      <div><dt>Keep every change accountable.</dt><dd>Record the settings and the signals behind each adjustment. Compare the result and keep a way back.</dd></div>
-    </dl>
-    <p class="vision-direction">This is the local hosting experience we're building. The examples explain the direction; they are not output from a released host.</p>
   </div>
 </section>
 
@@ -38,22 +51,25 @@ import ModelExplorer from './ModelExplorer.astro';
   .vision-intro { padding-top: 42px; max-width: 520px; }
   .vision-lead { font: 400 27px/1.45 var(--font-display); letter-spacing: -.01em; }
   .vision-intro > p:not(.vision-lead) { font-size: 14px; color: var(--text-secondary); line-height: 1.85; margin-top: 21px; }
-  .vision-model { margin-top: 64px; }
-  .model-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; margin-bottom: 28px; }
+  .growth-stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; list-style: none; padding: 0; margin: 48px 0 0; }
+  .growth-stage-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 18px; }
+  .growth-stages h3 { font-size: 29px; }
+  .growth-description { margin-top: 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.85; }
+  .growth-foundation { max-width: 940px; margin-top: 32px; font-size: 13px; color: var(--text-secondary); line-height: 1.85; }
+  .vision-model { margin-top: 72px; }
+  .model-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 28px; }
+  .model-heading .eyebrow { margin-bottom: 18px; }
   .model-heading h3 { font-size: 29px; }
   .model-heading > p { max-width: 520px; font-size: 13px; line-height: 1.85; color: var(--text-secondary); }
-  .vision-capabilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; margin: 64px 0 0; }
-  .vision-capabilities dt { font: 400 27px/1.2 var(--font-display); letter-spacing: -.015em; }
-  .vision-capabilities dd { margin: 18px 0 0; font-size: 13px; color: var(--text-secondary); line-height: 1.85; }
-  .vision-direction { max-width: 720px; margin-top: 36px; font-size: 12px; color: var(--text-secondary); }
-  @media (max-width: 950px) { .vision-heading, .model-heading { gap: 40px; } .vision-capabilities { gap: 32px; } }
+  @media (max-width: 950px) { .vision-heading, .model-heading { gap: 40px; } .growth-stages { gap: 32px; } }
   @media (max-width: 760px) {
     .vision-heading, .model-heading { grid-template-columns: 1fr; gap: 28px; }
     .vision-intro { padding-top: 0; }
     .vision-lead { font-size: 25px; }
-    .vision-model { margin-top: 44px; }
+    .growth-stages { grid-template-columns: 1fr; gap: 32px; margin-top: 36px; }
+    .growth-stage-label { margin-bottom: 12px; }
+    .growth-description { margin-top: 12px; }
+    .vision-model { margin-top: 48px; }
     .model-heading { gap: 16px; }
-    .vision-capabilities { grid-template-columns: 1fr; gap: 30px; margin-top: 44px; }
-    .vision-capabilities dd { margin-top: 12px; }
   }
 </style>
