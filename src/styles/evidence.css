@@ -50,14 +50,14 @@
 .reading-rule { font: 9px/1.7 var(--font-mono); color: var(--strided-bezel-dark); margin-top: 42px; }
 .evidence-reading h3 { font-size: 32px; line-height: 1.18; letter-spacing: -.018em; margin-top: 15px; }
 .evidence-reading h3 span { display: block; }
-.evidence-reading > p { font-size: 12px; line-height: 1.9; color: var(--strided-bezel-dark); margin-top: 23px; }
+.evidence-reading > p { font-size: 14px; line-height: 1.75; color: var(--strided-bezel-dark); margin-top: 23px; }
 .reading-next { margin-top: 36px; }
 .reading-next > span { font: 9px/1.5 var(--font-mono); }
-.reading-next > p { font-size: 12px; line-height: 1.85; color: var(--strided-bezel-dark); margin-top: 12px; }
+.reading-next > p { font-size: 14px; line-height: 1.75; color: var(--strided-bezel-dark); margin-top: 12px; }
 .reading-footnote { position: relative; padding-left: 19px; font: 9px/1.8 var(--font-mono); color: var(--strided-bezel-dark); margin-top: 35px; }
 .reading-footnote > span { position: absolute; left: 0; }
 .explorer-footer { display: flex; gap: 20px; align-items: start; justify-content: space-between; padding-top: 17px; }
-.explorer-footer p { font-size: 10px; color: var(--text-secondary); max-width: 610px; }
+.explorer-footer p { font-size: 12px; line-height: 1.65; color: var(--text-secondary); max-width: 650px; }
 .explorer-footer a { font: 10px/1.7 var(--font-mono); white-space: nowrap; text-decoration: none; }
 .explorer-footer a:hover { text-decoration: underline; }
 .explorer-footer a span { margin-left: 12px; }
