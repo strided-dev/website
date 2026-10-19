@@ -34,11 +34,13 @@
 .adjustment-controls button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-secondary); padding: 10px 0; min-height: 44px; font-size: 14px; }
 .adjustment-controls button:hover { color: var(--ink); }
 .adjustment-controls button[aria-pressed='true'] { border-color: var(--strided-purple); color: var(--strided-purple); font-weight: 500; }
-.map-detail { padding-top: 19px; min-height: 145px; }
+.map-detail { padding-top: 19px; min-height: 172px; }
 .map-detail-title { font-size: 15px; margin-bottom: 7px; }
 .map-detail-copy { font-size: 15px; line-height: 1.7; color: var(--text-secondary); max-width: 520px; }
 .map-scope { margin-top: 12px; font-size: 12px; color: var(--strided-purple); line-height: 1.65; }
 .map-scope > span { color: var(--text-secondary); }
+.map-knob { margin-top: 4px; font-size: 12px; line-height: 1.65; color: var(--text-secondary); }
+.map-knob code { font: 12px/1.65 var(--font-mono); color: var(--strided-purple); }
 .map-footnote { font-size: 12px; color: var(--text-secondary); padding-top: 8px; }
 @media (max-width: 1100px) and (min-width: 761px) {
   .map-body { grid-template-columns: 58% 42%; }
@@ -47,7 +49,7 @@
   .layer-label { padding-left: 7px; }
   .layer-signal { font-size: 10px; }
   .adjustment-controls { column-gap: 17px; }
-  .map-detail { min-height: 165px; }
+  .map-detail { min-height: 192px; }
 }
 @media (max-width: 420px) {
   .map-body { grid-template-columns: 58% 42%; }
@@ -57,5 +59,5 @@
   .layer-signal { font-size: 10px; }
   .layer-name { font-size: 14px; }
   .adjustment-controls { column-gap: 18px; }
-  .map-detail { min-height: 165px; }
+  .map-detail { min-height: 192px; }
 }

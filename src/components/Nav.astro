@@ -4,10 +4,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const home = currentPath === '/';
 const section = (id: string) => `${home ? '' : '/'}#${id}`;
 const sections = [
-  { id: 'system', label: 'The system' },
+  { id: 'vivace', label: 'vivace' },
+  { id: 'tuning', label: 'Live tuning' },
+  { id: 'benchmarks', label: 'Benchmarks' },
   { id: 'vision', label: 'Vision' },
-  { id: 'approach', label: 'Our approach' },
-  { id: 'research', label: 'Research' },
 ];
 ---
 <header class="site-header">
@@ -16,7 +16,7 @@ const sections = [
     <nav class="main-nav" aria-label="Main navigation">
       {sections.map(item => <a href={section(item.id)} data-section-link={item.id}>{item.label}</a>)}
     </nav>
-    <a href="/submit" class="nav-cta" aria-current={currentPath === '/submit' ? 'page' : undefined}>Share a workload <span class="arrow" aria-hidden="true">↗</span></a>
+    <a href={section('beta')} class="nav-cta">Join the beta <span class="arrow" aria-hidden="true">{home ? '↓' : '↗'}</span></a>
     <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
   </div>
   <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>

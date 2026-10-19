@@ -1,0 +1,14 @@
+/* Form controls shared by the workload submission and the beta list. */
+.field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.flabel { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+.flabel i { font-style: normal; margin-left: 3px; }
+.field input, .field select, .field textarea { width: 100%; min-height: 46px; border: 1px solid var(--border-primary); border-radius: 2px; background: var(--paper-card); color: var(--ink); padding: 11px 12px; font-size: 13px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--text-tertiary); }
+.field textarea { min-height: 110px; resize: vertical; line-height: 1.7; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: 1px solid var(--ink); outline-offset: 1px; }
+.submit-btn { display: flex; justify-content: space-between; min-height: 48px; align-items: center; padding: 12px 18px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper-card); border-radius: 2px; font-size: 12px; }
+.submit-btn:hover:not(:disabled) { background: var(--strided-accent); }
+.submit-btn:disabled { opacity: .48; }
+@media (max-width: 760px) {
+  .field input, .field select, .field textarea { font-size: 16px; }
+}

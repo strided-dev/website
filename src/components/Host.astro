@@ -1,0 +1,61 @@
+---
+import ModelExplorer from './ModelExplorer.astro';
+const features = [
+  { name: 'Native on every OS', body: 'Windows, macOS, and Linux. CUDA for GeForce RTX 30, 40, and 50 series, Metal for Apple silicon, and HIP for AMD Radeon.' },
+  { name: 'Conversations stay cached', body: 'A finished turn keeps its KV cache. The next turn reuses every matching token and prefills only the new message.' },
+  { name: 'Built for many at once', body: 'Continuous batching, chunked prefill, and a paged KV cache let many conversations share one GPU.' },
+  { name: 'Recovers on its own', body: 'A GPU fault ends the process cleanly. The supervisor restarts it, and chat resumes the transcript where it stopped.' },
+  { name: 'Yours to build on', body: 'A chat REPL, a benchmark harness, and a synchronous Rust library, all from one binary.' },
+];
+---
+<section class="host-section" id="vivace" aria-labelledby="vivace-title">
+  <div class="host container">
+    <div class="host-heading">
+      <p class="eyebrow">vivace</p>
+      <h2 id="vivace-title">A local host,<br />built from the kernels up.</h2>
+      <p class="host-description">One process per GPU. Your models and your prompts never leave the machine.</p>
+    </div>
+    <div class="host-story">
+      <p class="story-lead">vivace runs the GGUF models you already use, on the GPU you already have, with its own scheduler, KV cache, and kernels.</p>
+      <p class="story-body">The host and the tuner are one program, so <strong class="strided-emphasis">strided sees every step as it happens</strong> and changes settings between steps, without reloading the model or dropping a request.</p>
+      <dl class="features">
+        {features.map(item => <div><dt>{item.name}</dt><dd>{item.body}</dd></div>)}
+      </dl>
+    </div>
+  </div>
+
+  <div class="host-memory" id="memory">
+    <div class="container">
+      <div class="memory-heading">
+        <div><p class="eyebrow">Memory</p><h3 id="memory-title">Memory follows<br />the conversation.</h3></div>
+        <p>Explore a GPU with 24 GiB of memory. Choose a workload to see how vivace's KV cache fills, parks, and frees as the work changes.</p>
+      </div>
+      <ModelExplorer />
+    </div>
+  </div>
+</section>
+<style>
+  .host { padding-block: 64px var(--section-space); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .host-heading .eyebrow { margin-bottom: 28px; }
+  .host-description { max-width: 390px; margin-top: 26px; font-size: 16px; line-height: 1.75; color: var(--text-secondary); }
+  .host-story { padding-top: 42px; }
+  .story-lead { font-family: var(--font-display); font-size: 27px; line-height: 1.45; letter-spacing: -.01em; }
+  .story-body { color: var(--text-secondary); font-size: 16px; line-height: 1.75; margin-top: 21px; max-width: 540px; }
+  .features { display: grid; gap: 24px; margin: 34px 0 0; }
+  .features > div { display: grid; grid-template-columns: 170px 1fr; gap: 20px; font-size: 13px; line-height: 1.65; }
+  dt { font-weight: 500; }
+  dd { margin: 0; color: var(--text-secondary); }
+  .host-memory { background: var(--paper-card); padding-block: var(--section-space); }
+  .memory-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 28px; }
+  .memory-heading .eyebrow { margin-bottom: 18px; }
+  .memory-heading h3 { font-size: 29px; }
+  .memory-heading > p { max-width: 540px; font-size: 15px; line-height: 1.75; color: var(--text-secondary); }
+  @media (max-width: 950px) { .host, .memory-heading { gap: 40px; } .features > div { grid-template-columns: 140px 1fr; gap: 14px; } }
+  @media (max-width: 760px) {
+    .host { grid-template-columns: 1fr; gap: 28px; }
+    .host-story { padding-top: 0; }
+    .story-lead { font-size: 25px; }
+    .features > div { grid-template-columns: 1fr; gap: 4px; }
+    .memory-heading { grid-template-columns: 1fr; gap: 16px; }
+  }
+</style>

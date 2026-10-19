@@ -1,7 +1,7 @@
 /* Shared contract + validation for the dump submission flow. */
 
 export const MAX_BYTES = 50 * 1024 * 1024; // keep in sync with DumpForm MAX_MB
-export const ENGINES = ["vllm", "sglang", "trt-llm", "other"] as const;
+export const ENGINES = ["llama.cpp", "ollama", "vllm", "sglang", "trt-llm", "other"] as const;
 
 export type DumpMeta = {
   name: string;
@@ -13,7 +13,8 @@ export type DumpMeta = {
   fileSize: number;
 };
 
-const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+export const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+export const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 /** Coerce + validate untrusted JSON into DumpMeta. Returns an error string or the value. */
 export function parseMeta(raw: unknown): { error: string } | { value: DumpMeta } {
@@ -28,7 +29,7 @@ export function parseMeta(raw: unknown): { error: string } | { value: DumpMeta }
     fileSize: typeof r.fileSize === "number" && Number.isFinite(r.fileSize) ? r.fileSize : 0,
   };
   if (!meta.name) return { error: "Name is required." };
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(meta.email)) return { error: "A valid email is required." };
+  if (!isEmail(meta.email)) return { error: "A valid email is required." };
   if (meta.fileSize <= 0) return { error: "File size is required." };
   if (meta.fileSize > MAX_BYTES) return { error: "Dump exceeds the 50 MB limit." };
   return { value: meta };

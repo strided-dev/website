@@ -2,21 +2,21 @@ import { test, expect } from '@playwright/test';
 
 test('all section links stay on the homepage, preserve the graphic, and support history', async ({ page, isMobile }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/#vision');
+  await page.goto('/#memory');
   await page.evaluate(() => document.fonts.ready);
-  const idle = page.locator('[data-model-explorer]').getByRole('button', { name: 'Idle', exact: true });
-  await expect(idle).toBeEnabled();
-  await idle.click();
+  const agent = page.locator('[data-model-explorer]').getByRole('button', { name: 'Agent loop', exact: true });
+  await expect(agent).toBeEnabled();
+  await agent.click();
   const documentRequests: string[] = [];
   page.on('request', request => {
     if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentRequests.push(request.url());
   });
   const navigation = page.getByRole('navigation', { name: isMobile ? 'Mobile navigation' : 'Main navigation', exact: true, includeHidden: true });
   const links = [
-    { label: 'The system', id: 'system', heading: 'system-title' },
+    { label: 'vivace', id: 'vivace', heading: 'vivace-title' },
+    { label: 'Live tuning', id: 'tuning', heading: 'tuning-title' },
+    { label: 'Benchmarks', id: 'benchmarks', heading: 'benchmarks-title' },
     { label: 'Vision', id: 'vision', heading: 'vision-title' },
-    { label: 'Our approach', id: 'approach', heading: 'approach-title' },
-    { label: 'Research', id: 'research', heading: 'research-title' },
   ];
   for (const item of links) {
     if (isMobile) await page.getByRole('button', { name: 'Open navigation' }).click();
@@ -30,11 +30,11 @@ test('all section links stay on the homepage, preserve the graphic, and support 
     if (isMobile) await expect(navigation).toBeHidden();
   }
   await page.goBack();
-  await expect(page).toHaveURL(/\/#approach$/);
-  await expect(navigation.locator('[data-section-link="approach"]')).toHaveAttribute('aria-current', 'location');
-  await page.locator('#vision').evaluate(section => section.scrollIntoView());
-  await expect(navigation.locator('[data-section-link="vision"]')).toHaveAttribute('aria-current', 'location');
-  await expect(idle).toHaveAttribute('aria-pressed', 'true');
+  await expect(page).toHaveURL(/\/#benchmarks$/);
+  await expect(navigation.locator('[data-section-link="benchmarks"]')).toHaveAttribute('aria-current', 'location');
+  await page.locator('#tuning').evaluate(section => section.scrollIntoView());
+  await expect(navigation.locator('[data-section-link="tuning"]')).toHaveAttribute('aria-current', 'location');
+  await expect(agent).toHaveAttribute('aria-pressed', 'true');
   expect(documentRequests).toEqual([]);
 
   await page.goto('/submit');

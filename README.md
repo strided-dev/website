@@ -1,6 +1,6 @@
 # strided website
 
-Astro marketing site and workload submission flow. Pages are prerendered; the two upload endpoints run through the Vercel adapter.
+Astro marketing site for vivace, the vivace beta list, and the workload submission flow. Pages are prerendered; the beta and upload endpoints run through the Vercel adapter.
 
 ## Develop and verify
 
@@ -15,7 +15,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Browser checks cover desktop and mobile section navigation, active section state, browser history, legacy Vision links, graph controls, CSV export, local workload allocations and baseline reset, the vision without JavaScript, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Upload services are mocked: tests do not upload customer data or send email. Screenshots are written to `test-results/`.
+Browser checks cover desktop and mobile section navigation, active section state, browser history, legacy Vision links, system map controls, trial outcomes, keyboard inspection, CSV export, memory workloads and the loaded-state reset, the memory example without JavaScript, beta signup success, failure, validation, and the no-JavaScript form, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Beta and upload services are mocked: tests do not upload customer data, create contacts, or send email. Screenshots are written to `test-results/`.
 
 ## Brand source
 
@@ -35,29 +35,43 @@ The logo's exact purple (`#4a0081`, exported as `--strided-purple`) highlights s
 
 ## Content and diagrams
 
-The site leads with local model hosting and automatic runtime tuning. Here, local means models running on hardware the customer controls. Memory allocation, context limits, batching, and concurrency adapt to the workload within configured boundaries. The product is described as in development; the website does not start a model host or claim that these examples are released product output.
+The site presents vivace, a local model host built from the kernels up, with strided and gait running inside it. Here, local means models running on hardware the customer controls. vivace serves the model; strided reads every engine step from the in-process telemetry ring and diagnoses what limits the workload; gait trials one setting at a time against live traffic and keeps it only when the evidence holds. The product is described as in development; the website does not start a model host or claim that any example is released product output or a measured result. Copy follows `vivace-architecture.md` in the vivace repository: knob names, risk classes, trial phases, guardrail behavior, and benchmark rows come from it. Update both together.
 
-The Vision section explains the intended growth path before showing the local-host example: local model hosting as the current focus, shared model serving as an expansion path, and data center systems as the long-term ambition. It connects these stages through a common observe-adjust-verify loop and names the additional coordination, isolation, reliability, and operator controls broader deployments would require. This is a product direction, not a release schedule or a claim of deployed capabilities. The progression uses static HTML and existing typography, with no extra scripts, images, or decorative numbering.
+The homepage reads in this order: hero (`#main`), vivace (`#vivace`, with the memory example at `#memory`), live tuning (`#tuning`, with the trial example at `#trial`), benchmarks (`#benchmarks`), vision (`#vision`), and the beta list (`#beta`).
 
-The architecture illustration shows strided coordinating workload, model, runtime, memory, and hardware through one control loop. Its overview connects every level. Kernel, hyperparameter, and scheduling examples each connect several levels and explain the relationship, rather than inserting strided into a single runtime layer. The controls are keyboard accessible and announce the selected explanation and affected layers. These are illustrative coordination examples for the product in development. The evidence explorer shows synthetic context and request pressure, with a keyboard-operable time inspector, an allocated-memory breakdown, a data table, and CSV export. Every trace is illustrative, not telemetry or a measured benchmark. The submission flow collects research captures from local workloads.
+The hero illustration shows strided tuning vivace inside one process: workload, scheduler, KV cache, kernels, and GPU, with a purple control line connected to every level. Its overview connects every level. Prefill, batching, attention, and memory examples each name the vivace knob gait would trial and the layers it reaches. The controls are keyboard accessible and announce the selected explanation, affected layers, and setting.
 
-The four main navigation links point to homepage sections in reading order: `#system`, `#vision`, `#approach`, and `#research`. Each section introduces its purpose before its supporting content. The approach contains both the method and the evidence explorer. From the submission page, these links return to the same homepage anchors. A separate button opens the workload submission flow. Native anchors scroll smoothly to the section, leave room for the sticky header, and preserve browser history and interaction state. Reduced-motion preferences use an immediate transition. An IntersectionObserver marks the visible section without a scroll handler or JavaScript animation loop.
+The live tuning section explains strided's observe step, gait's side-by-side trial, and the keep-or-revert decision, then the authority policy: performance settings apply automatically, resource settings need `--allow-resource`, and quality settings need a human. The trial explorer shows synthetic gait trials (kept, reverted by the guardrail, and inconclusive after a traffic shift) with arm B windows shaded, a keyboard-operable window inspector, the trial phases with the skipped phase marked, a data table, and CSV export. Every trial is illustrative, not telemetry or a measured benchmark.
 
-Sections use descriptive headings and spacing instead of decorative numbering. Monospace is reserved for technical readouts. Divider lines belong to charts, tabular data, and controls; editorial content uses typography and surface changes for hierarchy.
+The benchmarks section states the bar vivace is built to (every workload against llama.cpp and Ollama on the same GGUF file), the workloads, and the honesty checks, without numbers. Publish numbers only from the benchmark harness, and keep the hardware line accurate: say "designed for, not yet measured" for anything not measured.
+
+The vision section explains the intended growth path: one machine as the current focus, many machines as an expansion path, and the data center as the long-term ambition, connected by the same observe-adjust-verify loop. This is a product direction, not a release schedule or a claim of deployed capabilities.
+
+The four main navigation links point to homepage sections in reading order: `#vivace`, `#tuning`, `#benchmarks`, and `#vision`. Each section introduces its purpose before its supporting content. The header button joins the beta list at `#beta`. From the submission page, these links return to the same homepage anchors. Native anchors scroll smoothly to the section, leave room for the sticky header, and preserve browser history and interaction state. Reduced-motion preferences use an immediate transition. An IntersectionObserver marks the visible section without a scroll handler or JavaScript animation loop.
+
+Sections use descriptive headings and spacing instead of decorative numbering. Monospace is reserved for technical readouts, knob names, and flags. Divider lines belong to charts, tabular data, and controls; editorial content uses typography and surface changes for hierarchy.
 
 Do not use em dashes in site copy, page titles, captions, emails, or brand copy. Use commas, colons, or separate sentences as appropriate.
 
-Always write the brand name as `strided`, including at the start of a sentence, in page titles, metadata, accessible labels, and emails.
+Always write the brand name as `strided`, including at the start of a sentence, in page titles, metadata, accessible labels, and emails. Write `vivace` and `gait` in lowercase too.
 
-Update scenario data and explanations together in `src/components/EvidenceExplorer.tsx`. Keep units, axis bounds, legends, data tables, and the illustrative-data disclosure intact. Changes to the brand selection may also require downloading the corresponding licensed font assets.
+Update trial data and explanations together in `src/components/TrialExplorer.tsx`. Keep units, axis bounds, legends, data tables, and the illustrative-data disclosure intact. Changes to the brand selection may also require downloading the corresponding licensed font assets.
 
-### Vision and local model example
+### Memory example
 
-`Vision.astro` at `/#vision` explains how the host would adjust as work changes. The former `/vision` route redirects there so shared links still work. `ModelExplorer.astro` retains the isometric language of the supplied `strided-rack-cubes.html` graphic, now representing memory on a single local host. Its 48 blocks each represent 0.5 GiB, totaling 24 GiB. Solid blocks show allocated memory and open blocks show headroom. The original HTML file is not needed at build time or in production.
+`ModelExplorer.astro` at `/#memory` retains the isometric language of the supplied `strided-rack-cubes.html` graphic, now representing GPU memory on one vivace host. Its 48 blocks each represent 0.5 GiB, totaling 24 GiB. Solid blocks hold weights, runtime buffers, or cached tokens, and open blocks are free. The former `/vision` route redirects to `/#vision` so shared links still work. The original HTML file is not needed at build time or in production.
 
-The baseline graphic and metrics are available without JavaScript. Five keyboard-operable controls select baseline, chat, long context, batch jobs, or idle. Each change restores the original graphic's 1.4-second cubic ease-out transition: memory blocks rise or settle while allocated memory and headroom track the visible allocation. Only changing solid faces are redrawn; capacity outlines stay fixed. Near the base, each cube's three solid faces fade as one group, avoiding opaque flat caps and a visible pop when empty geometry is removed. A new selection transitions from the current position, and a live status announces the completed result. Reduced motion uses an immediate update. Leaving the viewport, hiding the tab, or enabling reduced motion finishes the transition and cancels pending frames. There is no idle animation loop, 3D library, React runtime, or added dependency.
+The loaded-model graphic and metrics are available without JavaScript. Five keyboard-operable controls select loaded, one chat, eight chats, agent loop, or batch. Each change restores the original graphic's 1.4-second cubic ease-out transition: memory blocks rise or settle while memory in use and free memory track the visible allocation. Only changing solid faces are redrawn; capacity outlines stay fixed. Near the base, each cube's three solid faces fade as one group, avoiding opaque flat caps and a visible pop when empty geometry is removed. A new selection transitions from the current position, and a live status announces the completed result. Reduced motion uses an immediate update. Leaving the viewport, hiding the tab, or enabling reduced motion finishes the transition and cancels pending frames. There is no idle animation loop, 3D library, React runtime, or added dependency.
 
-Edit example settings and their explanations together in `src/lib/local-model.ts`. Each workload assumes 8 GiB of resident weights plus a KV cache reservation and runtime buffers. Allocated memory and headroom are derived from those values. Request slots and context limits illustrate the planned adjustments; cache size is not calculated from a specific architecture. Keep the legend, disclosure, and expandable assumptions with the graphic. Do not present these synthetic settings as compatibility guarantees or measured speed and latency improvements.
+Edit example settings and their explanations together in `src/lib/local-model.ts`. Each workload assumes 8 GiB of resident weights, 1.5 GiB of runtime buffers, and KV cache blocks holding tokens; vivace reserves its KV pool at load, so the filled blocks are the ones in use. Sequence counts and context limits illustrate the workloads; cache size is not calculated from a specific architecture. Keep the legend, disclosure, and expandable assumptions with the graphic. Do not present these synthetic settings as compatibility guarantees or measured speed and latency improvements.
+
+## Beta list
+
+`Beta.astro` at `/#beta` collects interest in the vivace beta: a required email, plus optional name, GPU, operating system, and what the person would run. `/api/beta` validates the signup with `src/lib/beta.ts`, adds the address to Resend contacts (inside the segment `RESEND_SEGMENT_ID` when set), and emails the team with the details. Either step keeps the signup, so the request fails only when both do. Nothing is emailed to the subscriber: a public form must not send mail to arbitrary addresses, and the beta announcement goes out from the contacts list. A hidden `website` field catches bots, which receive the same success response.
+
+The form is a native `POST` that a small script upgrades to `fetch` with an inline result. Without JavaScript, the endpoint redirects to `/#beta-joined` or `/#beta-error` and CSS `:target` shows the result. Astro's origin check rejects cross-site form posts.
+
+Deployment variables: `RESEND_API_KEY`, optional `RESEND_SEGMENT_ID`, and the same optional `EMAIL_FROM` and `EMAIL_TO` as the submission service. Create the segment in Resend before setting it.
 
 ## Submission service
 

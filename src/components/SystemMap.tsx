@@ -2,34 +2,40 @@ import { useState } from 'react';
 import '../styles/system-map.css';
 
 const layers = [
-  { id: 'workload', name: 'Workload', signal: 'Requests · context' },
-  { id: 'model', name: 'Model', signal: 'Hyperparameters' },
-  { id: 'runtime', name: 'Runtime', signal: 'Kernels · execution' },
-  { id: 'memory', name: 'Memory', signal: 'Cache · layout' },
-  { id: 'hardware', name: 'Hardware', signal: 'GPU · CPU · RAM' },
+  { id: 'workload', name: 'Workload', signal: 'Requests · sessions' },
+  { id: 'scheduler', name: 'Scheduler', signal: 'Batching · prefill' },
+  { id: 'cache', name: 'KV cache', signal: 'Paged · parked' },
+  { id: 'kernels', name: 'Kernels', signal: 'CUDA · Metal · HIP' },
+  { id: 'gpu', name: 'GPU', signal: 'RTX · Apple silicon' },
 ] as const;
 type Layer = typeof layers[number]['id'];
 
-const adjustments: { label: string; layers: Layer[]; title: string; description: string }[] = [
+// Each example is a vivace knob that gait can trial live, and the layers it reaches.
+const adjustments: { label: string; layers: Layer[]; knob?: string; title: string; description: string }[] = [
   {
-    label: 'Overview', layers: ['workload', 'model', 'runtime', 'memory', 'hardware'],
-    title: 'One control loop, across the stack.',
-    description: 'strided is being built to coordinate kernel choices, hyperparameters, memory, and scheduling, then verify their combined effect on the workload.',
+    label: 'Overview', layers: ['workload', 'scheduler', 'cache', 'kernels', 'gpu'],
+    title: 'One process. One control loop.',
+    description: 'vivace serves the model. strided reads every engine step from an in-process ring and diagnoses what limits the workload, then gait tests one setting at a time. No sidecar, no IPC, no HTTP.',
   },
   {
-    label: 'Kernels', layers: ['model', 'runtime', 'memory', 'hardware'],
-    title: 'Match execution to the model and machine.',
-    description: 'Kernel choices connect model operations to execution, memory layout, and the processor. strided will tune those choices together and check the workload result.',
+    label: 'Prefill', layers: ['workload', 'scheduler', 'kernels'], knob: 'prefill_chunk_tokens',
+    title: 'Keep replies streaming while prompts load.',
+    description: 'When long prompts stall the replies already streaming, strided flags prefill and decode interference. gait tests a new chunk size so prompt work spreads across steps.',
   },
   {
-    label: 'Hyperparameters', layers: ['workload', 'model', 'runtime', 'memory'],
-    title: 'Tune settings against the whole workload.',
-    description: 'Model and serving hyperparameters change the work the runtime executes and the memory it needs. strided will evaluate them together, within your quality and resource limits.',
+    label: 'Batching', layers: ['workload', 'scheduler', 'cache', 'gpu'], knob: 'max_batch_seqs',
+    title: 'Run more sequences per step.',
+    description: 'When requests queue up, or decode leaves memory bandwidth idle at a small batch, gait tests a larger batch, never past what the memory plan allows.',
   },
   {
-    label: 'Scheduling', layers: ['workload', 'runtime', 'memory', 'hardware'],
-    title: 'Place work where capacity can support it.',
-    description: 'Batching, concurrency, and placement connect incoming requests to execution, memory capacity, and hardware. strided will coordinate them as demand changes.',
+    label: 'Attention', layers: ['cache', 'kernels', 'gpu'], knob: 'attn_decode_splits',
+    title: 'Split decode attention across the GPU.',
+    description: 'With no finding open, gait explores. It splits each decode attention pass into more parallel pieces and keeps the setting only if the measured result improves.',
+  },
+  {
+    label: 'Memory', layers: ['scheduler', 'cache', 'gpu'], knob: 'kv_preempt_watermark',
+    title: 'Act before the cache runs out.',
+    description: 'When the KV cache nears capacity, strided flags the pressure. Resource settings like the preemption watermark change only when you allow it.',
   },
 ];
 
@@ -41,8 +47,8 @@ export default function SystemMap() {
   return (
     <div className="system-map">
       <div className="map-heading">
-        <p className="control-heading"><span className="control-name">strided</span><span>Coordinates the stack</span></p>
-        <span className="map-caption">Design direction</span>
+        <p className="control-heading"><span className="control-name">strided</span><span>Tunes vivace live</span></p>
+        <span className="map-caption">Inside one process</span>
       </div>
       <div className="map-body">
         <svg className="stack-art" viewBox="0 0 310 377" preserveAspectRatio="none" aria-hidden="true">
@@ -76,7 +82,7 @@ export default function SystemMap() {
           </g>
           <path className="stack-base" d="M17 321 L153 360 L289 321 M17 333 L153 372 L289 333" />
         </svg>
-        <ul className="stack-labels" role="list" aria-label="Model hosting stack">
+        <ul className="stack-labels" role="list" aria-label="The vivace stack">
           {layers.map(layer => (
             <li key={layer.id} className={`layer-label${affected(layer.id) ? ' is-affected' : ''}`}>
               <span className="layer-name">{layer.name}<span className="layer-dot" aria-hidden="true" /></span>
@@ -85,7 +91,7 @@ export default function SystemMap() {
           ))}
         </ul>
       </div>
-      <div className="adjustment-controls" role="group" aria-label="Explore coordinated adjustments">
+      <div className="adjustment-controls" role="group" aria-label="Explore live adjustments">
         {adjustments.map((item, i) => (
           <button key={item.label} type="button" aria-pressed={i === active} aria-controls="control-description" onClick={() => setActive(i)}>{item.label}</button>
         ))}
@@ -94,8 +100,9 @@ export default function SystemMap() {
         <p className="map-detail-title">{adjustment.title}</p>
         <p className="map-detail-copy">{adjustment.description}</p>
         <p className="map-scope"><span>Spans </span>{layers.filter(layer => affected(layer.id)).map(layer => layer.name).join(' · ')}</p>
+        <p className="map-knob">{adjustment.knob ? <><span>Setting </span><code>{adjustment.knob}</code></> : <span>Changes land between steps, without a restart</span>}</p>
       </div>
-      <p className="map-footnote">Select an adjustment to see which parts work together.</p>
+      <p className="map-footnote">Select an adjustment to see which layers it reaches.</p>
     </div>
   );
 }

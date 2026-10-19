@@ -45,7 +45,7 @@ export default function DumpForm() {
     name: "",
     email: "",
     company: "",
-    engine: "vllm",
+    engine: "llama.cpp",
     notes: "",
   });
 
@@ -175,8 +175,10 @@ export default function DumpForm() {
           />
         </label>
         <label className="field">
-          <span className="flabel">Inference engine</span>
+          <span className="flabel">Engine you use today</span>
           <select value={form.engine} onChange={set("engine")}>
+            <option value="llama.cpp">llama.cpp</option>
+            <option value="ollama">Ollama</option>
             <option value="vllm">vLLM</option>
             <option value="sglang">SGLang</option>
             <option value="trt-llm">TensorRT-LLM</option>

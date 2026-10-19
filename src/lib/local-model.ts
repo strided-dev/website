@@ -1,38 +1,38 @@
-/** Illustrative local hosting allocations. These are not measured results. */
+/** Illustrative vivace memory use on one GPU. These are not measured results. */
 export const CAPACITY_GIB = 24;
 export const BLOCK_GIB = 0.5;
 export const MODEL_GIB = 8;
 
 export const workloads = [
   {
-    key: 'baseline', label: 'Baseline', cacheGiB: 6, runtimeGiB: 2, requests: 4, context: 8192,
-    title: 'Start with a known configuration.',
-    description: 'One resident model, a reserved KV cache, and four request slots. This is an illustrative starting point before the host responds to a change in workload.',
-    constraint: 'Keep a baseline to compare each adjustment against.',
+    key: 'loaded', label: 'Loaded', cacheGiB: 0, runtimeGiB: 1.5, requests: 0, context: 8192,
+    title: 'Fit first, then serve.',
+    description: 'At load, vivace plans memory for the weights, runtime buffers, and a pool of KV cache blocks. If a full-length conversation would not fit, it refuses cleanly instead of failing later.',
+    constraint: 'Planned at load: room for at least one full-context conversation.',
   },
   {
-    key: 'chat', label: 'Chat', cacheGiB: 3, runtimeGiB: 2, requests: 2, context: 8192,
-    title: 'Make room for the next reply.',
-    description: 'For interactive conversations, this example reduces concurrent request slots and reserves a smaller KV cache. The aim is to keep the machine from taking on more work than it can handle.',
-    constraint: 'Adjustment: fewer simultaneous requests, more memory headroom.',
+    key: 'chat', label: 'One chat', cacheGiB: 2, runtimeGiB: 1.5, requests: 1, context: 8192,
+    title: 'Keep the conversation cached.',
+    description: 'Between turns, the conversation stays parked in the KV cache. The next turn reuses every matching token and prefills only the new message.',
+    constraint: 'Parked between turns: only the new message is prefilled.',
   },
   {
-    key: 'context', label: 'Long context', cacheGiB: 10, runtimeGiB: 2, requests: 1, context: 32768,
-    title: 'Give longer prompts room.',
-    description: 'This example raises the context limit and reserves more KV cache. It reduces concurrency to one request so the larger context can fit within the same memory budget.',
-    constraint: 'Adjustment: a larger context allowance, fewer request slots.',
+    key: 'chats', label: 'Eight chats', cacheGiB: 9, runtimeGiB: 1.5, requests: 8, context: 8192,
+    title: 'Batch conversations together.',
+    description: 'Eight conversations share each decode step. Long prompts are prefilled in chunks, so replies that are already streaming keep their pace.',
+    constraint: 'Tuned live: sequences per step and prefill chunk size.',
   },
   {
-    key: 'batch', label: 'Batch jobs', cacheGiB: 9.5, runtimeGiB: 2.5, requests: 6, context: 4096,
-    title: 'Use spare room for queued work.',
-    description: 'For a queue of shorter jobs, this example allocates more request slots and runtime buffers while lowering the context limit per request.',
-    constraint: 'Adjustment: more concurrent work, a shorter context allowance.',
+    key: 'agent', label: 'Agent loop', cacheGiB: 5, runtimeGiB: 1.5, requests: 1, context: 16384,
+    title: 'Give long loops room.',
+    description: 'An agent builds a 4,096-token prefix, then makes twenty tool calls. Each call appends its result to the cached prefix and prefills only that.',
+    constraint: 'Set at load: a longer context for every sequence.',
   },
   {
-    key: 'idle', label: 'Idle', cacheGiB: 0, runtimeGiB: 0.5, requests: 0, context: 8192,
-    title: 'Release the cache after the work.',
-    description: 'When the requests finish, this example clears the reserved KV cache and reduces runtime buffers. The model stays resident, with no request slots currently in use.',
-    constraint: 'Adjustment: release temporary memory and keep the model loaded.',
+    key: 'batch', label: 'Batch', cacheGiB: 11, runtimeGiB: 1.5, requests: 16, context: 8192,
+    title: 'Fill the GPU with queued work.',
+    description: 'Two hundred independent prompts, sixteen at a time. Nothing parks: each finished sequence frees its blocks for the next prompt in the queue.',
+    constraint: 'Tuned live: more sequences per step, within the memory plan.',
   },
 ] as const;
 

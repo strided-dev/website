@@ -1,30 +1,30 @@
 ---
 import { cells, scenario, workloads, cubePaths, cubeOpacity, CAPACITY_GIB, BLOCK_GIB, MODEL_GIB } from '../lib/local-model';
-const baseline = scenario('baseline');
+const loaded = scenario('loaded');
 ---
 <div class="model-explorer" data-model-explorer>
   <div class="model-toolbar">
     <fieldset class="model-workloads" data-workloads disabled>
-      <legend class="sr-only">Choose a local workload</legend>
-      {workloads.map(workload => <button type="button" data-workload={workload.key} aria-pressed={workload.key === 'baseline'} aria-controls="model-summary model-metrics">{workload.label}</button>)}
+      <legend class="sr-only">Choose a workload</legend>
+      {workloads.map(workload => <button type="button" data-workload={workload.key} aria-pressed={workload.key === 'loaded'} aria-controls="model-summary model-metrics">{workload.label}</button>)}
     </fieldset>
-    <span class="model-example">Illustrative allocation</span>
+    <span class="model-example">Illustrative example</span>
   </div>
 
   <div class="model-display">
     <figure class="model-figure">
       <div class="model-legend" aria-label="How to read the memory blocks">
-        <span><i class="solid-key" aria-hidden="true"></i>Allocated memory</span>
-        <span><i class="wire-key" aria-hidden="true"></i>Available capacity</span>
+        <span><i class="solid-key" aria-hidden="true"></i>In use</span>
+        <span><i class="wire-key" aria-hidden="true"></i>Free</span>
       </div>
       <svg class="model-view" viewBox="0 0 780 452" role="img" aria-labelledby="model-title" aria-describedby="model-description" aria-busy="false">
-        <title id="model-title">Local model memory allocation</title>
-        <desc id="model-description">Forty-eight blocks represent 24 GiB of GPU memory on one local host. Each block is half a GiB. Filled blocks show allocated memory; open blocks show available capacity. Aggregate values appear below.</desc>
+        <title id="model-title">GPU memory on one vivace host</title>
+        <desc id="model-description">Forty-eight blocks represent 24 GiB of GPU memory on one vivace host. Each block is half a GiB. Filled blocks hold model weights, runtime buffers, or cached tokens; open blocks are free. Aggregate values appear below.</desc>
         {cells.map((cell, index) => {
-          const paths = cubePaths(cell, baseline.allocation[index]);
+          const paths = cubePaths(cell, loaded.allocation[index]);
           return <g data-cube>
             <path class="cube-wire" data-face="wire" d={paths.wire} />
-            <g data-solid opacity={cubeOpacity(baseline.allocation[index])}>
+            <g data-solid opacity={cubeOpacity(loaded.allocation[index])}>
               <path class="cube-left" data-face="left" d={paths.left} />
               <path class="cube-right" data-face="right" d={paths.right} />
               <path class="cube-top" data-face="top" d={paths.top} />
@@ -32,30 +32,30 @@ const baseline = scenario('baseline');
           </g>;
         })}
       </svg>
-      <figcaption>One local host. Each block represents {BLOCK_GIB} GiB of GPU memory.</figcaption>
+      <figcaption>One vivace host. Each block represents {BLOCK_GIB} GiB of GPU memory.</figcaption>
     </figure>
 
     <div class="model-summary" id="model-summary">
-      <p class="eyebrow" data-workload-name>Baseline</p>
-      <h3 data-workload-title>{baseline.title}</h3>
-      <p class="model-explanation" data-workload-description>{baseline.description}</p>
-      <p class="model-constraint" data-workload-constraint>{baseline.constraint}</p>
-      <p class="model-setting">Context limit <span data-metric="context">{baseline.context.toLocaleString('en-US')}</span> tokens per request</p>
+      <p class="eyebrow" data-workload-name>{loaded.label}</p>
+      <h4 data-workload-title>{loaded.title}</h4>
+      <p class="model-explanation" data-workload-description>{loaded.description}</p>
+      <p class="model-constraint" data-workload-constraint>{loaded.constraint}</p>
+      <p class="model-setting">Context limit <span data-metric="context">{loaded.context.toLocaleString('en-US')}</span> tokens per sequence</p>
     </div>
   </div>
 
   <dl class="model-metrics" id="model-metrics">
-    <div><dt>GPU memory allocated</dt><dd><span data-metric="memory">{baseline.usedGiB.toFixed(1)}</span> <span class="metric-unit">GiB</span><span class="metric-note">Model weights, KV cache, and runtime buffers</span></dd></div>
-    <div><dt>Request slots allocated</dt><dd><span data-metric="requests">{baseline.requests}</span><span class="metric-note">Illustrative concurrent request capacity</span></dd></div>
-    <div><dt>Memory headroom</dt><dd><span data-metric="headroom">{baseline.headroom.toFixed(1)}</span> <span class="metric-unit">GiB</span><span class="metric-note">Within the same 24 GiB GPU memory budget</span></dd></div>
+    <div><dt>GPU memory in use</dt><dd><span data-metric="memory">{loaded.usedGiB.toFixed(1)}</span> <span class="metric-unit">GiB</span><span class="metric-note">Weights, runtime buffers, and cached tokens</span></dd></div>
+    <div><dt>Sequences running</dt><dd><span data-metric="requests">{loaded.requests}</span><span class="metric-note">Conversations or prompts decoding together</span></dd></div>
+    <div><dt>Free memory</dt><dd><span data-metric="headroom">{loaded.headroom.toFixed(1)}</span> <span class="metric-unit">GiB</span><span class="metric-note">Within the same 24 GiB of GPU memory</span></dd></div>
   </dl>
   <p class="sr-only" role="status" aria-atomic="true" data-model-announcement></p>
-  <p class="model-disclosure">An illustration of automatic adjustments. These are example settings, not a live host or measured performance results.</p>
+  <p class="model-disclosure">An illustration of how vivace uses memory as the work changes. These are example values, not a live host or measured results.</p>
   <details class="model-assumptions">
     <summary>About this example</summary>
-    <p>This synthetic host has {CAPACITY_GIB} GiB of GPU memory and {MODEL_GIB} GiB of resident model weights. Allocated memory is the sum of weights, reserved KV cache, and runtime buffers. Each workload uses an assumed cache reservation and context limit; these are not calculated from a specific model architecture. Real requirements depend on the model, precision, runtime, and active tokens. No speed or latency improvement is predicted.</p>
+    <p>This synthetic host has {CAPACITY_GIB} GiB of GPU memory and {MODEL_GIB} GiB of resident model weights. Memory in use is the sum of the weights, runtime buffers, and KV cache blocks holding tokens. vivace reserves its KV pool when the model loads; the filled blocks here are the ones holding tokens. Cache sizes are assumed, not calculated from a specific model architecture. When the pool fills, parked conversations give up their least recently used blocks first, keeping their longest prefix, before any running sequence is preempted. No speed or latency improvement is predicted.</p>
   </details>
-  <noscript><p class="model-disclosure">The baseline is shown above. Enable JavaScript to explore the other workloads.</p></noscript>
+  <noscript><p class="model-disclosure">The loaded model is shown above. Enable JavaScript to explore the other workloads.</p></noscript>
 </div>
 
 <script>
@@ -81,7 +81,7 @@ const baseline = scenario('baseline');
     const announcement = root.querySelector<HTMLElement>('[data-model-announcement]')!;
     const view = root.querySelector<SVGSVGElement>('.model-view')!;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let active: Workload = 'baseline';
+    let active: Workload = 'loaded';
     let target = scenario(active);
     let displayed = target.allocation;
     let frame = 0;
@@ -107,7 +107,7 @@ const baseline = scenario('baseline');
       frame = 0;
       draw(target.allocation);
       view.setAttribute('aria-busy', 'false');
-      announcement.textContent = `${target.label}. Allocated GPU memory ${target.usedGiB.toFixed(1)} GiB, ${target.requests} request slots, context limit ${target.context} tokens, memory headroom ${target.headroom.toFixed(1)} GiB. ${target.constraint}`;
+      announcement.textContent = `${target.label}. GPU memory in use ${target.usedGiB.toFixed(1)} GiB, ${target.requests} ${target.requests === 1 ? 'sequence' : 'sequences'} running, context limit ${target.context} tokens per sequence, free memory ${target.headroom.toFixed(1)} GiB. ${target.constraint}`;
     }
 
     function animate() {
@@ -189,7 +189,7 @@ const baseline = scenario('baseline');
   .cube-right { fill: var(--text-secondary); }
   .model-figure figcaption { font-size: 11px; color: var(--text-secondary); margin-top: 12px; }
   .model-summary { min-height: 350px; }
-  .model-summary h3 { font-size: clamp(29px, 2.6vw, 37px); margin-top: 22px; line-height: 1.15; }
+  .model-summary h4 { font-size: clamp(29px, 2.6vw, 37px); margin-top: 22px; line-height: 1.15; }
   .model-explanation { font-size: 15px; line-height: 1.75; color: var(--text-secondary); margin-top: 22px; }
   .model-constraint { font-size: 14px; line-height: 1.7; margin-top: 24px; color: var(--strided-purple); }
   .model-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin: 44px 0 0; }
@@ -209,7 +209,7 @@ const baseline = scenario('baseline');
     .model-example { font-size: 10px; }
     .model-display { grid-template-columns: 1fr; gap: 36px; }
     .model-summary { min-height: 0; max-width: 500px; }
-    .model-summary h3 { font-size: 34px; margin-top: 15px; max-width: 340px; }
+    .model-summary h4 { font-size: 34px; margin-top: 15px; max-width: 340px; }
     .model-explanation { margin-top: 16px; }
     .model-constraint { margin-top: 16px; }
     .model-metrics { gap: 20px; margin-top: 36px; }

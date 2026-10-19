@@ -1,0 +1,70 @@
+---
+const workloads = [
+  { name: 'Chat', runs: 'One conversation, 12 turns', pass: 'Sooner first token from the second turn on, with time per token within 5%' },
+  { name: 'Chats', runs: '4 and 8 conversations at once', pass: 'Lower p99 latency and higher total throughput' },
+  { name: 'Agent', runs: '20 tool calls on a 4,096-token prefix', pass: 'Less wall time and lower latency per call' },
+  { name: 'Batch', runs: '200 prompts, 8 and 16 at a time', pass: 'At least 15% more total throughput' },
+  { name: 'Long prompt', runs: '2,048 and 4,096-token prompts', pass: 'Prefill at least as fast, first token at least as soon' },
+  { name: 'Fixed shape', runs: 'The llama-batched-bench shape', pass: 'Within 3% of llama.cpp\'s own tool: the honesty anchor' },
+  { name: 'Live tuning', runs: '8 conversations with tuning on', pass: 'Zero failed requests, and every change visible within one step' },
+];
+const checks = [
+  { name: 'Same prompts', body: 'Every engine gets byte-identical prompts. If any prompt\'s token hash differs between engines, the comparison is refused.' },
+  { name: 'Strong baselines', body: 'llama.cpp in-process with its best flags, and Ollama with flash attention, matching context, and the model kept loaded.' },
+  { name: 'Recorded once', body: 'Results are recorded on every merge from the same fixed prompt set, and never edited after they are published.' },
+];
+---
+<section class="bench container" id="benchmarks" aria-labelledby="benchmarks-title">
+  <div class="bench-heading">
+    <div><p class="eyebrow">Benchmarks</p><h2 id="benchmarks-title">Measured,<br />not claimed.</h2></div>
+    <div class="bench-intro">
+      <p class="bench-lead">The bar: beat llama.cpp and Ollama on every workload, with the same GGUF file on the same machine.</p>
+      <p>vivace is still in development, so there are no numbers here yet. When there are, each one will come from a single harness with fixed prompts, run against both baselines.</p>
+    </div>
+  </div>
+  <div class="bench-table-wrap">
+    <table class="bench-table">
+      <caption class="sr-only">Benchmark workloads and what vivace must show to pass</caption>
+      <thead><tr><th scope="col">Workload</th><th scope="col">What runs</th><th scope="col">To pass, against both baselines</th></tr></thead>
+      <tbody>
+        {workloads.map(row => <tr><th scope="row">{row.name}</th><td>{row.runs}</td><td>{row.pass}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <ul class="bench-checks" role="list">
+    {checks.map(check => <li><h3>{check.name}</h3><p>{check.body}</p></li>)}
+  </ul>
+  <p class="bench-hardware">Developed on GeForce RTX 5070 Ti, RTX 4060, and RTX 3050, and on an Apple M5 with 24 GB. AMD Radeon: designed for, not yet measured.</p>
+</section>
+<style>
+  .bench { padding-block: var(--section-space); }
+  .bench-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .bench-heading .eyebrow { margin-bottom: 28px; }
+  .bench-intro { padding-top: 42px; max-width: 540px; }
+  .bench-lead { font: 400 27px/1.45 var(--font-display); letter-spacing: -.01em; }
+  .bench-intro > p:not(.bench-lead) { font-size: 16px; line-height: 1.75; color: var(--text-secondary); margin-top: 21px; }
+  .bench-table-wrap { margin-top: 56px; }
+  .bench-table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.6; }
+  .bench-table th, .bench-table td { text-align: left; vertical-align: top; padding: 15px 24px 15px 0; border-bottom: 1px solid var(--line); }
+  .bench-table thead th { font-size: 12px; font-weight: 500; color: var(--text-secondary); padding-block: 0 12px; border-bottom-color: var(--border-primary); }
+  .bench-table tbody th { font-weight: 500; width: 18%; }
+  .bench-table td { color: var(--text-secondary); }
+  .bench-table td:first-of-type { width: 34%; }
+  .bench-table td:last-child { padding-right: 0; }
+  .bench-checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; margin: 56px 0 0; padding: 0; list-style: none; }
+  .bench-checks h3 { font: 500 13px/1.5 var(--font-sans); letter-spacing: normal; }
+  .bench-checks p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-top: 8px; }
+  .bench-hardware { margin-top: 48px; font-size: 12px; line-height: 1.65; color: var(--text-secondary); max-width: 760px; }
+  @media (max-width: 950px) { .bench-heading { gap: 40px; } .bench-checks { gap: 32px; } }
+  @media (max-width: 760px) {
+    .bench-heading { grid-template-columns: 1fr; gap: 28px; }
+    .bench-intro { padding-top: 0; }
+    .bench-lead { font-size: 25px; }
+    .bench-table-wrap { margin-top: 40px; }
+    .bench-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+    .bench-table tr { display: grid; gap: 4px; padding-block: 16px; border-bottom: 1px solid var(--line); }
+    .bench-table tbody th, .bench-table td, .bench-table td:first-of-type { width: auto; padding: 0; border: 0; }
+    .bench-table td:last-child { color: var(--ink); }
+    .bench-checks { grid-template-columns: 1fr; gap: 24px; margin-top: 40px; }
+  }
+</style>

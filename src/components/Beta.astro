@@ -1,0 +1,162 @@
+---
+import { GPUS, SYSTEMS } from '../lib/beta';
+import '../styles/forms.css';
+---
+<section class="beta" id="beta" aria-labelledby="beta-title">
+  <div class="container beta-inner">
+    <div class="beta-copy">
+      <p class="eyebrow">vivace beta</p>
+      <h2 id="beta-title">Run vivace<br />before anyone else.</h2>
+      <p class="beta-description">We're opening vivace to a small group of people who run models on their own hardware. Join the list and we'll email you when the beta opens.</p>
+      <div class="beta-row"><span class="eyebrow">Early builds</span><p>vivace for Windows, macOS, or Linux, with strided and gait built in.</p></div>
+      <div class="beta-row"><span class="eyebrow">Your hardware</span><p>Tell us your GPU so we can invite people across every machine we support.</p></div>
+      <div class="beta-row"><span class="eyebrow">A direct line</span><p>Talk with the people building it, and help decide what comes next.</p></div>
+      <p class="beta-links">
+        <a class="text-link" href="/submit">Want to help sooner? Share a workload <span class="arrow" aria-hidden="true">↗</span></a>
+        <a class="text-link" href="mailto:hello@strided.dev">Prefer a conversation? hello@strided.dev <span class="arrow" aria-hidden="true">↗</span></a>
+      </p>
+    </div>
+
+    <div class="beta-card">
+      <div class="beta-result" id="beta-joined" tabindex="-1" hidden data-beta-joined>
+        <div class="beta-mark" aria-hidden="true">✓</div>
+        <h3>You're on the list.</h3>
+        <p>We'll email <span class="beta-email" data-beta-email>you</span> when the vivace beta opens.</p>
+      </div>
+      <form class="beta-form" method="post" action="/api/beta" data-beta-form>
+        <div class="beta-form-heading"><h3>Join the beta list</h3><p>Only your email is required.</p></div>
+        <p class="beta-error" id="beta-error" role="alert" tabindex="-1" hidden data-beta-error><span data-beta-error-text>We couldn't add you right now.</span> You can try again or email <a href="mailto:hello@strided.dev">hello@strided.dev</a>.</p>
+        <fieldset class="beta-fields" data-beta-fields>
+          <legend class="sr-only">Your details</legend>
+          <div class="beta-grid">
+            <label class="field">
+              <span class="flabel">Email<i>*</i></span>
+              <input type="email" name="email" autocomplete="email" maxlength="320" placeholder="you@example.com" required />
+            </label>
+            <label class="field">
+              <span class="flabel">Name</span>
+              <input type="text" name="name" autocomplete="name" maxlength="200" placeholder="Optional" />
+            </label>
+          </div>
+          <div class="beta-grid">
+            <label class="field">
+              <span class="flabel">GPU</span>
+              <select name="gpu">
+                <option value="">Choose one</option>
+                {Object.entries(GPUS).map(([value, name]) => <option value={value}>{name}</option>)}
+              </select>
+            </label>
+            <label class="field">
+              <span class="flabel">Operating system</span>
+              <select name="os">
+                <option value="">Choose one</option>
+                {Object.entries(SYSTEMS).map(([value, name]) => <option value={value}>{name}</option>)}
+              </select>
+            </label>
+          </div>
+          <label class="field">
+            <span class="flabel">What would you run on it?</span>
+            <textarea name="use" rows="3" maxlength="2000" placeholder="Models, prompt lengths, how many chats at once, or the tool you use today."></textarea>
+          </label>
+          <div class="beta-trap" aria-hidden="true">
+            <label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+        </fieldset>
+        <p class="beta-consent">We'll use your email only for vivace beta updates. Unsubscribe at any time.</p>
+        <button type="submit" class="submit-btn" data-beta-submit><span data-beta-label>Join the beta</span><span aria-hidden="true">↗</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-beta-form]');
+  const joined = document.querySelector<HTMLElement>('[data-beta-joined]');
+  const error = document.querySelector<HTMLElement>('[data-beta-error]');
+  const errorText = document.querySelector<HTMLElement>('[data-beta-error-text]');
+  const fields = document.querySelector<HTMLFieldSetElement>('[data-beta-fields]');
+  const submit = document.querySelector<HTMLButtonElement>('[data-beta-submit]');
+  const label = document.querySelector<HTMLElement>('[data-beta-label]');
+  let busy = false;
+
+  function setBusy(value: boolean) {
+    busy = value;
+    form!.setAttribute('aria-busy', String(value));
+    fields!.disabled = value;
+    submit!.disabled = value;
+    label!.textContent = value ? 'Joining…' : 'Join the beta';
+  }
+
+  // Without JavaScript the form posts natively and the server redirects back here.
+  form?.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (busy) return;
+    // Read the fields before disabling them; disabled controls are not submitted.
+    const data = Object.fromEntries(new FormData(form));
+    error!.hidden = true;
+    setBusy(true);
+    let message = "We couldn't add you right now.";
+    try {
+      const response = await fetch(form.action, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
+      const body = await response.json().catch(() => ({}));
+      if (response.ok) {
+        document.querySelector<HTMLElement>('[data-beta-email]')!.textContent = String(data.email);
+        form.hidden = true;
+        joined!.hidden = false;
+        joined!.focus();
+        return;
+      }
+      if (typeof body.error === 'string') message = body.error;
+    } catch {
+      // A network failure keeps the generic message.
+    } finally {
+      setBusy(false);
+    }
+    errorText!.textContent = message;
+    error!.hidden = false;
+  });
+</script>
+
+<style>
+  .beta { background: var(--ink); color: var(--paper); padding-block: 96px; }
+  .beta-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
+  .beta .eyebrow { color: var(--strided-bezel-dark); }
+  .beta-copy > .eyebrow { margin-bottom: 28px; }
+  .beta-description { font-size: 16px; color: var(--strided-bezel-dark); margin-top: 23px; max-width: 450px; line-height: 1.75; }
+  .beta-row { display: grid; grid-template-columns: 110px 1fr; gap: 24px; margin-top: 28px; max-width: 520px; }
+  .beta-row .eyebrow { padding-top: 2px; }
+  .beta-row p { font-size: 15px; line-height: 1.7; color: var(--strided-bezel-dark); }
+  .beta-links { display: flex; flex-direction: column; align-items: flex-start; margin-top: 36px; }
+  .beta-links .text-link { font-size: 12px; gap: 15px; padding-block: 8px; }
+  .beta :focus-visible { outline-color: var(--paper); }
+
+  .beta-card { color: var(--ink); background: var(--paper-card); border: 1px solid var(--border-primary); padding: clamp(24px, 3vw, 40px); box-shadow: 0 1px 0 var(--strided-bezel-light) inset; }
+  .beta-card :focus-visible { outline-color: var(--ink); }
+  .beta-form { display: flex; flex-direction: column; gap: 22px; }
+  .beta-form[hidden] { display: none; }
+  .beta-form-heading h3 { font-size: 30px; letter-spacing: -.02em; }
+  .beta-form-heading p { font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-top: 9px; }
+  .beta-fields { display: flex; flex-direction: column; gap: 22px; border: 0; padding: 0; margin: 0; min-width: 0; }
+  .beta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .beta-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .beta-consent { font-size: 11px; line-height: 1.75; color: var(--text-secondary); }
+  .beta-error { font-size: 12px; line-height: 1.75; color: var(--ink); border-left: 2px solid var(--ink); padding-left: 12px; }
+  .beta-error[hidden] { display: none; }
+  .beta-result { display: flex; flex-direction: column; gap: 18px; }
+  .beta-result[hidden] { display: none; }
+  .beta-mark { width: 44px; height: 44px; border: 1px solid var(--border-primary); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .beta-result h3 { font-size: 36px; }
+  .beta-result p { font-size: 16px; line-height: 1.75; color: var(--text-secondary); overflow-wrap: anywhere; }
+  .beta-email { color: var(--ink); }
+  /* Without JavaScript the server redirects to one of these fragments. */
+  #beta-joined:target { display: flex; }
+  #beta-error:target { display: block; }
+  .beta-card:has(#beta-joined:target) .beta-form { display: none; }
+
+  @media (max-width: 1000px) { .beta-inner { gap: 50px; } .beta-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    .beta { padding-block: 65px; }
+    .beta-inner { grid-template-columns: 1fr; gap: 44px; }
+    .beta-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>

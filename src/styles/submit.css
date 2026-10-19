@@ -1,3 +1,5 @@
+@import './forms.css';
+
 .submit-main { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(45px, 7vw, 110px); padding-block: 60px 100px; }
 .back-link { color: var(--text-secondary); font-size: 11px; gap: 10px; margin-bottom: 46px; }
 .submit-intro > .eyebrow { margin-bottom: 22px; }
@@ -17,13 +19,6 @@
 .form-card { display: flex; flex-direction: column; gap: 24px; }
 .form-fields { display: flex; flex-direction: column; gap: 24px; border: 0; padding: 0; margin: 0; min-width: 0; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.flabel { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
-.flabel i { font-style: normal; margin-left: 3px; }
-.field input, .field select, .field textarea { width: 100%; min-height: 46px; border: 1px solid var(--border-primary); border-radius: 2px; background: var(--paper-card); color: var(--ink); padding: 11px 12px; font-size: 13px; }
-.field input::placeholder, .field textarea::placeholder { color: var(--text-tertiary); }
-.field textarea { min-height: 110px; resize: vertical; line-height: 1.7; }
-.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: 1px solid var(--ink); outline-offset: 1px; }
 .dropzone { position: relative; border: 1px dashed var(--border-primary); background: var(--paper); padding: 25px 15px; text-align: center; min-height: 137px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .dropzone:hover, .dropzone:focus-within, .dropzone.has-file { border-color: var(--ink); }
 .dropzone:focus-within { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -35,9 +30,6 @@
 .dz-sub { font-size: 10px; color: var(--text-secondary); line-height: 1.75; }
 .form-foot { padding-top: 8px; display: flex; flex-direction: column; align-items: stretch; gap: 18px; }
 .privacy { font-size: 10px; color: var(--text-secondary); line-height: 1.8; }
-.submit-btn { display: flex; justify-content: space-between; min-height: 48px; align-items: center; padding: 12px 18px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper-card); border-radius: 2px; font-size: 12px; }
-.submit-btn:hover:not(:disabled) { background: var(--strided-accent); }
-.submit-btn:disabled { opacity: .48; }
 .ferr { font-size: 11px; color: var(--ink); line-height: 1.75; }
 .ferr[role='alert'] { border-left: 2px solid var(--ink); padding-left: 12px; }
 .success-mark { width: 44px; height: 44px; border: 1px solid var(--border-primary); display: flex; align-items: center; justify-content: center; font-size: 22px; }
@@ -53,5 +45,4 @@
   .submission-guide { margin-top: 30px; }
   .submit-form { margin-top: 0; }
   .submit-description { font-size: 17px; }
-  .field input, .field select, .field textarea { font-size: 16px; }
 }
