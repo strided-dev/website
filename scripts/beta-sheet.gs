@@ -1,3 +1,7 @@
+/**
+ * @OnlyCurrentDoc  Limits the script's Google permission to this one spreadsheet.
+ */
+
 /* vivace beta list → Google Sheet. /api/beta posts each signup here.
 
    Setup (once):
@@ -10,12 +14,21 @@
 
    Signups land in the first tab. The header row is added on the first signup.
    After editing this script, use Deploy → Manage deployments → Edit → New version
-   so the same URL keeps working. */
+   so the same URL keeps working.
+
+   "Anyone" lets the website's server call the script without signing in. It does
+   not let anyone open the sheet: keep the sheet itself shared only with the team.
+   The script can only add rows and never sends sheet data back. */
 
 var HEADERS = ['Signed up', 'Email', 'Name', 'GPU', 'OS', 'What they would run'];
+// The same limits /api/beta applies, enforced again because the URL accepts any request.
+var LIMITS = { email: 320, name: 200, gpu: 100, os: 100, use: 2000 };
 
 function doPost(e) {
   var signup = JSON.parse(e.postData.contents);
+  var values = Object.keys(LIMITS).map(function (key) {
+    return asText(signup[key], LIMITS[key]);
+  });
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -24,7 +37,6 @@ function doPost(e) {
       sheet.appendRow(HEADERS);
       sheet.setFrozenRows(1);
     }
-    var values = [signup.email, signup.name, signup.gpu, signup.os, signup.use].map(asText);
     sheet.appendRow([new Date()].concat(values));
   } finally {
     lock.releaseLock();
@@ -32,8 +44,8 @@ function doPost(e) {
   return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
 }
 
-// Keep submitted values as plain text, so an entry like "=IMPORTXML(...)" never runs as a formula.
-function asText(value) {
-  var text = value == null ? '' : String(value);
+// Keep submitted values as short plain text, so an entry like "=IMPORTXML(...)" never runs as a formula.
+function asText(value, limit) {
+  var text = typeof value === 'string' ? value.slice(0, limit) : '';
   return /^[=+\-@]/.test(text) ? "'" + text : text;
 }
