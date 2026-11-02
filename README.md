@@ -67,11 +67,13 @@ Edit example settings and their explanations together in `src/lib/local-model.ts
 
 ## Beta list
 
-`Beta.astro` at `/#beta` collects interest in the vivace beta: a required email, plus optional name, GPU, operating system, and what the person would run. `/api/beta` validates the signup with `src/lib/beta.ts`, adds the address to Resend contacts (inside the segment `RESEND_SEGMENT_ID` when set), and emails the team with the details. Either step keeps the signup, so the request fails only when both do. Nothing is emailed to the subscriber: a public form must not send mail to arbitrary addresses, and the beta announcement goes out from the contacts list. A hidden `website` field catches bots, which receive the same success response.
+`Beta.astro` at `/#beta` collects interest in the vivace beta: a required email, plus optional name, GPU, operating system, and what the person would run. `/api/beta` validates the signup with `src/lib/beta.ts` and records it everywhere that is configured: a row in the team's Google Sheet, a Resend contact (inside the segment `RESEND_SEGMENT_ID` when set), and an email to the team with the details. Any one of them keeps the signup, so the request fails only when all of them do. Nothing is emailed to the subscriber: a public form must not send mail to arbitrary addresses, and the beta announcement goes out from the list. A hidden `website` field catches bots, which receive the same success response.
+
+The Google Sheet is the free place to read every response. A short Apps Script attached to the sheet, `scripts/beta-sheet.gs`, accepts each signup from `/api/beta` and appends a row. To set it up, create a sheet with the Google account that should own the list, open Extensions → Apps Script, paste the file, then Deploy → New deployment → Web app with "Execute as: Me" and "Who has access: Anyone". Put the `/exec` URL in `BETA_SHEET_URL` and redeploy the site. The script stores submitted values as text, so nothing typed into the form can run as a spreadsheet formula. After changing the script, publish a new version of the same deployment to keep the URL.
 
 The form is a native `POST` that a small script upgrades to `fetch` with an inline result. Without JavaScript, the endpoint redirects to `/#beta-joined` or `/#beta-error` and CSS `:target` shows the result. Astro's origin check rejects cross-site form posts.
 
-Deployment variables: `RESEND_API_KEY`, optional `RESEND_SEGMENT_ID`, and the same optional `EMAIL_FROM` and `EMAIL_TO` as the submission service. Create the segment in Resend before setting it.
+Deployment variables: at least one of `BETA_SHEET_URL` and `RESEND_API_KEY`. With Resend, optionally `RESEND_SEGMENT_ID` and the same optional `EMAIL_FROM` and `EMAIL_TO` as the submission service. Create the segment in Resend before setting it.
 
 ## Submission service
 
