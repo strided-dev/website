@@ -24,3 +24,18 @@ export function parseSignup(raw: unknown): { spam: true } | { error: string } | 
   if (!isEmail(signup.email)) return { error: "A valid email is required." };
   return { value: signup };
 }
+
+/** Append a signup to the Google Sheet behind `url`, the Apps Script web app in scripts/beta-sheet.gs. */
+export async function appendToSheet(url: string, signup: BetaSignup): Promise<void> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(signup),
+    signal: AbortSignal.timeout(10_000),
+  });
+  // Script errors and Google sign-in pages come back as HTML, often with status 200, so only the script's JSON counts.
+  const body: unknown = await response.json().catch(() => null);
+  if (!response.ok || (body as { ok?: unknown } | null)?.ok !== true) {
+    throw new Error(`Sheet answered ${response.status} without { ok: true }`);
+  }
+}
