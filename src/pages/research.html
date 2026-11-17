@@ -1,0 +1,86 @@
+<section class="ark-hero short" id="ark-top">
+  <div class="ark-hero-main">
+    <div class="ark-eyebrow">RESEARCH · NEWEST FIRST</div>
+    <h1>The record,<br>kept honestly.</h1>
+    <p class="ark-intro">Everything we build is measured against the engines people already use, on machines people own, and published with the losses left in.</p>
+    <div class="ark-cta"><a class="btn" href="#products">What we make</a><a class="btn ghost" href="#ledger">The ledger</a></div>
+  </div>
+</section>
+<section class="ark-section first" id="products" aria-labelledby="products-title">
+  <div class="ark-head">
+    <div class="ark-eyebrow">WHAT WE MAKE</div>
+    <h2 id="products-title">Three pieces, one process.</h2>
+    <p class="lede">An engine, an agent and a tuner, built together, measured together, and run on one card.</p>
+  </div>
+  <div class="products">
+    <article class="product" id="engine">
+      <div class="name"><span class="kind">Inference engine</span><h3>vivace</h3><p>The engine. Open models on the GPU you have, serving many conversations at once from one card, with a finished conversation parked so the next turn starts where it left off. Open source under Apache 2.0 soon.</p><a href="#ledger">Measured results</a></div>
+      <dl class="spec">
+        <div><dt>Hardware</dt><dd>NVIDIA RTX 30, 40 and 50 series (CUDA). Apple M5 (Metal).</dd></div>
+        <div><dt>Models</dt><dd>GGUF. Llama 3, Qwen 2.5 and 3, Qwen 3.5 hybrid, Mistral. <code>Q4_K_M</code> and <code>Q8_0</code>.</dd></div>
+        <div><dt>Serves</dt><dd><code>/v1/chat/completions</code> and <code>/v1/messages</code> on localhost. Works with Claude Code, Qwen Code and OpenCode.</dd></div>
+        <div><dt>Faults</dt><dd>A GPU fault exits with code 3; <code>vivace supervise</code> restarts it and <code>chat --resume</code> picks the transcript back up.</dd></div>
+        <div><dt>Correctness</dt><dd>Top-1 agreement with llama.cpp on the same file at or above 99 %, with a bounded KL, in four modes.</dd></div>
+      </dl>
+    </article>
+    <article class="product" id="agent">
+      <div class="name"><span class="kind">Personal agent</span><h3>Iris</h3><p>The agent. It lives on your machine and knows the difference between reading and spending: it quotes its sources by file and line, keeps its memory in plain text you can open, and asks before anything leaves the computer.</p><a href="#ledger">Tool-choice accuracy</a></div>
+      <dl class="spec">
+        <div><dt>Permissions</dt><dd>Four classes: <code>Read</code>, <code>WriteLocal</code>, <code>WriteExternal</code>, <code>Spend</code>. Spending always asks; after untrusted input, every write asks.</dd></div>
+        <div><dt>Citations</dt><dd>From your documents, file and line. From the web, only quotes the saved page still shows.</dd></div>
+        <div><dt>Memory</dt><dd>Plain text files you can open, edit and delete, every write logged with its reason.</dd></div>
+        <div><dt>MCP</dt><dd>Runs as a server for other tools, and never offers them spending or writes outside this computer.</dd></div>
+        <div><dt>Skills</dt><dd><code>ask_docs</code>, <code>web_answer</code>, <code>read_papers</code>, <code>research</code>.</dd></div>
+      </dl>
+    </article>
+    <article class="product" id="tuner">
+      <div class="name"><span class="kind">Diagnosis and tuning</span><h3>strided and gait</h3><p>The tuner. A diagnosis whose every rule carries a citation, and a trial loop that changes one thing at a time, writes its prediction down first, and keeps the change only when the measurement proves it.</p><a href="#stack">Inside one process</a></div>
+      <dl class="spec">
+        <div><dt>Rules</dt><dd>Each carries a citation: Roofline, PagedAttention, Sarathi-Serve, DistServe, Little's law. A rule without one will not load.</dd></div>
+        <div><dt>Confidence</dt><dd>Every finding has a number. Ambiguous evidence gives no diagnosis at all.</dd></div>
+        <div><dt>Trial</dt><dd><code>INTAKE → PREFLIGHT → BASELINE → APPLY → VERIFY → REVIEW → PACKET</code>, with the prediction written before the change.</dd></div>
+        <div><dt>Keep rule</dt><dd>Kept only if the objective improves with the 95 % interval clear of zero; otherwise reverted through its declared inverse.</dd></div>
+        <div><dt>Authority</dt><dd>Performance knobs may change on their own. Anything that could change an answer needs a human.</dd></div>
+      </dl>
+    </article>
+  </div>
+</section>
+<section class="ark-section" id="stack" aria-labelledby="stack-title">
+  <div class="ark-head">
+    <div class="ark-eyebrow">THE ARCHITECTURE</div>
+    <h2 id="stack-title">Inside one process.</h2>
+    <p class="lede">The engine, the diagnosis and the tuner share one process on the card. Choose an adjustment to see which layers it reaches.</p>
+  </div>
+  {{STACK}}
+</section>
+<section class="ark-section notes" id="notes" aria-labelledby="notes-title">
+  <div class="ark-head">
+    <div class="ark-eyebrow">RESEARCH NOTES</div>
+    <h2 id="notes-title">What we measured.</h2>
+    <p class="lede">How it was done, and what it cost. The newest notes first.</p>
+  </div>
+  <h3>Latest</h3>
+  <article class="note">
+    <span class="when">23 Oct 2026 · Engine</span>
+    <div><h4>vivace against vLLM on one card</h4><p>A data-centre engine on a gaming GPU: where its AWQ path wins on throughput, where GGUF loading does not, and why the comparison is not like for like.</p><p class="take">Behind on throughput, the gap closing as concurrency rises; ahead on first token.</p></div>
+  </article>
+  <article class="note">
+    <span class="when">17 Oct 2026 · Engine</span>
+    <div><h4>Many chats, one card</h4><p>One consumer GPU serving sixteen conversations, measured against llama.cpp and Ollama on the same files, with the parity check first.</p><p class="take">With eight or more chats the shared step wins; alone, llama.cpp still does.</p></div>
+  </article>
+  <h3>Earlier</h3>
+  <article class="note">
+    <span class="when">16 Oct 2026 · Agent</span>
+    <div><h4>Choosing the tool, or answering</h4><p>Three routers for the same decision: the model alone, a logprob gate, a hidden-state probe. Wrong-tool rate over 200 prompts on two models.</p><p class="take">The router is only as good as the model under it: ten times fewer wrong tools with Qwen3-8B.</p></div>
+  </article>
+  <article class="note">
+    <span class="when">10 Oct 2026 · Engine</span>
+    <div><h4>One machine's numbers: Metal on an M5</h4><p>First token and tokens per second on a base M5 with 24 GB, published as one machine's numbers, not as targets.</p><p class="take">First token 1.3 to 1.4× sooner; decode speed equal with one conversation.</p></div>
+  </article>
+  <article class="note">
+    <span class="when">Oct 2026 · Tuner</span>
+    <div><h4>What gait kept, and what it gave back</h4><p>A tuner that keeps nothing by default: the first trial, a guardrail that reverts, and the open bug where a kept value was not.</p><p class="take">One keep on the CPU reference, none on a GPU yet. The 5070 Ti session is next.</p></div>
+  </article>
+</section>
+{{LEDGER}}
+

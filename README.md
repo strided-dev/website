@@ -1,91 +1,180 @@
-# strided website
+# Arkaya Labs website, take 37
 
-Astro marketing site for vivace, the vivace beta list, and the workload submission flow. Pages are prerendered; the beta and upload endpoints run through the Vercel adapter.
+Deployed on Vercel at arkaya-labs.com as a plain static site (`vercel.json`: no build step; `.vercelignore` keeps `src/`, `tools/` and this file off the site). The old strided Astro site lives on the `strided-legacy` branch.
+Footer: "Copyright 2026 the Arkaya Labs authors". Contact: hello@arkaya-labs.com.
 
-## Develop and verify
+Take 37: GitHub links point to github.com/arkaya-labs. Take 36: the contact address is now hello@arkaya.si (footer
+on every page, and Write to us on About).
 
-Requires Node.js 22.12 or later.
 
-```sh
-npm ci
-npm run dev
-npm run check
-npm run build
-npx playwright install chromium
-npm run test:e2e
-```
+Take 35: the home headline is now "Intelligence you own, not rent." (it echoes the creed on the About page; the tab
+title matches), and the About page's seal is redrawn larger, simpler and Indian in style, with gilt lotus petals (see
+The seal and mission). Take 33's changes follow.
 
-Browser checks cover desktop and mobile section navigation, active section state, browser history, legacy Vision links, system map controls, trial outcomes, keyboard inspection, CSV export, memory workloads and the loaded-state reset, the memory example without JavaScript, beta signup success, failure, validation, and the no-JavaScript form, file validation, upload success and failure, horizontal overflow, and WCAG AA accessibility. Beta and upload services are mocked: tests do not upload customer data, create contacts, or send email. Screenshots are written to `test-results/`.
+Take 33 makes the site read as an open-source project rather than a product launch:
+- Early access is gone. The Projects page ends with "Follow the project": a Star on GitHub button and a release-notes
+  email signup. Every former "Get early access" button and the footer link now say "Follow the project" and point
+  to `projects.html#follow`.
+- Products is now Projects (`projects.html`), and Company is now About (`about.html`).
+- On About, "Work with us" is now "Contribute" (issues, pull requests and reproductions welcome), and "Write to us"
+  asks for questions, reproductions or contributions.
+- The footer reads "Copyright 2026 the Arkaya Labs authors": Arkaya Labs is not a registered company (set in
+  `imprint()` in `src/build.py`).
 
-## Brand source
+Take 31 and 32 fixed the closing paintings when the pages are opened straight from disk, and made the Ellora temple's
+lamps breathe visibly.
 
-The canonical handoff is `../strided-design-system.json`. Its **selected** direction is the baseline: Porcelain, etched surfaces, natural tracking, Newsreader, and the original purple-and-ink mark. The other catalog palettes are alternatives, not additional site colors.
 
-```sh
-npm run brand:sync
-# Or provide another location for the same canonical handoff:
-npm run brand:sync -- /path/to/strided-design-system.json
-```
+Take 30 added the Products page, now Projects (painting: the Kailasa temple at Ellora): the three projects at a
+glance, then a short section each. The bar reads Projects, Research, About.
 
-The sync script writes `src/design-system.json`, `src/styles/brand.css`, and the favicon. The local snapshot allows the website repository to deploy independently. `Mark.astro` renders the exported geometry, fills, opacity, and outlines directly; `Logo.astro` retains the exported mark-to-wordmark scale and gap.
 
-Newsreader is the selected display and wordmark face. IBM Plex Sans and IBM Plex Mono, both from the handoff's typography catalog, support body copy, controls, and instrument labels. Fonts are self-hosted as WOFF2 with their OFL licenses in `public/fonts`. The palette's `inkSoft` is used for small text because `inkFaint` does not reach AA contrast against Porcelain. The exact canonical color tokens are preserved.
+Take 28 with all three paintings repainted taller (2576 × 1438, was 2576 × 1093), with open sky across the top, so each
+one blends into the page over sky instead of over trees and cliffs. The footer now sits on that sky (see Page colours).
+Take 28's fix stays: the fade between page and painting never goes dark, then light, then dark again.
 
-The logo's exact purple (`#4a0081`, exported as `--strided-purple`) highlights strided's role in automatic tuning: the hero promise, coordination across the stack, key control-loop copy, and the model example's adjustment notes. The first diagram puts strided outside the stack, with a purple control line connected to every level. A selected adjustment highlights the layers it coordinates; text also names those layers, and the selected button uses an underline, weight, and `aria-pressed`. Keep neutral surfaces for infrastructure and data series.
+Take 7's layout with take 9's UI and day/night machinery, across four pages:
 
-## Content and diagrams
+| Page | Painting | What's on it |
+|---|---|---|
+| `index.html` (Home) | Taktsang, Paro | Take 7's home: hero, Iris demo carousel, the numbers |
+| `projects.html` | Kailasa, Ellora | Three project cards, then vivace, Iris, and strided and gait: key facts and four points each; Follow the project (GitHub, release notes) |
+| `research.html` | Delphi | What we make (vivace, Iris, strided and gait), the stack diagram, research notes, the ledger drawn as a chart |
+| `about.html` (About) | Chittorgarh | Mission with the large seal, who we are (open source, contribute, write to us), six rules |
 
-The site presents vivace, a local model host built from the kernels up, with strided and gait running inside it. Here, local means models running on hardware the customer controls. vivace serves the model; strided reads every engine step from the in-process telemetry ring and diagnoses what limits the workload; gait trials one setting at a time against live traffic and keeps it only when the evidence holds. The product is described as in development; the website does not start a model host or claim that any example is released product output or a measured result. Copy follows `vivace-architecture.md` in the vivace repository: knob names, risk classes, trial phases, guardrail behavior, and benchmark rows come from it. Update both together.
+Every page keeps take 7's structure: the sticky bar with the progress line, a faint blurred copy of that page's
+painting fixed behind the content under a paper wash, and the full-width painting at the very bottom. As the closing
+painting rises into view, the wash thickens so the backdrop gives way to it.
 
-The homepage reads in this order: hero (`#main`), vivace (`#vivace`, with the memory example at `#memory`), live tuning (`#tuning`, with the trial example at `#trial`), benchmarks (`#benchmarks`), vision (`#vision`), and the beta list (`#beta`).
+## Open it
 
-The hero illustration shows strided tuning vivace inside one process: workload, scheduler, KV cache, kernels, and GPU, with a purple control line connected to every level. Its overview connects every level. Prefill, batching, attention, and memory examples each name the vivace knob gait would trial and the layers it reaches. The controls are keyboard accessible and announce the selected explanation, affected layers, and setting.
+Run `python3 -m http.server 8000` in this folder and open `http://localhost:8000`.
 
-The live tuning section explains strided's observe step, gait's side-by-side trial, and the keep-or-revert decision, then the authority policy: performance settings apply automatically, resource settings need `--allow-resource`, and quality settings need a human. The trial explorer shows synthetic gait trials (kept, reverted by the guardrail, and inconclusive after a traffic shift) with arm B windows shaded, a keyboard-operable window inspector, the trial phases with the skipped phase marked, a data table, and CSV export. Every trial is illustrative, not telemetry or a measured benchmark.
+Opening `index.html` straight from disk also works, but browsers refuse to give `file://` images to WebGL, so the
+closing paintings then fall back to a plain day/night crossfade (no breathing lamps, stars or wind). The paintings'
+fade masks are inlined in `styles.css` as data: URIs for the same reason: from disk the browser refuses mask image
+files, and a mask that fails to load hides the whole painting (take 30 had this bug).
 
-The benchmarks section states the bar vivace is built to (every workload against llama.cpp and Ollama on the same GGUF file), the workloads, and the honesty checks, without numbers. Publish numbers only from the benchmark harness, and keep the hardware line accurate: say "designed for, not yet measured" for anything not measured.
+## Day and night (from take 9)
 
-The vision section explains the intended growth path: one machine as the current focus, many machines as an expansion path, and the data center as the long-term ambition, connected by the same observe-adjust-verify loop. This is a product direction, not a release schedule or a claim of deployed capabilities.
+- `theme.js` runs in `<head>` so the first frame is already the right palette. First visit follows the system
+  setting (or the host page's theme); clicking the sun/moon remembers the choice under `ak-theme`, shared across
+  pages and tabs, and it always wins over a host that sets its own theme. Where storage is blocked, the choice
+  still carries from page to page in the same tab.
+- Everything turns on one clock and one curve: `--dusk` (3.2 s) and `--ease` in `styles.css`.
+- The brand mark and the seal swap to their dark-paper version at night.
+- The closing painting on each page is a canvas (`site.js`): a WebGL pass crossfades day into night on the same
+  --dusk tween. After dark the flames and lit windows breathe and a few stars twinkle. Nothing in the picture moves or
+  bends; the lamp layer holds only the lamps themselves (see below), so lit walls and trees stay still. The two still images stay underneath, so with reduced motion or without WebGL the
+  picture still crossfades.
 
-The four main navigation links point to homepage sections in reading order: `#vivace`, `#tuning`, `#benchmarks`, and `#vision`. Each section introduces its purpose before its supporting content. The header button joins the beta list at `#beta`. From the submission page, these links return to the same homepage anchors. Native anchors scroll smoothly to the section, leave room for the sticky header, and preserve browser history and interaction state. Reduced-motion preferences use an immediate transition. An IntersectionObserver marks the visible section without a scroll handler or JavaScript animation loop.
+## The seal and mission
 
-Sections use descriptive headings and spacing instead of decorative numbering. Monospace is reserved for technical readouts, knob names, and flags. Divider lines belong to charts, tabular data, and controls; editorial content uses typography and surface changes for hierarchy.
+The seal, "Intelligence should be owned, not rented." and the Sui juris motto live only on the About page, as the
+centrepiece of its mission section. Since take 35 the seal is drawn by `tools/seal.py` (run it, then rebuild) and is Indian in its vocabulary, kept to a
+few bold rings: a lobed, cusped edge like a Mughal or Rajput medallion with a gold jewel in each lobe, a dotted rangoli
+ring, the inscription (ARKAYA LABS · MMXXVI over the top, SUI JURIS under the bottom) with lotus buds at three and
+nine, and a two-layer gilt lotus rosette, as carved on a temple ceiling, around an enamel medallion holding the mark.
+Its colours (ink, `--gold`, the enamel; the petals are gold by day and bronze by night) are set in `styles.css` under
+"The seal", so it follows the theme. It shows up to 440 px wide, on a soft disc of page colour with a low shadow.
 
-Do not use em dashes in site copy, page titles, captions, emails, or brand copy. Use commas, colons, or separate sentences as appropriate.
+## Page colours
 
-Always write the brand name as `strided`, including at the start of a sentence, in page titles, metadata, accessible labels, and emails. Write `vivace` and `gait` in lowercase too.
+By day each page's background is the sky of its own painting, sampled from the band where the picture fades into
+the page. By night the page keeps the deep blue (`#0e1322`) and, just above the closing painting, eases into that
+painting's moonlit sky over a long fade (`.ark-lead` and `--ark-lead` near the end of `styles.css`), so there is no
+edge. The header, demo frame and lines are mixed from the page colour; the ledger's dark band fades in and out.
 
-Update trial data and explanations together in `src/components/TrialExplorer.tsx`. Keep units, axis bounds, legends, data tables, and the illustrative-data disclosure intact. Changes to the brand selection may also require downloading the corresponding licensed font assets.
+The fade is not one flat colour any more. Up to take 27 it was (`--ark-sky`), and wherever the top of a painting is
+darker than that colour (Paro's pines and cliff, Delphi's left sky and right-hand cliffs) the page went dark, then a
+lit band, then dark again. Now each painting has two small strips, `assets/<name>.lead.png` (day) and
+`<name>.night.lead.png` (night), made by `tools/lead_strips.py` from the painting's own top edge: column by column the
+fade arrives at the colour actually at the top of the picture, never lighter than the old sky colour, and dark masses
+spread softly outward as they rise instead of standing as stripes. In every column the colour moves one way only,
+from the page into the picture. The night strip fades in over the day one on the --dusk clock, and both share one mask
+(the old mask also ended on a sudden stop that drew a faint light line at the top of the picture; it is now flat at
+both ends).
 
-### Memory example
+The paintings have open sky across their top fifth, and the footer sits on it: the picture is drawn up under the
+footer (`.ark-reveal` in `styles.css`), a little further on short, wide windows, so that at the bottom of the page
+the footer always clears the top bar (checked from 1280 × 720 to 2560 × 1440, and on phones).
 
-`ModelExplorer.astro` at `/#memory` retains the isometric language of the supplied `strided-rack-cubes.html` graphic, now representing GPU memory on one vivace host. Its 48 blocks each represent 0.5 GiB, totaling 24 GiB. Solid blocks hold weights, runtime buffers, or cached tokens, and open blocks are free. The former `/vision` route redirects to `/#vision` so shared links still work. The original HTML file is not needed at build time or in production.
+## Editing
 
-The loaded-model graphic and metrics are available without JavaScript. Five keyboard-operable controls select loaded, one chat, eight chats, agent loop, or batch. Each change restores the original graphic's 1.4-second cubic ease-out transition: memory blocks rise or settle while memory in use and free memory track the visible allocation. Only changing solid faces are redrawn; capacity outlines stay fixed. Near the base, each cube's three solid faces fade as one group, avoiding opaque flat caps and a visible pop when empty geometry is removed. A new selection transitions from the current position, and a live status announces the completed result. Reduced motion uses an immediate update. Leaving the viewport, hiding the tab, or enabling reduced motion finishes the transition and cancels pending frames. There is no idle animation loop, 3D library, React runtime, or added dependency.
+The four pages are built from `src/pages/*.html` plus shared pieces in `src/partials/` (seal, stack diagram) and the
+header, footer and painting blocks in `src/build.py`. After editing, run `python3 src/build.py`. Editing the built
+HTML directly also works, but the next build overwrites it.
 
-Edit example settings and their explanations together in `src/lib/local-model.ts`. Each workload assumes 8 GiB of resident weights, 1.5 GiB of runtime buffers, and KV cache blocks holding tokens; vivace reserves its KV pool at load, so the filled blocks are the ones in use. Sequence counts and context limits illustrate the workloads; cache size is not calculated from a specific architecture. Keep the legend, disclosure, and expandable assumptions with the graphic. Do not present these synthetic settings as compatibility guarantees or measured speed and latency improvements.
+- Demo videos: as in take 7, set `videoSrc` per demo at the top of `demos.js`. The carousel advances by itself
+  after about 4 s on each demo (`AUTO_ADVANCE_MS`; a gold arc on the next arrow shows the time left), pauses 6 s after you touch it (`RESUME_MS`), and stops for
+  keyboard focus, the Pause motion button and reduced motion.
+- Release-notes signup: set `data-endpoint` on `<form id="signup">` in `src/pages/projects.html` (Buttondown,
+  Formspree, or your own URL). It posts JSON `{email}`. Until then it says release notes are not set up yet and
+  points people to GitHub.
+- Backdrop strength: `WASH` in `site.js` (default .73, so ~27% of the painting shows through).
+- The ledger: edit the lists at the top of `src/ledger.py`, then rebuild. Engine rows are drawn as the difference
+  from the engine named on the row (right of centre = better), on one shared −60 % to +60 % axis; anything bigger is
+  clipped with a break mark and labelled in words. Blue = ahead, lotus pink = behind (checked for colour-blind
+  separation in both modes). The exact numbers are under "Show the numbers as a table".
 
-## Beta list
+## Swapping paintings
 
-`Beta.astro` at `/#beta` collects interest in the vivace beta: a required email, plus optional name, GPU, operating system, and what the person would run. `/api/beta` validates the signup with `src/lib/beta.ts` and records it everywhere that is configured: a row in the team's Google Sheet, a Resend contact (inside the segment `RESEND_SEGMENT_ID` when set), and an email to the team with the details. Any one of them keeps the signup, so the request fails only when all of them do. Nothing is emailed to the subscriber: a public form must not send mail to arbitrary addresses, and the beta announcement goes out from the list. A hidden `website` field catches bots, which receive the same success response.
+Put `<name>.webp` (day) and `<name>.night.webp` (night) in `assets/` at the same size, plus half-width
+`<name>.small.webp` / `<name>.night.small.webp` for the blurred backdrop. Then make the lamp/star layer:
 
-The Google Sheet is the free place to read every response. A short Apps Script attached to the sheet, `scripts/beta-sheet.gs`, accepts each signup from `/api/beta` and appends a row. To set it up, create a sheet with the Google account that should own the list, open Extensions → Apps Script, paste the file, then Deploy → New deployment → Web app with "Execute as: Me" and "Who has access: Anyone". Put the `/exec` URL in `BETA_SHEET_URL` and redeploy the site. The script stores submitted values as text, so nothing typed into the form can run as a spreadsheet formula. After changing the script, publish a new version of the same deployment to keep the URL.
+    python3 tools/masks.py <name> --sun <moon x>,<moon y> --sky <how far down the sky reaches>   # stars
+    python3 tools/lamps.py <name>                                                               # flames
 
-The form is a native `POST` that a small script upgrades to `fetch` with an inline result. Without JavaScript, the endpoint redirects to `/#beta-joined` or `/#beta-error` and CSS `:target` shows the result. Astro's origin check rejects cross-site form posts.
+`lamps.py` keeps only small, bright, warm points that stand out from their surroundings (flames, lit windows,
+lamp strings) and drops anything larger than a lamp, and (since take 29) the faint warm residue between lamps, so lit
+hillsides never breathe; it writes a preview to /tmp to check by eye. Chittorgarh used
+`--size 6 --min 0.12`; Paro and Delphi the defaults. The `.mask.webp` it also writes is for motion, which the site no longer uses; delete it. Add the
+moon position to `PAINT` in `site.js`, and the backdrop rules (`.page-<name>`) and lead-in strip rules
+(`.page-<name> .ark-lead::before/::after`) in `styles.css`, and the painting's size to `SIZES` in `src/build.py`.
+Paintings should have open sky across roughly their top fifth, with every tree, cliff and cloud below it: the footer
+sits on that sky and the page fades into it. If a new painting has another shape, change the backdrop's aspect-ratio
+(`.ark-landscape-image`) and the footer overlap (`.ark-reveal`, which assumes a picture 55.82 % as tall as it is wide)
+in `styles.css` to match.
+The top-edge fade of each closing painting comes from `tools/fade_masks.py` (now a short straight fade, .14 to .20 of
+the height, since the tops are open sky); add the new painting to `SHAPES` there and run it. The fade above each painting
+carries the painting's canvas grain (`assets/canvas.grain.png`, from `tools/sky_grain.py`, built from the original
+full-quality Chittorgarh night painting, whose open sky shows the weave most cleanly). Finally add the painting's day
+page colour (its sky, sampled from the top 6 %) and its top-edge sky colours to `PAGE` and `SKY` at the top of
+`tools/lead_strips.py` and run it, for the lead-in strips (`SKY` also caps how far the fade may climb toward a lighter
+top edge, which keeps the footer readable). Set the same day colour as that page's `--ark-paper` in `styles.css`.
+Take 29 used: Paro `--sun 0.298,0.422 --sky 0.56`, Delphi `--sun 0.314,0.388 --sky 0.5`, Chittorgarh (no moon)
+`--sun 0.5,-1 --sky 0.45`; take 30's Ellora `--sun 0.612,0.326 --sky 0.45`,
+and for its lamps `tools/lamps.py ellora --glow 3` (its lit windows are only a few pixels, so they get a wider halo to
+breathe in).
+Needs `opencv-python`, `numpy` and `Pillow`.
 
-Deployment variables: at least one of `BETA_SHEET_URL` and `RESEND_API_KEY`. With Resend, optionally `RESEND_SEGMENT_ID` and the same optional `EMAIL_FROM` and `EMAIL_TO` as the submission service. Create the segment in Resend before setting it.
+## Image size
 
-## Submission service
+The paintings are 2576 × 1438. That is sharp up to about a 1700 px wide window on a 1.5× display and is fine
+everywhere else for a painterly image. For crisp results on large Retina/4K screens, supply them at **3840 × 2144**
+(same 1.79 : 1 ratio) and re-run the conversion and masks. Export the night skies at high quality: compression shows
+as faint blocks and banding in a smooth dark sky, right where it meets the fade.
 
-The existing flow is preserved: `/api/upload-url` signs an upload, the browser sends the capture directly to S3-compatible storage, and `/api/notify` validates the object and notifies the team. Required deployment variables:
+## Checked
 
-- `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`
-- `S3_ENDPOINT` for R2 or other compatible storage; `S3_REGION` as appropriate
-- `UPLOAD_TOKEN_SECRET`, `RESEND_API_KEY`
-- Optional `EMAIL_FROM` and `EMAIL_TO`
+JavaScript syntax; all four pages in light and dark at 1440 × 900 and 390 × 844 in headless Chrome; WebGL canvases
+start on every page; theme toggle lands on the right colours and is remembered across pages. Google Fonts were not
+reachable in the test environment, so the screenshots used fallback fonts.
 
-The bucket must allow browser PUT requests from the deployed origin. Real storage access and email delivery require configured credentials; automated browser tests use mocks. File validation in the UI complements the existing server checks. No retention policy is inferred from signed URL expiration.
+## Navigation
 
-## Dependency follow-up
+The bar has three links, Projects, Research and About, plus the sun/moon switch. The Arkaya Labs mark goes home. On
+phones narrower than 400 px the wordmark shortens to "Arkaya", and below 340 px to the mark alone, so the bar fits.
 
-Compatible security updates were applied during the redesign. At verification, `npm audit` still reports six existing findings (five high, one low) in the Astro 6 / Vercel 10 dependency chain. Its recommended fixes require a major upgrade to Astro 7 and Vercel adapter 11; that migration is separate from this visual refactor. Re-run the audit before deployment.
+## Performance on modest machines
+
+- The sun/moon switch uses View Transitions where the browser has them (Chrome, Edge, Safari 18+, recent
+  Firefox): the page swaps palette at once and the GPU crossfades one snapshot over 2.4 s, while the icon animates
+  live. Older browsers fall back to the CSS fade on `--dusk`.
+- The background paintings have their blur baked into `*.small.webp` (no live CSS blur), the backdrop sits on its
+  own GPU layer, and there is no frosted-glass blur under the header or the ledger panel.
+- The top bar has no band at rest: a soft veil appears behind the nav only while the page is scrolling and fades
+  0.7 s after it stops (the delay is in `site.js`).
+
+- Home hero buttons: "Follow the project" (to the end of the Projects page) and "Explore the research". The demo carousel
+  has no Pause motion button; it still stops for keyboard focus and reduced motion.

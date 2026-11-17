@@ -1,0 +1,89 @@
+<section class="ark-hero" id="ark-top">
+  <div class="ark-hero-main">
+    <div class="ark-eyebrow">LOCAL AI · AGENT &amp; INFERENCE RESEARCH</div>
+    <h1>Intelligence you own,<br class="br-wide"> not rent.</h1>
+    <p class="ark-intro">We’re building advanced local AI to help you do more with the hardware you already have.</p>
+    <div class="ark-cta ark-cta-home"><a class="btn" href="projects.html#follow">Follow the project<svg class="btn-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg></a><a class="btn ghost" href="research.html">Explore the research</a></div>
+  </div>
+</section>
+<section class="ark-demos" id="ark-demos" aria-labelledby="ark-demo-title">
+  <h2 id="ark-demo-title" class="ark-sr-only">Iris on your computer</h2>
+  <div class="ark-gallery-nav">
+    <div class="ark-task-tabs" role="group" aria-label="Choose a demo">
+      <button type="button" class="cursor-interaction" data-demo="0" aria-pressed="true">Papers</button>
+      <button type="button" class="cursor-interaction" data-demo="1" aria-pressed="false">Code</button>
+      <button type="button" class="cursor-interaction" data-demo="2" aria-pressed="false">Email</button>
+      <button type="button" class="cursor-interaction" data-demo="3" aria-pressed="false">Web research</button>
+    </div>
+  </div>
+  <div class="ark-carousel" role="region" aria-roledescription="carousel" aria-label="Iris demonstrations">
+    <div class="ark-track"></div>
+    <div class="ark-arrows">
+      <button type="button" class="cursor-interaction ark-prev" data-direction="-1" aria-label="Previous demo"><svg class="ark-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg></button>
+      <button type="button" class="cursor-interaction ark-next" data-direction="1" aria-label="Next demo"><svg class="ark-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg><svg class="ark-timer" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23"/></svg></button>
+    </div>
+  </div>
+  <template id="ark-demo-template">
+  <div class="ark-media-stage">
+  <video class="ark-recording" muted loop playsinline preload="metadata" aria-label="Iris demo recording" hidden></video>
+  <button class="ark-video-start" type="button" hidden>Play demo</button>
+  <div class="ark-app" aria-label="Iris interface concept">
+    <aside class="ark-sidebar">
+      <div class="ark-app-brand">Vivace</div>
+      <div class="ark-new">＋ &nbsp; New chat</div>
+      <div class="ark-sidebar-item ark-current">Home</div>
+      <div class="ark-sidebar-item">My chats</div>
+      <div class="ark-sidebar-item">Model manager</div>
+      <div class="ark-sidebar-item">Connectors</div>
+      <div class="ark-sidebar-item">Settings</div>
+      <div class="ark-sidebar-note">Interface concept</div>
+    </aside>
+    <div class="ark-conversation">
+      <div class="ark-app-top"><span>New chat</span><span class="ark-status">Iris <span>·</span> Preview</span></div>
+      <div class="ark-attachment">Attached papers-ml · 4 files</div>
+      <div class="ark-user-message">Summarize the papers in here.</div>
+      <div class="ark-assistant-label">Iris</div>
+      <div class="ark-activity">
+        <div class="ark-activity-title">Reading papers</div>
+        <img src="assets/demos/papers.gif" class="ark-demo-motion" width="600" height="144" alt="Animated paper-reading concept showing selection of relevant sections">
+        <div class="ark-activity-detail">Selecting relevant passages</div>
+      </div>
+      <div class="ark-composer"><span>＋</span><span>Ask anything</span><span aria-hidden="true">↑</span></div>
+    </div>
+  </div>
+  </div>
+  </template>
+  <noscript><p class="ark-preview-note">Enable JavaScript to browse the animated demos.</p></noscript>
+  <div class="ark-caption" aria-live="off">
+    <h3>Four papers, one request.</h3>
+    <p>Iris selects relevant passages and reads in parallel.</p>
+  </div>
+  <div class="ark-preview-note">Animated interface concepts · recordings coming soon</div>
+</section>
+<section class="ark-benchmarks" id="ark-performance" aria-labelledby="ark-performance-title">
+  <div class="ark-eyebrow">ENGINE PERFORMANCE · OCTOBER 2026 SNAPSHOT</div>
+  <h2 id="ark-performance-title">The numbers.</h2>
+  <div class="ark-metrics">
+    <div class="ark-metric">
+      <div class="ark-value">20–49<span>%</span></div>
+      <h3>higher aggregate throughput</h3>
+      <p>vs Ollama 0.40.1</p>
+      <div class="ark-condition">RTX 5070 Ti · 8–16 concurrent chats<br>17 October 2026</div>
+    </div>
+    <div class="ark-metric">
+      <div class="ark-value">114<span>ms</span></div>
+      <h3>to the first token</h3>
+      <p>vs 160 ms with llama.cpp</p>
+      <div class="ark-condition">Apple M5, 24 GB · 52-token prompt<br>9 October 2026</div>
+    </div>
+  </div>
+  <details class="ark-conditions" open>
+    <summary class="cursor-interaction">Across workloads and test conditions</summary>
+    <div class="ark-result-row"><span>RTX 5070 Ti · 8–16 chats · throughput vs llama.cpp</span><strong>+12.7–15.1%</strong></div>
+    <div class="ark-result-row"><span>RTX 5070 Ti · one chat · first token vs Ollama</span><strong>2–2.5× slower</strong></div>
+    <div class="ark-result-row"><span>Apple M5 · 4 chats · throughput vs llama.cpp</span><strong>−3.8%</strong></div>
+    <p class="ark-data-note">Figures transcribed from the October ledger; different machines and workloads.</p>
+  </details>
+  <a class="ark-more" href="research.html#ledger">The full ledger, losses included</a>
+</section>
+
