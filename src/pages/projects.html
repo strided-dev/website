@@ -1,0 +1,123 @@
+<section class="ark-hero short" id="ark-top">
+  <div class="ark-hero-main">
+    <div class="ark-eyebrow">PROJECTS</div>
+    <h1>Three pieces,<br>one machine.</h1>
+    <p class="ark-intro">An engine, an agent and a tuner, built to run together on the computer you already own: no signal, no account, nothing to rent.</p>
+    <div class="ark-cta"><a class="btn" href="#follow">Follow the project<svg class="btn-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg></a><a class="btn ghost" href="research.html#ledger">See the numbers</a></div>
+  </div>
+</section>
+<section class="ark-section first pp-glance" aria-label="The three projects at a glance">
+  <div class="pp-trio">
+    <a class="pp-card" href="#vivace">
+      <span class="kind">Inference engine</span>
+      <h2>vivace</h2>
+      <p>Open models on the GPU you have, many conversations at once from one card.</p>
+      <span class="pp-status open">Open source soon · Apache 2.0</span>
+      <span class="pp-go">The engine<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg></span>
+    </a>
+    <a class="pp-card" href="#iris">
+      <span class="kind">Personal agent</span>
+      <h2>Iris</h2>
+      <p>Lives on your computer, shows its sources, and asks before anything leaves it.</p>
+      <span class="pp-status preview">Preview</span>
+      <span class="pp-go">The agent<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg></span>
+    </a>
+    <a class="pp-card" href="#tuner">
+      <span class="kind">Diagnosis and tuning</span>
+      <h2>strided and gait</h2>
+      <p>Finds what limits your machine, and keeps a change only when the measurement proves it.</p>
+      <span class="pp-status trial">In trials</span>
+      <span class="pp-go">The tuner<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.2c4.4-.3 9-.3 13.8 0"/><path d="M13.6 7.4c1.4 1.9 3 3.5 4.9 4.8-1.9 1.2-3.5 2.8-4.9 4.6"/></svg></span>
+    </a>
+  </div>
+</section>
+<section class="ark-section pp" id="vivace" aria-labelledby="vivace-title">
+  <div class="pp-grid">
+    <div class="pp-intro">
+      <span class="kind">Inference engine</span>
+      <h2 id="vivace-title">vivace</h2>
+      <p class="lede">The engine. It serves open models from the GPU already on your desk, and nothing leaves the machine unless you send it.</p>
+      <dl class="pp-facts">
+        <div><dt>Runs on</dt><dd>NVIDIA RTX 30, 40 and 50 · Apple M5</dd></div>
+        <div><dt>Models</dt><dd>Llama 3 · Qwen 2.5, 3 and 3.5 · Mistral</dd></div>
+        <div><dt>Serves</dt><dd><code>/v1/chat/completions</code> · <code>/v1/messages</code></dd></div>
+        <div><dt>Checked</dt><dd>Same top token as llama.cpp, 99 % of the time or better</dd></div>
+      </dl>
+      <a class="ark-more" href="research.html#ledger">Measured results</a>
+    </div>
+    <ul class="pp-feats">
+      <li><h3>Many chats, one card</h3><p>Conversations share each step on the GPU, so one card serves sixteen at once.</p></li>
+      <li><h3>Picks up where you left off</h3><p>A finished conversation is parked, and the next turn starts from its saved state.</p></li>
+      <li><h3>Works with your tools</h3><p>Claude Code, Qwen Code and OpenCode connect to it on localhost.</p></li>
+      <li><h3>Recovers on its own</h3><p>Run under <code>vivace supervise</code>, it restarts after a GPU fault and the chat resumes where it stopped.</p></li>
+    </ul>
+  </div>
+</section>
+<section class="ark-section pp" id="iris" aria-labelledby="iris-title">
+  <div class="pp-grid">
+    <div class="pp-intro">
+      <span class="kind">Personal agent</span>
+      <h2 id="iris-title">Iris</h2>
+      <p class="lede">The agent. It lives on your computer and knows the difference between reading and spending.</p>
+      <dl class="pp-facts">
+        <div><dt>Runs on</dt><dd>vivace, on your own machine</dd></div>
+        <div><dt>Skills</dt><dd><code>ask_docs</code> · <code>web_answer</code> · <code>read_papers</code> · <code>research</code></dd></div>
+        <div><dt>Connects</dt><dd>As an MCP server, for your other tools</dd></div>
+        <div><dt>Measured</dt><dd>Wrong tool 2.5 % of the time with Qwen3-8B</dd></div>
+      </dl>
+      <a class="ark-more" href="index.html#ark-demos">See Iris at work</a>
+    </div>
+    <ul class="pp-feats">
+      <li><h3>Asks before it spends</h3><p>Spending always asks first, and after anything untrusted, so does every write.</p></li>
+      <li><h3>Shows its sources</h3><p>Quotes your documents by file and line, and the web only where the saved page still says it.</p></li>
+      <li><h3>Memory you can read</h3><p>Plain text files you can open, edit and delete, each change logged with its reason.</p></li>
+      <li><h3>Stays on the machine</h3><p>Other tools can use it, but it never offers them spending or writes beyond this computer.</p></li>
+    </ul>
+  </div>
+</section>
+<section class="ark-section pp" id="tuner" aria-labelledby="tuner-title">
+  <div class="pp-grid">
+    <div class="pp-intro">
+      <span class="kind">Diagnosis and tuning</span>
+      <h2 id="tuner-title">strided and gait</h2>
+      <p class="lede">The tuner. strided finds what limits your workload; gait changes one setting at a time and keeps it only when the numbers agree.</p>
+      <dl class="pp-facts">
+        <div><dt>Lives in</dt><dd>The engine's own process: no sidecar, no restart</dd></div>
+        <div><dt>Decides</dt><dd>Speed settings on its own; anything that could change an answer waits for you</dd></div>
+        <div><dt>Records</dt><dd>A hash-chained journal, intent written before outcome</dd></div>
+        <div><dt>So far</dt><dd>One change kept, on the CPU reference; GPU trials next</dd></div>
+      </dl>
+      <a class="ark-more" href="research.html#stack">Inside one process</a>
+    </div>
+    <ul class="pp-feats">
+      <li><h3>Every rule cites its source</h3><p>Roofline, PagedAttention, Sarathi-Serve, DistServe, Little's law. A rule without one won't load.</p></li>
+      <li><h3>Says when it isn't sure</h3><p>Every finding carries a confidence, and ambiguous evidence gives no diagnosis at all.</p></li>
+      <li><h3>Predicts, then measures</h3><p>Each trial writes its prediction down before it touches anything.</p></li>
+      <li><h3>Keeps only what holds</h3><p>A change stays only if its gain clears the noise; otherwise it is undone.</p></li>
+    </ul>
+  </div>
+</section>
+<section class="ark-section" id="follow" aria-labelledby="follow-title">
+  <div class="register">
+    <div>
+      <div class="ark-eyebrow">IN THE OPEN</div>
+      <h2 id="follow-title">Follow the project.</h2>
+      <p class="lede">The code, the benchmarks and the results that did not hold up all land on GitHub first. Star it to watch the work as it happens, or leave an email for release notes.</p>
+    </div>
+    <div class="follow-ways">
+      <div class="follow-way">
+        <h3>Star on GitHub</h3>
+        <p>Every change, issue and benchmark, as it happens.</p>
+        <a class="btn" href="https://github.com/arkaya-labs">Star on GitHub<svg class="btn-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.5 5.3 5.8.7-4.3 4 1.1 5.7L12 16.5l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></a>
+      </div>
+      <form class="signup follow-way" id="signup" novalidate data-endpoint="">
+        <h3>Get release notes</h3>
+        <p>One short email when something is released, and nothing else.</p>
+        <label for="su-email">Email</label>
+        <input id="su-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+        <button class="btn ghost" type="submit" id="su-btn">Get release notes</button>
+        <p class="su-msg" id="su-msg" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>

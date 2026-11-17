@@ -1,0 +1,810 @@
+/* Arkaya Labs, take 10: take 7's layout and dimensions, take 9's UI and day/night machinery, three pages.
+   One clock (--dusk) and one curve (--ease) turn everything between day and night. */
+:root {
+  color-scheme: light;
+  --ark-paper: #f3ebdc;
+  --ark-ink: #2a2521;
+  --ark-muted: #5e554b;
+  --ark-green: #356345;
+  --ark-line: #d8cbb9;
+  --ark-app: #fbf7ef;
+  --ark-demo-scale: .85;
+  --ark-sidebar: #eee6d8;
+  --ark-current: #dedfc8;
+  --ark-bubble: #eee7da;
+  --ark-composer: #fffaf2;
+  --ark-eyebrow: #784527;
+  --ark-header: rgba(243,235,220,.89);
+  --ark-hover: #e7ebdd;
+  --dusk: 3.2s;
+  --ease: cubic-bezier(.65,0,.35,1);
+  --ink: var(--ark-ink);
+  --paper: var(--ark-paper);
+  --gold: #c99a33;
+  /* take 9 tokens, used by its components below */
+  --ink-2: var(--ark-muted); --ink-3: #8d8477; --rule: #dacfbd;
+  --tile: #241e1a; --tile-ink: #f1e9da; --tile-ink-2: #b3a896; --tile-rule: #3a322b;
+  --lotus: #b8275a; --keep: #3c7f55; --lose: #b8275a; --notrun: #8d8477;
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --text: Figtree, Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--ark-paper); scroll-padding-top: 90px; }
+body { margin: 0; color: var(--ark-ink); font-family: Figtree, Arial, sans-serif; overflow-x: clip; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--ark-green); outline-offset: 5px; }
+button { -webkit-tap-highlight-color: transparent; }
+button, img { max-width: 100%; }
+[hidden] { display: none !important; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { color: var(--ark-ink); font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; letter-spacing: -.035em; }
+p { color: var(--ark-muted); }
+.ark-page { position: relative; isolation: isolate; }
+.ark-landscape, .ark-wash { position: fixed; inset: 0; pointer-events: none; }
+.ark-landscape { transform: translateZ(0); }  /* its own GPU layer: scrolling never repaints the backdrop */
+.ark-landscape { z-index: -2; }  /* the blur is baked into the *.small.webp backdrops: no live filter */
+.ark-landscape-image {
+  position: absolute; bottom: 0; width: 100%; aspect-ratio: 2576 / 1438;
+  background: center bottom / 100% auto no-repeat;
+  mask-image: linear-gradient(to bottom, transparent, #000 35%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%);
+}
+.ark-wash { z-index: -1; background: var(--ark-paper); opacity: .73; }
+.ark-header {
+  position: sticky; top: 0; z-index: 10; height: 72px; padding: 0 6%;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background: var(--ark-header);
+  border-bottom: 1px solid var(--ark-line);
+}
+.ark-brand { padding: 6px 0; display: flex; align-items: center; gap: 8px; background: none; border: 0; font-size: 21px; font-weight: 500; white-space: nowrap; text-decoration: none; color: var(--ark-ink); }
+.ark-brand .mkw { width: 30px; height: 30px; }
+.ark-brand span { font-weight: 400; }
+nav { display: flex; gap: 24px; }
+nav a { padding: 12px 0; font-size: 13px; color: var(--ark-muted); text-decoration: none; white-space: nowrap; }
+nav a:hover, nav a[aria-current] { color: var(--ark-ink); }
+nav a[aria-current] { box-shadow: inset 0 -1.5px 0 var(--ark-green); }
+.ark-hero { min-height: max(490px, calc(100svh - 230px)); padding: 80px 6% 90px; text-align: center; }
+.ark-hero-main { max-width: 1100px; margin: auto; }
+.ark-eyebrow { color: var(--ark-eyebrow); font-size: 11px; line-height: 1.7; letter-spacing: .16em; font-weight: 500; margin-bottom: 20px; }
+h1 { font-size: clamp(54px, 7.3vw, 106px); line-height: .98; }
+.ark-intro { max-width: 650px; margin: 25px auto 0; font-size: 18px; line-height: 1.6; }
+.ark-demos { --ark-demo-width: calc((min(100vw,1400px) - 14vw) * .95 * var(--ark-demo-scale)); max-width: 1400px; margin: 0 auto; padding: 0 7% 100px; scroll-margin-top: 100px; }
+.ark-gallery-nav { display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 22px; }
+.ark-task-tabs { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+.ark-task-tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 12px 0; font-size: 14px; white-space: nowrap; }
+.ark-task-tabs button[aria-pressed=true] { border-bottom-color: var(--ark-green); color: var(--ark-green); }
+.ark-task-tabs button:hover { color: var(--ark-green); }
+.ark-carousel { position: relative; width: 100vw; margin-inline: calc(50% - 50vw); }
+.ark-track {
+  position: relative; display: flex; align-items: stretch; gap: clamp(18px,2vw,40px);
+  overflow-x: auto; overflow-y: hidden; padding: 20px calc((100% - var(--ark-demo-width))/2) 32px;
+  scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+  touch-action: pan-x pan-y pinch-zoom; cursor: grab;
+}
+.ark-track::-webkit-scrollbar { display: none; }
+.ark-track.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+.ark-slide { position: relative; flex: 0 0 var(--ark-demo-width); min-width: 0; min-height: calc(560px * var(--ark-demo-scale)); aspect-ratio: 16/10; scroll-snap-align: center; opacity: .2; transform: scale(.94); transform-origin: center; }
+.ark-slide.is-active { opacity: 1; transform: none; }
+.ark-carousel::before,.ark-carousel::after { content: ''; position: absolute; z-index: 2; top: 0; bottom: 0; width: clamp(22px,4vw,100px); pointer-events: none; }
+.ark-carousel::before { left: 0; background: linear-gradient(to right,var(--ark-paper),transparent); }
+.ark-carousel::after { right: 0; background: linear-gradient(to left,var(--ark-paper),transparent); }
+.ark-arrows { position: absolute; inset: 20px 0 32px; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding-inline: clamp(12px,1.3vw,30px); pointer-events: none; }
+.ark-arrows button {
+  display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; pointer-events: auto;
+  padding: 0; border: 1px solid var(--ark-line); border-radius: 50%;
+  background: var(--ark-app); font-family: Arial, sans-serif; font-size: 23px;
+  line-height: 1; letter-spacing: 0; transition: background-color .15s, border-color .15s;
+}
+.ark-arrows button span { display: block; line-height: 1; transform: translateY(-1px); }
+.ark-arrows button:hover { background: var(--ark-hover); border-color: #a9b79d; }
+.ark-media-stage { position: relative; height: 100%; touch-action: pan-x pan-y pinch-zoom; }
+.ark-app {
+  display: grid; grid-template-columns: 180px minmax(0,1fr); height: 100%; min-height: 0;
+  background: var(--ark-app); border: 1px solid var(--ark-line); border-radius: 14px; overflow: hidden;
+  box-shadow: 0 18px 48px rgba(69,48,22,.12), 0 3px 7px rgba(69,48,22,.06);
+}
+.ark-sidebar { position: relative; padding: 28px 16px; background: var(--ark-sidebar); border-right: 1px solid var(--ark-line); font-size: 12px; }
+.ark-app-brand { font-size: 23px; font-weight: 500; margin: 0 8px 28px; }
+.ark-new { padding: 12px 10px; background: var(--ark-app); border-radius: 7px; margin-bottom: 20px; }
+.ark-sidebar-item { padding: 11px; margin-bottom: 3px; border-radius: 6px; }
+.ark-current { background: var(--ark-current); }
+.ark-sidebar-note { position: absolute; bottom: 22px; left: 27px; color: var(--ark-muted); font-size: 11px; }
+.ark-conversation { display: flex; flex-direction: column; min-width: 0; padding: 28px 32px; }
+.ark-app-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 18px; font-weight: 500; }
+.ark-status { color: var(--ark-green); font-size: 12px; white-space: nowrap; }
+.ark-status span { padding: 0 4px; }
+.ark-attachment { font-size: 11px; color: var(--ark-muted); margin: 26px 0 16px; }
+.ark-user-message { align-self: flex-end; max-width: 90%; padding: 13px 16px; background: var(--ark-bubble); border-radius: 12px; font-size: 14px; line-height: 1.5; }
+.ark-assistant-label { color: var(--ark-green); font-size: 13px; margin: 25px 0 12px; }
+.ark-activity { flex: 1; min-height: 145px; padding-left: 17px; border-left: 2px solid var(--ark-line); }
+.ark-activity-title { font-size: 14px; font-weight: 500; margin: 2px 0 10px; }
+.ark-demo-motion { display: block; width: 100%; max-width: 600px; height: auto; aspect-ratio: 600/144; object-fit: contain; object-position: left; }
+.ark-activity-detail { font-size: 11px; color: var(--ark-muted); margin: 11px 0; }
+.ark-composer { display: flex; align-items: center; gap: 12px; padding: 13px 16px; margin-top: 22px; border: 1px solid var(--ark-line); border-radius: 28px; background: var(--ark-composer); font-size: 13px; color: var(--ark-muted); }
+.ark-composer span:last-child { margin-left: auto; color: var(--ark-green); font-size: 19px; }
+.ark-recording { display: block; width: 100%; height: 100%; aspect-ratio: 16/10; object-fit: contain; background: var(--ark-app); border-radius: 14px; box-shadow: 0 18px 48px rgba(69,48,22,.12); }
+.ark-video-start { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%,-50%); padding: 12px 20px; background: var(--ark-app); border: 1px solid var(--ark-line); border-radius: 7px; }
+.ark-caption { text-align: center; max-width: 700px; margin: 29px auto 0; }
+.ark-caption h3 { font-size: 31px; line-height: 1.15; }
+.ark-caption p { font-size: 14px; line-height: 1.6; margin-top: 10px; }
+.ark-preview-note { text-align: center; color: var(--ark-muted); font-size: 11px; line-height: 1.6; margin-top: 17px; }
+.ark-motion-toggle { display: block; margin: 9px auto 0; border: 0; border-bottom: 1px solid currentColor; padding: 3px 0; background: none; font-size: 11px; color: var(--ark-muted); }
+.ark-benchmarks { max-width: 1400px; margin: 0 auto; padding: 65px 7% 82px; border-top: 1px solid rgba(137,117,84,.3); text-align: center; scroll-margin-top: 90px; }
+h2 { font-size: clamp(42px,5vw,66px); line-height: 1.05; }
+.ark-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 45px; margin-top: 50px; }
+.ark-metric + .ark-metric { border-left: 1px solid var(--ark-line); padding-left: 40px; }
+.ark-value { font-family: 'Cormorant Garamond',Georgia,serif; font-size: clamp(80px,9vw,130px); line-height: 1; letter-spacing: -.06em; white-space: nowrap; margin-bottom: 18px; }
+.ark-value span { font-size: .48em; margin-left: 6px; letter-spacing: -.04em; }
+.ark-metric h3 { font-family: Figtree,Arial,sans-serif; font-size: 16px; letter-spacing: -.02em; }
+.ark-metric p { font-size: 13px; line-height: 1.5; margin: 10px 0; }
+.ark-condition { color: var(--ark-muted); font-size: 11px; line-height: 1.75; }
+.ark-conditions { text-align: left; margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--ark-line); font-size: 11px; line-height: 1.7; }
+.ark-conditions summary { color: var(--ark-green); font-size: 12px; padding: 9px 0; cursor: pointer; }
+.ark-result-row { display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-bottom: 1px solid var(--ark-line); }
+.ark-result-row strong { font-weight: 500; white-space: nowrap; }
+.ark-data-note { font-size: 11px; line-height: 1.7; margin-top: 14px; }
+/* Preserve the wide view on every screen: no cover crop or fixed-height zoom. */
+.ark-reveal { position: relative; margin: 0; padding: 0; line-height: 0; }
+.ark-painting-pair {
+  position: relative;
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.72) 16%, #000 35%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.72) 16%, #000 35%);
+}
+.ark-final-painting { display: block; width: 100%; height: auto; object-fit: contain; }
+.ark-painting-night { position: absolute; inset: 0; height: 100%; opacity: 0; }
+
+.ark-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media(min-width:1700px) { .ark-hero { padding-top: 110px; } }
+/* Slightly smaller laptop frame; restrained growth on wider browser windows.
+   Explicit width avoids viewport-relative padding shrinking a capped demo. */
+@media(min-width:1600px) {
+  .ark-demos { --ark-demo-width: calc(clamp(1120px,calc(80vw - 160px),1900px) * var(--ark-demo-scale)); width: var(--ark-demo-width); max-width: none; padding-inline: 0; }
+  .ark-app { grid-template-columns: clamp(180px,11.25vw,288px) minmax(0,1fr); }
+  .ark-sidebar { padding: clamp(28px,1.75vw,44px) clamp(16px,1vw,25px); font-size: clamp(12px,.75vw,17px); }
+  .ark-app-brand { font-size: clamp(23px,1.4375vw,32px); }
+  .ark-sidebar-item { padding: clamp(11px,.6875vw,16px); }
+  .ark-sidebar-note { font-size: clamp(11px,.6875vw,14px); }
+  .ark-conversation { padding: clamp(28px,1.75vw,44px) clamp(32px,2vw,51px); }
+  .ark-app-top { font-size: clamp(18px,1.125vw,28px); }
+  .ark-status { font-size: clamp(12px,.75vw,17px); }
+  .ark-attachment,.ark-activity-detail { font-size: clamp(11px,.6875vw,15px); }
+  .ark-user-message,.ark-activity-title { font-size: clamp(14px,.875vw,20px); }
+  .ark-assistant-label,.ark-composer { font-size: clamp(13px,.8125vw,18px); }
+  .ark-demo-motion { max-width: clamp(600px,37.5vw,960px); }
+  .ark-task-tabs { gap: clamp(30px,1.875vw,48px); }
+  .ark-task-tabs button { font-size: clamp(14px,.875vw,17px); }
+  .ark-arrows button { width: clamp(40px,2.5vw,48px); height: clamp(40px,2.5vw,48px); flex-basis: clamp(40px,2.5vw,48px); font-size: clamp(23px,1.4375vw,29px); }
+  .ark-caption h3 { font-size: clamp(31px,1.9375vw,40px); }
+  .ark-caption p { font-size: clamp(14px,.875vw,17px); }
+}
+@media(max-width:760px) {
+  .ark-header { height: 64px; padding: 0 5%; }
+  .ark-brand { font-size: 17px; gap: 5px; }
+  .ark-brand .mkw { width: 25px; height: 25px; }
+  nav { gap: 15px; }
+  nav a { font-size: 12px; }
+  .ark-hero { min-height: max(470px,calc(100svh - 240px)); padding: 70px 6% 75px; }
+  .ark-hero .ark-eyebrow { max-width: 280px; margin: 0 auto 20px; font-size: 10px; }
+  .ark-intro { max-width: 500px; font-size: 15px; }
+  .ark-intro br { display: none; }
+  .ark-demos { --ark-demo-width: 82vw; padding: 0 6% 80px; }
+  .ark-track { gap: 14px; }
+  .ark-slide { min-height: 500px; }
+  .ark-arrows { padding-inline: 6px; }
+  .ark-gallery-nav { gap: 10px 22px; }
+  .ark-task-tabs { gap: 19px; }
+  .ark-task-tabs button { font-size: 12px; }
+  .ark-arrows button { width: 44px; height: 44px; flex-basis: 44px; }
+  .ark-app { grid-template-columns: 1fr; }
+  .ark-sidebar { display: none; }
+  .ark-conversation { padding: 23px 20px; }
+  .ark-demo-motion { min-height: 105px; }
+  .ark-caption h3 { font-size: 28px; }
+  .ark-benchmarks { padding: 55px 6% 60px; }
+  .ark-metrics { gap: 30px; }
+  .ark-metric + .ark-metric { padding-left: 25px; }
+  .ark-value { font-size: 82px; }
+}
+@media(max-width:650px) {
+  .ark-metrics { grid-template-columns: 1fr; gap: 32px; margin-top: 35px; }
+  .ark-metric + .ark-metric { padding: 30px 0 0; border-left: 0; border-top: 1px solid var(--ark-line); }
+  .ark-value { font-size: 100px; }
+  .ark-result-row { flex-direction: column; gap: 4px; }
+  .ark-task-tabs { gap: 15px; }
+  .ark-user-message { max-width: 100%; font-size: 13px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* Take 9's theme control; take 7's structure and dimensions remain above. */
+.theme{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);background:color-mix(in srgb,var(--paper) 55%,transparent);padding:0;margin:0;cursor:pointer;flex:none;color:var(--ink)}
+.theme:hover{border-color:var(--ink)}
+.theme svg{width:22px;height:22px;display:block;overflow:visible;transform:rotate(0deg);transition:transform var(--dusk) var(--ease)}
+.theme .disc{fill:var(--gold)}
+.theme .bite{cx:30px;cy:4px;transition:cx var(--dusk) var(--ease),cy var(--dusk) var(--ease)}
+.theme .rays{stroke:var(--gold);stroke-width:1.7;transform-origin:12px 12px;transform:scale(1);opacity:1;transition:transform var(--dusk) var(--ease),opacity var(--dusk) var(--ease),stroke var(--dusk) var(--ease)}
+.theme[aria-pressed="true"] svg{transform:rotate(25deg)}
+.theme[aria-pressed="true"] .disc{fill:var(--ink)}
+.theme[aria-pressed="true"] .bite{cx:16.5px;cy:9.5px}
+.theme[aria-pressed="true"] .rays{transform:scale(.3);opacity:0}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ark-paper: #0e1322;
+  --ark-ink: #ece6d8;
+  --ark-muted: #bdb5a6;
+  --ark-green: #91c8ac;
+  --ark-line: #354158;
+  --ark-app: #171e2c;
+  --ark-sidebar: #121927;
+  --ark-current: #293b3b;
+  --ark-bubble: #263144;
+  --ark-composer: #1c2838;
+  --ark-eyebrow: #d9b382;
+  --ark-header: rgba(14,19,34,.89);
+  --ark-hover: #2a3c3c;
+  --gold: #e2b64e;
+  --ink-3: #847d72; --rule: #283152;
+  --tile: #090c17; --tile-ink: #ece6d8; --tile-ink-2: #a9a294; --tile-rule: #232a42;
+  --lotus: #ec6a9c; --keep: #6fbf8a; --lose: #ec6a9c;
+}
+nav { align-items: center; }
+.ark-landscape-night { opacity: 0; }
+:root[data-theme="dark"] .ark-landscape-night,
+:root[data-theme="dark"] .ark-painting-night { opacity: 1; }
+.ark-landscape-night, .ark-painting-night { transition: opacity var(--dusk) var(--ease); }
+html, body, h1, h2, h3, p, .ark-header, .ark-wash, .ark-eyebrow,
+.ark-arrows button, .ark-app, .ark-sidebar, .ark-new, .ark-current,
+.ark-user-message, .ark-composer, .ark-status, .ark-attachment,
+.ark-assistant-label, .ark-activity, .ark-activity-detail, .ark-sidebar-note,
+.ark-preview-note, .ark-motion-toggle, .ark-condition, .ark-conditions,
+.ark-result-row, .ark-metric, .ark-benchmarks, .ark-task-tabs button,
+.ark-video-start, .ark-recording, .theme {
+  transition: color var(--dusk) var(--ease), background-color var(--dusk) var(--ease), border-color var(--dusk) var(--ease);
+}
+:root.still *, :root.still *::before, :root.still *::after { transition: none !important; }
+@media(max-width:420px) {
+  .ark-header { gap: 10px; padding-inline: 4%; }
+  .ark-header nav { gap: 12px; }
+  .ark-brand { font-size: 18px; gap: 5px; }
+  .ark-brand .mkw { width: 26px; height: 26px; }
+  .theme { width: 36px; height: 36px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+
+/* ───────────────────────── Take 10 additions ───────────────────────── */
+html { scroll-behavior: smooth; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+code { font-family: var(--mono); font-size: .82em; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Each page has its own painting pair: Paro (home), Ellora (projects), Delphi (research), Chittorgarh (about). */
+.page-paro    .ark-landscape-day   { background-image: url('assets/paro.small.webp'); }
+.page-paro    .ark-landscape-night { background-image: url('assets/paro.night.small.webp'); }
+.page-delphi  .ark-landscape-day   { background-image: url('assets/delphi.small.webp'); }
+.page-delphi  .ark-landscape-night { background-image: url('assets/delphi.night.small.webp'); }
+.page-chittor .ark-landscape-day   { background-image: url('assets/chittor.small.webp'); }
+.page-chittor .ark-landscape-night { background-image: url('assets/chittor.night.small.webp'); }
+.page-ellora  .ark-landscape-day   { background-image: url('assets/ellora.small.webp'); }
+.page-ellora  .ark-landscape-night { background-image: url('assets/ellora.night.small.webp'); }
+/* the closing painting: take 9's living canvas sits over the two stills once WebGL has drawn a frame */
+.ark-live { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease; }
+.ark-live.on { opacity: 1; }
+
+/* Header: take 9's brand (the mark swaps to its dark-paper version at night) and page links, in take 7's bar. */
+.ark-brand .mkw { position: relative; display: block; flex: none; }
+.ark-brand .mk { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity var(--dusk) var(--ease); }
+.ark-brand .mk.dark { opacity: 0; }
+:root.night .ark-brand .mk.light { opacity: 0; }
+:root.night .ark-brand .mk.dark { opacity: 1; }
+.ark-header { transition: border-color .3s ease, background-color var(--dusk) var(--ease); }
+nav a { transition: color .2s ease; }
+
+/* Hero additions: the mission line and take 9's buttons. */
+.ark-intro b { color: var(--ark-ink); font-weight: 500; }
+.ark-mission { margin: 16px auto 0; font-size: 18px; color: var(--ark-ink); }
+.ark-cta { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+.btn { display: inline-block; padding: 10px 18px; border-radius: 999px; font-size: 14.5px; font-weight: 500; text-decoration: none; border: 1px solid var(--ark-ink); background: var(--ark-ink); color: var(--ark-paper); cursor: pointer; font-family: var(--text); }
+.btn.ghost { background: transparent; color: var(--ark-ink); border-color: color-mix(in srgb, var(--ark-ink) 45%, transparent); }
+.btn.ghost:hover { border-color: var(--ark-ink); }
+.ark-hero.short { min-height: max(400px, calc(62svh - 72px)); }
+
+/* Sections in take 7's rhythm: a centered head, then the content. */
+.ark-section { max-width: 1240px; margin: 0 auto; padding: 72px 6% 88px; border-top: 1px solid rgba(137,117,84,.3); scroll-margin-top: 90px; }
+.ark-section.first { border-top: 0; padding-top: 0; }
+.ark-head { text-align: center; max-width: 780px; margin: 0 auto 48px; }
+.ark-head .lede { margin: 16px auto 0; }
+.lede { color: var(--ark-muted); font-size: 17px; line-height: 1.6; max-width: 56ch; }
+.ark-more { display: inline-block; margin-top: 26px; color: var(--ark-green); font-size: 14px; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.ark-benchmarks .ark-more { margin-top: 30px; }
+
+/* Products (take 9) */
+.products { display: grid; }
+.product { display: grid; grid-template-columns: minmax(0,5fr) minmax(0,7fr); gap: clamp(28px,5vw,72px); padding: clamp(34px,4vw,52px) 0; border-top: 1px solid color-mix(in srgb, var(--ark-ink) 55%, transparent); align-items: start; scroll-margin-top: 90px; }
+.product .kind { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ark-eyebrow); margin-bottom: 10px; }
+.product h3 { font-size: clamp(34px,3.4vw,46px); line-height: 1.05; }
+.product .name p { margin-top: 14px; font-size: 16px; line-height: 1.6; max-width: 40ch; }
+.product .name a { display: inline-block; margin-top: 16px; font-size: 15px; font-weight: 500; color: var(--ark-green); }
+.spec { margin: 0; padding: 0; display: grid; font-size: 15px; line-height: 1.55; }
+.spec div { display: grid; grid-template-columns: 8em minmax(0,1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--ark-line); }
+.spec div:first-child { border-top: 0; padding-top: 4px; }
+.spec dt { color: var(--ink-3); }
+.spec dd { margin: 0; color: var(--ark-ink); }
+
+/* The stack (take 9): five painted slabs that arrive condensed as the mark and open out. */
+.stackgrid { display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr); gap: clamp(28px,5vw,72px); align-items: center; }
+.stackfig { position: relative; }
+.stack { width: 100%; height: auto; display: block; overflow: visible; --paper: var(--ark-paper); --l0:#F0DFC0; --l1:#E6C4A0; --l2:#CF9470; --l3:#9AA468; --l4:#7A5A42; --edge:#5A4330; --gold:#C99A33; --line:#6B5440; }
+:root.night .stack { --l0:#55608A; --l1:#44507A; --l2:#6E5A6A; --l3:#4F6A5E; --l4:#3C3448; --edge:#C9C0B0; --gold:#E2B64E; --line:#9A94A8; }
+.stack .top { stroke: var(--edge); stroke-width: 1.2; transition: fill var(--dusk) var(--ease), stroke var(--dusk) var(--ease); }
+.stack .side { stroke: var(--edge); stroke-width: 1; transition: fill var(--dusk) var(--ease), stroke var(--dusk) var(--ease); }
+.stack .l0 .top{fill:var(--l0)}.stack .l1 .top{fill:var(--l1)}.stack .l2 .top{fill:var(--l2)}.stack .l3 .top{fill:var(--l3)}.stack .l4 .top{fill:var(--l4)}
+.stack .l0 .side{fill:color-mix(in srgb,var(--l0) 70%,#000)}.stack .l1 .side{fill:color-mix(in srgb,var(--l1) 70%,#000)}.stack .l2 .side{fill:color-mix(in srgb,var(--l2) 70%,#000)}.stack .l3 .side{fill:color-mix(in srgb,var(--l3) 70%,#000)}.stack .l4 .side{fill:color-mix(in srgb,var(--l4) 70%,#000)}
+.stack .side.right { filter: brightness(.86); }
+.stack .brush { stroke: #fff; stroke-opacity: .22; stroke-width: 5; stroke-linecap: round; }
+.stack .l4 .brush, .stack .l3 .brush { stroke-opacity: .14; }
+.stack .inner { fill: none; stroke: var(--gold); stroke-width: 1.4; stroke-dasharray: 3 4; }
+.stack .tie, .stack .spine { stroke: var(--line); stroke-width: 1.2; }
+.stack .dot { fill: var(--line); }
+.stack .loop { stroke: var(--line); stroke-width: 1.6; stroke-dasharray: 480; stroke-dashoffset: 480; transition: stroke-dashoffset 1.6s var(--ease) 1s, stroke var(--dusk) var(--ease); }
+.stack.open .loop { stroke-dashoffset: 0; }
+.stack .name { font: 600 17px var(--text); fill: var(--ark-ink); letter-spacing: -.01em; }
+.stack .meta { font: 400 12.5px var(--mono); fill: var(--ink-3); letter-spacing: .02em; }
+.stack .slab { transition: transform .9s var(--ease), opacity .7s var(--ease); will-change: transform; transform-origin: 250px 0; opacity: 0; }
+.stack .slab .name, .stack .slab .meta, .stack .slab .tie, .stack .slab .spine, .stack .slab .dot { opacity: 0; transition: opacity .8s var(--ease), fill var(--dusk) var(--ease), stroke var(--dusk) var(--ease); }
+.stack.open .slab .name, .stack.open .slab .meta, .stack.open .slab .tie, .stack.open .slab .spine, .stack.open .slab .dot { opacity: 1; }
+.stack .l0{transform:translate(0,100px) scale(.55)}.stack .l1{transform:translate(0,200px) scale(.55)}.stack .l2{transform:translate(0,300px) scale(.55)}.stack .l3{transform:translate(0,400px) scale(.55)}.stack .l4{transform:translate(0,500px) scale(.55)}
+.stack .mark { transform: translate(160px,240px) scale(1.8); transform-box: view-box; }
+.stack .mark path, .stack .mark circle { transition: fill var(--dusk) var(--ease), stroke var(--dusk) var(--ease); }
+.stack .petals { transform-origin: 50px 50px; transform-box: view-box; transition: opacity .7s var(--ease), transform .9s var(--ease); }
+.stack.open .petals { opacity: 0; transform: scale(.6) rotate(20deg); }
+.stack .sun { transform-origin: 50px 50px; transform-box: view-box; transition: transform 1.1s var(--ease); }
+.stack.open .sun { transform: translate(-105.6px,-150px) scale(.75); }
+.stack .sunrays { transform-origin: 50px 50px; transform-box: view-box; animation: sunspin 48s linear infinite; }
+@keyframes sunspin { to { transform: rotate(360deg); } }
+.stack .beam { stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 520; stroke-dashoffset: 520; opacity: 0; transition: stroke-dashoffset 1s var(--ease), opacity .4s ease, stroke var(--dusk) var(--ease); }
+.stack .b0{stroke:var(--gold)}.stack .b1{stroke:color-mix(in srgb,var(--gold) 60%,var(--l1))}.stack .b2{stroke:var(--l2)}.stack .b3{stroke:var(--l3)}.stack .b4{stroke:color-mix(in srgb,var(--l4) 70%,var(--gold))}
+.stack.open .beam { stroke-dashoffset: 0; opacity: .55; }
+.stack.open .b0{transition-delay:.5s}.stack.open .b1{transition-delay:.65s}.stack.open .b2{transition-delay:.8s}.stack.open .b3{transition-delay:.95s}.stack.open .b4{transition-delay:1.1s}
+.stack.open .slab { opacity: 1; }
+.stack.open .l0{transform:translate(0,100px) scale(1);transition-delay:1.1s}.stack.open .l1{transform:translate(0,200px) scale(1);transition-delay:1.25s}.stack.open .l2{transform:translate(0,300px) scale(1);transition-delay:1.4s}.stack.open .l3{transform:translate(0,400px) scale(1);transition-delay:1.55s}.stack.open .l4{transform:translate(0,500px) scale(1);transition-delay:1.7s}
+.stack.open .slab.off { opacity: .3; }
+.stack .slab.off .name { fill: var(--ink-3); }
+.fold { position: absolute; right: 0; bottom: -6px; font: 500 13px var(--text); color: var(--ark-muted); background: transparent; border: 1px solid color-mix(in srgb, var(--ark-ink) 30%, transparent); border-radius: 999px; padding: 6px 12px; }
+.fold:hover { color: var(--ark-ink); border-color: var(--ark-ink); }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--ark-line); margin-bottom: 22px; }
+.tabs button { font: 500 15px var(--text); color: var(--ark-muted); background: transparent; border: 0; border-bottom: 2px solid transparent; padding: 8px 10px 10px; margin-bottom: -1px; transition: color .25s ease, border-color .25s ease; }
+.tabs button:hover { color: var(--ark-ink); }
+.tabs button[aria-selected="true"] { color: var(--ark-green); border-bottom-color: var(--ark-green); }
+.tabpane h3 { font-family: var(--text); font-size: 20px; font-weight: 600; letter-spacing: 0; margin-bottom: 10px; }
+.tabpane p { font-size: 16px; line-height: 1.6; max-width: 44ch; }
+.tabpane .note-line { margin-top: 12px; font-size: 14.5px; color: var(--ink-3); }
+
+/* Research notes (take 9) */
+.notes h3 { font-size: 13px; font-family: var(--mono); font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--ark-eyebrow); padding-bottom: 10px; border-bottom: 1px solid color-mix(in srgb, var(--ark-ink) 55%, transparent); }
+.notes h3 + .note { border-top: 0; }
+.notes .note + h3 { margin-top: 48px; }
+.note { display: grid; grid-template-columns: 12em minmax(0,1fr); gap: 16px 32px; padding: 24px 0; border-top: 1px solid var(--ark-line); }
+.note .when { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding-top: 6px; }
+.note h4 { margin: 0; font-family: var(--text); font-size: 19px; font-weight: 600; line-height: 1.3; color: var(--ark-ink); }
+.note p { font-size: 15.5px; line-height: 1.6; max-width: 66ch; margin-top: 6px; }
+.note .take { color: var(--ark-ink); font-weight: 500; }
+
+/* How we work (take 9) */
+.rules { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 40px; max-width: 980px; margin: 0 auto; }
+.rules blockquote { margin: 0; padding: 14px 0 0; border-top: 1px solid var(--ark-line); font-family: var(--display); font-size: 27px; font-weight: 500; line-height: 1.15; color: var(--ark-ink); }
+
+/* The company (take 9) */
+.company { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 clamp(28px,5vw,72px); }
+.company div { padding: 24px 0; border-top: 1px solid var(--ark-line); }
+.company h3 { font-family: var(--text); font-size: 18px; font-weight: 600; letter-spacing: 0; margin-bottom: 8px; }
+.company p { font-size: 15.5px; line-height: 1.6; max-width: 46ch; }
+.company p + p { margin-top: 8px; }
+.company a { color: var(--ark-ink); }
+
+/* Follow the project (Projects page; layout and form from take 9's early access) */
+.register { display: grid; grid-template-columns: minmax(0,5fr) minmax(0,7fr); gap: clamp(28px,5vw,72px); align-items: start; }
+.register h2 { font-size: clamp(38px,4.2vw,56px); }
+.signup { display: grid; gap: 8px; max-width: 520px; }
+.signup label { font-size: 15px; color: var(--ark-muted); }
+.signup input[type=email], .signup input[type=text] { font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--ark-line); border-radius: 8px; background: var(--ark-app); color: var(--ark-ink); margin-bottom: 8px; width: 100%; }
+.signup input:focus-visible { outline: 2px solid var(--ark-green); outline-offset: 1px; border-color: var(--ark-ink); }
+.signup fieldset { border: 0; padding: 0; margin: 0 0 8px; display: flex; gap: 18px; flex-wrap: wrap; }
+.signup legend { font-size: 15px; color: var(--ark-muted); padding: 0; margin-bottom: 6px; }
+.signup fieldset label { display: inline-flex; align-items: center; gap: 6px; color: var(--ark-ink); font-size: 16px; }
+.signup input[type=checkbox] { accent-color: var(--lotus); width: 16px; height: 16px; }
+.signup .btn { justify-self: start; }
+.signup .btn[disabled] { opacity: .6; cursor: default; }
+.su-msg { font-size: 15px; color: var(--ark-muted); margin: 0; }
+.su-msg:empty { display: none; }
+.su-msg.ok { color: var(--keep); } .su-msg.err { color: var(--lose); }
+.follow-ways { display: grid; gap: 34px; max-width: 520px; }
+.follow-way { position: relative; display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--ark-line); }
+.follow-way::before { content: ''; position: absolute; top: -1px; left: 0; width: 28px; height: 2px; background: var(--gold); }
+.follow-way h3 { font-family: var(--text); font-size: 18px; font-weight: 600; letter-spacing: 0; line-height: 1.3; }
+.follow-way > p:not(.su-msg) { font-size: 15px; line-height: 1.6; color: var(--ark-muted); margin: 0 0 8px; }
+.follow-way > .btn { justify-self: start; }
+.follow-way .btn-arrow path { stroke-linejoin: round; }
+
+/* The seal and the mission (take 9's colophon), centred in take 7's manner just above the closing painting. */
+.ark-seal-band { max-width: 1100px; margin: 0 auto; padding: 84px 6% 36px; text-align: center; color: var(--ark-ink); border-top: 1px solid rgba(137,117,84,.3); }
+.seal { display: block; width: clamp(150px,15vw,190px); height: auto; margin: 0 auto 28px; color: var(--ark-ink); }
+.creed { font-family: var(--display); font-size: clamp(32px,4vw,54px); font-weight: 500; letter-spacing: -.02em; line-height: 1.05; max-width: 17ch; margin: 0 auto; color: var(--ark-ink); text-wrap: balance; }
+.motto { font-size: 15px; margin: 14px auto 0; max-width: 48ch; }
+.ark-seal-band.major { border-top: 0; padding-top: 24px; padding-bottom: 88px; }
+.ark-seal-band.major .seal { width: clamp(270px, 36vw, 440px); max-width: 100%; margin-bottom: 40px; }
+.ark-seal-band.major .creed { font-size: clamp(40px,5.4vw,74px); }
+.mission-text { max-width: 60ch; margin: 26px auto 0; font-size: 17px; line-height: 1.65; }
+.ark-imprint { max-width: 1100px; margin: 0 auto; padding: 22px 6% 34px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 26px; font-size: 13px; color: var(--ark-muted); }
+.ark-imprint a { text-decoration: none; }
+.ark-imprint a:hover { color: var(--ark-ink); text-decoration: underline; }
+.ark-imprint .fine { flex-basis: 100%; text-align: center; font-size: 11.5px; color: var(--ink-3); margin-top: 4px; }
+
+/* one clock for everything new that sets its own colour */
+.btn, .ark-mission, .lede, .product, .product .kind, .spec div, .spec dt, .spec dd, .note, .note .when, .note h4,
+.notes h3, .rules blockquote, .company div, .company h3, .company p,
+.signup input, .signup label, .signup legend, .ark-seal-band, .seal, .creed, .motto, .ark-imprint, .ark-more,
+.tabs, .tabpane h3, .tabpane p, .fold, .ark-section, .mission-text {
+  transition: color var(--dusk) var(--ease), background-color var(--dusk) var(--ease), border-color var(--dusk) var(--ease);
+}
+:root.still *, :root.still *::before, :root.still *::after { transition: none !important; }
+
+@media (max-width: 900px) {
+  .product, .register, .stackgrid { grid-template-columns: 1fr; gap: 20px; }
+  .rules, .company { grid-template-columns: 1fr; }
+  .note { grid-template-columns: 1fr; gap: 4px; }
+  .note .when { padding-top: 0; }
+  .stack .name { font-size: 19px; } .stack .meta { font-size: 14px; }
+}
+@media (max-width: 760px) {
+  .ark-section { padding: 56px 6% 64px; }
+  .ark-head { margin-bottom: 34px; }
+  .ark-mission { font-size: 15px; }
+  .spec div { grid-template-columns: 6.5em minmax(0,1fr); }
+  .rules blockquote { font-size: 23px; }
+}
+@media (max-width: 560px) {
+  nav a.wide { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ark-live { display: none; }
+  .stack .sunrays { animation: none; }
+}
+/* The seal (drawn by tools/seal.py: a lobed Indian medallion around a lotus rosette): ink is currentColor; gold and lotus are the site's own; the enamel matches the
+   mark's halo so its interlaced petals sit seamlessly on it. It rests on a soft disc of page colour with a low shadow,
+   so it reads as one pressed object over the painted backdrop. */
+.seal { overflow: visible; }
+.seal .face { fill: color-mix(in srgb, var(--ark-paper) 86%, transparent); }
+.seal .i { stroke: currentColor; } .seal .if { fill: currentColor; }
+.seal .g { stroke: var(--gold); } .seal .gf { fill: var(--gold); }
+/* the rosette's petals are gilt, so the pink lotus mark at its heart stands out on its own */
+.seal .lp1 { fill: color-mix(in srgb, var(--gold) 16%, var(--ark-paper)); stroke: var(--gold); }
+.seal .lp2 { fill: color-mix(in srgb, var(--gold) 34%, var(--ark-paper)); stroke: var(--gold); }
+:root.night .seal .lp1 { fill: color-mix(in srgb, var(--gold) 24%, #1c140b); }   /* a warm bronze ground by night, */
+:root.night .seal .lp2 { fill: color-mix(in srgb, var(--gold) 40%, #1c140b); }   /* not gold muddied by the navy */
+.seal .enamel { fill: #FAFAF7; } :root.night .seal .enamel { fill: #0B0B0C; }
+.seal .ink-text { fill: currentColor; }
+.ark-seal-band.major .seal { filter: drop-shadow(0 18px 36px color-mix(in srgb, var(--ark-ink) 14%, transparent)); }
+:root.night .ark-seal-band.major .seal { filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .45)); }
+.seal * { transition: fill var(--dusk) var(--ease), stroke var(--dusk) var(--ease); }
+.seal .mk { transition: opacity var(--dusk) var(--ease); }
+.seal .mk.dark { opacity: 0; }
+:root.night .seal .mk.light { opacity: 0; }
+:root.night .seal .mk.dark { opacity: 1; }
+
+/* ── Page paper and the painting's sky ──
+   By day the page is the painting's own sky, sampled from the band where it fades into the page. By night the page
+   is a deep blue that lightens, over a long eased fade, into that painting's night sky just above it, as a real
+   night sky lightens toward the horizon. Everything else (header, demo frame,
+   lines, the ledger's stone) is mixed from the paper, so each page keeps one family of colours. */
+html.page-paro    { --ark-paper: #eae2d6; }
+html.page-delphi  { --ark-paper: #f7dfc7; }
+html.page-chittor { --ark-paper: #eee2d2; }
+html.page-ellora  { --ark-paper: #e1d7c8; }
+/* By night the page keeps take 9's deep blue; the painting's sky is reached by the lead-in strips further down. */
+html.page-paro[data-theme="dark"],
+html.page-delphi[data-theme="dark"],
+html.page-chittor[data-theme="dark"],
+html.page-ellora[data-theme="dark"]  { --ark-paper: #0e1322; }
+:root {
+  --ark-header: color-mix(in srgb, var(--ark-paper) 96%, transparent);
+  --ark-app: color-mix(in srgb, var(--ark-paper), #fff 60%);
+  --ark-composer: color-mix(in srgb, var(--ark-paper), #fff 70%);
+  --ark-sidebar: color-mix(in srgb, var(--ark-paper), #4a3a20 4%);
+  --ark-bubble: color-mix(in srgb, var(--ark-paper), #4a3a20 5%);
+  --ark-line: color-mix(in srgb, var(--ark-paper), #6b5235 20%);
+  --rule: var(--ark-line);
+}
+:root[data-theme="dark"] {
+  --ark-header: color-mix(in srgb, var(--ark-paper) 96%, transparent);
+  --ark-app: color-mix(in srgb, var(--ark-paper), #fff 6%);
+  --ark-composer: color-mix(in srgb, var(--ark-paper), #fff 10%);
+  --ark-sidebar: color-mix(in srgb, var(--ark-paper), #000 14%);
+  --ark-bubble: color-mix(in srgb, var(--ark-paper), #fff 14%);
+  --ark-current: color-mix(in srgb, var(--ark-paper), #91c8ac 20%);
+  --ark-hover: color-mix(in srgb, var(--ark-paper), #91c8ac 20%);
+  --ark-line: color-mix(in srgb, var(--ark-paper), #fff 18%);
+  --rule: var(--ark-line);
+}
+/* lines that were a fixed warm brown now follow the page */
+.ark-benchmarks, .ark-section, .ark-seal-band { border-top-color: var(--ark-line); }
+.ark-section.first, .ark-seal-band.major { border-top-color: transparent; }
+
+/* The lead-in above the closing painting: the painting's own top edge, carried up column by column and laid over the
+   bottom of the page through an eased mask, so the page runs into the picture with no visible start or end. It
+   overlaps the footer instead of adding height, so nothing moves when the theme changes.
+
+   It used to be one flat sky colour. Wherever the top of the picture is darker than that colour (Paro's pines and
+   cliff, Delphi's left sky and right-hand cliffs), the eye met dark page, then a lit band, then dark picture again.
+   Each strip (assets/<name>.lead.png and <name>.night.lead.png, from tools/lead_strips.py) instead holds, in its lower
+   half, the picture's top-edge colour per column, never lighter than the old sky colour, and in its upper half eases
+   to one even colour; so every column only ever moves away from the page colour as it nears the picture.
+   Layers, top to bottom: the canvas grain (overlay); the strip, its upper two thirds (the fade) stretched over the
+   lead-in; the same strip stretched so only its lower third (the seam colours) shows, filling in behind the painting's
+   faded top.
+   The day strip sits on .ark-lead::before and the night strip on ::after, fading in over it on the --dusk clock (as the
+   painting's own day/night pair does). The mask sits on .ark-lead, so the two are masked once, as one: masked
+   separately, the day strip would show through the night one's half-transparent middle as a grey haze.
+   The mask is a smoothstep (flat at both ends): the old one ended on a steep straight ramp, and that sudden stop drew a
+   faint light line right where the picture begins. */
+:root { --ark-lead: clamp(340px, 36vw, 760px); }
+/* The paintings (2576 x 1438) have open sky across their top fifth, and the footer sits on it: the picture is drawn up
+   under the footer by 9 % of the page width (about a sixth of the picture's height). On short, wide windows, where the
+   picture alone nearly fills the screen, it is drawn up further (up to 14 %, a quarter of its height) so that at the
+   very bottom of the page the footer still clears the 72 px bar: 55.82vw is the picture's height, 168px the bar plus
+   the footer's own height. */
+.ark-reveal { position: relative; margin-top: calc(-1 * var(--ark-lead) - max(9%, min(14%, 55.82vw - 100vh + 168px))); padding-top: var(--ark-lead); pointer-events: none; }
+.ark-lead {
+  position: absolute; inset: 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.028) calc(var(--ark-lead) * .1), rgba(0,0,0,.104) calc(var(--ark-lead) * .2), rgba(0,0,0,.216) calc(var(--ark-lead) * .3), rgba(0,0,0,.352) calc(var(--ark-lead) * .4), rgba(0,0,0,.5) calc(var(--ark-lead) * .5), rgba(0,0,0,.648) calc(var(--ark-lead) * .6), rgba(0,0,0,.784) calc(var(--ark-lead) * .7), rgba(0,0,0,.896) calc(var(--ark-lead) * .8), rgba(0,0,0,.972) calc(var(--ark-lead) * .9), #000 var(--ark-lead));
+  mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.028) calc(var(--ark-lead) * .1), rgba(0,0,0,.104) calc(var(--ark-lead) * .2), rgba(0,0,0,.216) calc(var(--ark-lead) * .3), rgba(0,0,0,.352) calc(var(--ark-lead) * .4), rgba(0,0,0,.5) calc(var(--ark-lead) * .5), rgba(0,0,0,.648) calc(var(--ark-lead) * .6), rgba(0,0,0,.784) calc(var(--ark-lead) * .7), rgba(0,0,0,.896) calc(var(--ark-lead) * .8), rgba(0,0,0,.972) calc(var(--ark-lead) * .9), #000 var(--ark-lead));
+}
+.ark-lead::before, .ark-lead::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: url('assets/canvas.grain.png'), var(--ark-strip), var(--ark-strip);
+  background-blend-mode: overlay, normal, normal;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size: calc(512 / 2576 * 100%) auto, 100% calc(var(--ark-lead) * 1.5), 100% 300%;
+  background-position: left bottom, left top, left bottom;
+}
+.ark-lead::after { opacity: 0; transition: opacity var(--dusk) var(--ease); }
+:root[data-theme="dark"] .ark-lead::after { opacity: 1; }
+.page-paro    .ark-lead::before { --ark-strip: url('assets/paro.lead.png'); }
+.page-paro    .ark-lead::after  { --ark-strip: url('assets/paro.night.lead.png'); }
+.page-delphi  .ark-lead::before { --ark-strip: url('assets/delphi.lead.png'); }
+.page-delphi  .ark-lead::after  { --ark-strip: url('assets/delphi.night.lead.png'); }
+.page-chittor .ark-lead::before { --ark-strip: url('assets/chittor.lead.png'); }
+.page-chittor .ark-lead::after  { --ark-strip: url('assets/chittor.night.lead.png'); }
+.page-ellora  .ark-lead::before { --ark-strip: url('assets/ellora.lead.png'); }
+.page-ellora  .ark-lead::after  { --ark-strip: url('assets/ellora.night.lead.png'); }
+.ark-imprint { position: relative; z-index: 1; }
+main { position: relative; z-index: 1; }
+/* The closing painting's top edge fades by a per-painting map (assets/<name>.fade.png, from tools/fade_masks.py):
+   short over open sky so the moon is never veiled, long where cliffs or trees reach the top so they dissolve like mist.
+   The wide part of the blend happens above the picture, in the lead-in (page colour easing into the picture's own
+   top-edge colours, column by column). */
+.ark-painting-pair { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+/* fade masks: written by tools/fade_masks.py (inlined so they also work when the pages are opened from disk) */
+.page-delphi .ark-painting-pair { -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADt0lEQVR42u3cuw0CMRRFQXvXLP/+y4WEAggRZ0ZyAzc6eoHHAAAAAP7f/DwAIGQJAABoBsBmBgDoBcBuBgDoBcAyAwD0AuAwAwAIAAAgEAAXMwCAAAAAAgFwMwMACAAAIBAADzMAgAAAAAIB8DQDAAgAAEAAAAACAAAQAACAAAAABAAA4B8AAOBnAuBuBgAQAABAIACuZgAAAQAABALgbAYA6AXAYQYA6AXAyQwA0AuAZQYA6AXAbgYA6AXAZgYA6AXANAMAtMwxxssMANDi/A8AAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPClN+8RBDajvdrIAAAAAElFTkSuQmCC'); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADt0lEQVR42u3cuw0CMRRFQXvXLP/+y4WEAggRZ0ZyAzc6eoHHAAAAAP7f/DwAIGQJAABoBsBmBgDoBcBuBgDoBcAyAwD0AuAwAwAIAAAgEAAXMwCAAAAAAgFwMwMACAAAIBAADzMAgAAAAAIB8DQDAAgAAEAAAAACAAAQAACAAAAABAAA4B8AAOBnAuBuBgAQAABAIACuZgAAAQAABALgbAYA6AXAYQYA6AXAyQwA0AuAZQYA6AXAbgYA6AXAZgYA6AXANAMAtMwxxssMANDi/A8AAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPClN+8RBDajvdrIAAAAAElFTkSuQmCC'); }
+.page-paro .ark-painting-pair { -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADt0lEQVR42u3cuw0CMRRFQXvXLP/+y4WEAggRZ0ZyAzc6eoHHAAAAAP7f/DwAIGQJAABoBsBmBgDoBcBuBgDoBcAyAwD0AuAwAwAIAAAgEAAXMwCAAAAAAgFwMwMACAAAIBAADzMAgAAAAAIB8DQDAAgAAEAAAAACAAAQAACAAAAABAAA4B8AAOBnAuBuBgAQAABAIACuZgAAAQAABALgbAYA6AXAYQYA6AXAyQwA0AuAZQYA6AXAbgYA6AXAZgYA6AXANAMAtMwxxssMANDi/A8AAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPClN+8RBDajvdrIAAAAAElFTkSuQmCC'); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADt0lEQVR42u3cuw0CMRRFQXvXLP/+y4WEAggRZ0ZyAzc6eoHHAAAAAP7f/DwAIGQJAABoBsBmBgDoBcBuBgDoBcAyAwD0AuAwAwAIAAAgEAAXMwCAAAAAAgFwMwMACAAAIBAADzMAgAAAAAIB8DQDAAgAAEAAAAACAAAQAACAAAAABAAA4B8AAOBnAuBuBgAQAABAIACuZgAAAQAABALgbAYA6AXAYQYA6AXAyQwA0AuAZQYA6AXAbgYA6AXAZgYA6AXANAMAtMwxxssMANDi/A8AAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPClN+8RBDajvdrIAAAAAElFTkSuQmCC'); }
+.page-chittor .ark-painting-pair { -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADs0lEQVR42u3duw2AMBBEwTOYb//9QkIPSLczkhvY6MkOXAUAAAAAADQ0vgMABJkCAAAEAAAgAACArgGwmAEA8gJgNQMACAAAICAAphkAQAAAAAEBsJkBAAQAABAQALsZACAvAA4zAIAbAAAgIABOMwCAAAAABAAAIAAAgBYBcJkBAAQAACAAAAABAAC0CIDbDADgBgAAEAAAgAAAAAQAACAAAAABAAD4CwAAEAAAwH8BcJgBAAQAACAAAICOAbCbAQDyAmAzAwAIAAAgIACmGQBAAAAAAQGwmgEABAAAEBAAixkAQAAAAAEBMMwAAAIAAGhuVNVjBgDI4v0fAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAiPUCBGIETl0gN+0AAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADs0lEQVR42u3duw2AMBBEwTOYb//9QkIPSLczkhvY6MkOXAUAAAAAADQ0vgMABJkCAAAEAAAgAACArgGwmAEA8gJgNQMACAAAICAAphkAQAAAAAEBsJkBAAQAABAQALsZACAvAA4zAIAbAAAgIABOMwCAAAAABAAAIAAAgBYBcJkBAAQAACAAAAABAAC0CIDbDADgBgAAEAAAgAAAAAQAACAAAAABAAD4CwAAEAAAwH8BcJgBAAQAACAAAICOAbCbAQDyAmAzAwAIAAAgIACmGQBAAAAAAQGwmgEABAAAEBAAixkAQAAAAAEBMMwAAAIAAGhuVNVjBgDI4v0fAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAiPUCBGIETl0gN+0AAAAASUVORK5CYII='); }
+.page-ellora .ark-painting-pair { -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADt0lEQVR42u3cuw0CMRRFQXvXLP/+y4WEAggRZ0ZyAzc6eoHHAAAAAP7f/DwAIGQJAABoBsBmBgDoBcBuBgDoBcAyAwD0AuAwAwAIAAAgEAAXMwCAAAAAAgFwMwMACAAAIBAADzMAgAAAAAIB8DQDAAgAAEAAAAACAAAQAACAAAAABAAA4B8AAOBnAuBuBgAQAABAIACuZgAAAQAABALgbAYA6AXAYQYA6AXAyQwA0AuAZQYA6AXAbgYA6AXAZgYA6AXANAMAtMwxxssMANDi/A8AAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPClN+8RBDajvdrIAAAAAElFTkSuQmCC'); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAEACAYAAADFkM5nAAADt0lEQVR42u3cuw0CMRRFQXvXLP/+y4WEAggRZ0ZyAzc6eoHHAAAAAP7f/DwAIGQJAABoBsBmBgDoBcBuBgDoBcAyAwD0AuAwAwAIAAAgEAAXMwCAAAAAAgFwMwMACAAAIBAADzMAgAAAAAIB8DQDAAgAAEAAAAACAAAQAACAAAAABAAA4B8AAOBnAuBuBgAQAABAIACuZgAAAQAABALgbAYA6AXAYQYA6AXAyQwA0AuAZQYA6AXAbgYA6AXAZgYA6AXANAMAtMwxxssMANDi/A8AAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPClN+8RBDajvdrIAAAAAElFTkSuQmCC'); }
+/* end fade masks */
+.ark-landscape-image {
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.04) 10%, rgba(0,0,0,.14) 20%, rgba(0,0,0,.32) 30%, rgba(0,0,0,.56) 40%, rgba(0,0,0,.8) 50%, #000 62%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.04) 10%, rgba(0,0,0,.14) 20%, rgba(0,0,0,.32) 30%, rgba(0,0,0,.56) 40%, rgba(0,0,0,.8) 50%, #000 62%);
+}
+
+/* ── The ledger, drawn: a diverging bar per published number on one shared axis ──
+   Blue = vivace ahead, lotus pink = vivace behind (validated for colour-blind separation in both modes). Polarity is
+   also carried by side of centre, an arrow and the written value, never by colour alone. */
+:root { --win: #1f6fb8; --loss: #b8275a; --lg-ink: color-mix(in srgb, var(--ark-ink) 70%, var(--ark-paper)); }
+:root[data-theme="dark"] { --win: #4b8fd8; --loss: #e0558a; }
+.lg { max-width: 1080px; margin: 0 auto; }
+.lg-group + .lg-group { margin-top: 56px; }
+.lg-gh { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 24px; align-items: end; padding-bottom: 14px; margin-bottom: 6px; border-bottom: 1px solid color-mix(in srgb, var(--ark-ink) 45%, transparent); }
+.lg-gh h3 { font-family: var(--text); font-size: 18px; font-weight: 600; letter-spacing: 0; grid-column: 1; }
+.lg-gh p { grid-column: 1; font-size: 14px; }
+.lg-legend { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 16px; flex-wrap: wrap; justify-content: flex-end; font-size: 12.5px; color: var(--ark-muted); }
+.lg-legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.sw { display: inline-block; width: 14px; height: 8px; border-radius: 2px; }
+.sw.win { background: var(--win); } .sw.loss { background: var(--loss); }
+.sw.lead { background: color-mix(in srgb, var(--ark-ink) 22%, transparent); }
+.lg-plot { position: relative; }
+.lg-row { display: grid; grid-template-columns: minmax(0, 30%) minmax(0, 1fr) 9.5em; gap: 18px; align-items: center; padding: 9px 0; border-radius: 6px; outline-offset: 2px; }
+.lg-plot .lg-row { border-bottom: 1px solid color-mix(in srgb, var(--ark-line) 55%, transparent); }
+.lg-row:not(.lg-axis):hover, .lg-row:focus-visible { background: color-mix(in srgb, var(--ark-ink) 5%, transparent); }
+.lg-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lg-what { font-size: 14px; color: var(--ark-ink); line-height: 1.3; }
+.lg-meta { font-size: 11.5px; color: var(--ink-3); font-family: var(--mono); letter-spacing: .02em; }
+.lg-track { position: relative; height: 14px; }
+.lg-bar, .lg-lead { position: absolute; top: 2px; height: 10px; }
+.lg-bar.win { background: var(--win); border-radius: 0 4px 4px 0; }
+.lg-bar.loss { background: var(--loss); border-radius: 4px 0 0 4px; }
+.lg-bar.ink { background: var(--lg-ink); border-radius: 0 4px 4px 0; }
+.lg-lead { background: color-mix(in srgb, var(--ark-ink) 16%, transparent); }
+.lg-bar.loss.clip { border-radius: 0; }
+.lg-break { position: absolute; left: -2px; top: -1px; width: 10px; height: 16px;
+  background: repeating-linear-gradient(135deg, var(--ark-paper) 0 2px, transparent 2px 5px); }
+.lg-value { font-family: var(--mono); font-size: 12.5px; color: var(--ark-ink); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.lg-value i { font-style: normal; font-size: 9px; }
+.lg-value.win i { color: var(--win); } .lg-value.loss i { color: var(--loss); }
+/* the shared axis: gridlines behind every row of a group, labels underneath */
+.lg-grid { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--ark-line) 70%, transparent); pointer-events: none; }
+.lg-grid.zero { background: color-mix(in srgb, var(--ark-ink) 55%, transparent); }
+.lg-plot > .lg-grid { margin-left: 0; }
+.lg-axis { padding-top: 6px; }
+.lg-tick { position: absolute; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.lg-tick.zero { color: var(--ark-ink); }
+/* gridlines sit in the chart column only: the plot is laid out in the same three columns as a row */
+.lg-plot { --lg-left: calc(30% + 18px); --lg-right: calc(9.5em + 18px); }
+.lg-plot > .lg-grid { left: calc(var(--lg-left) + (100% - var(--lg-left) - var(--lg-right)) * var(--at)); }
+.lg-plain .lg-track, .lg-plot.plain .lg-track { background: linear-gradient(to right, color-mix(in srgb, var(--ark-ink) 55%, transparent) 0 1px, transparent 1px); }
+.lg-tuner { display: grid; grid-template-columns: minmax(0, 30%) minmax(0, 1fr); gap: 18px; align-items: center; padding: 12px 0; }
+.lg-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+.lg-pill { display: inline-flex; align-items: baseline; gap: 7px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--ark-line); font-size: 13px; color: var(--ark-ink); background: color-mix(in srgb, var(--ark-paper), #fff 8%); }
+.lg-pill i { font-style: normal; font-weight: 600; }
+.lg-pill small { color: var(--ink-3); font-size: 11.5px; }
+.lg-pill.kept i { color: var(--win); } .lg-pill.reverted i { color: var(--loss); } .lg-pill.notrun i { color: var(--ink-3); }
+.lg-table { margin-top: 40px; font-size: 13px; }
+.lg-table summary { color: var(--ark-green); cursor: pointer; padding: 6px 0; font-size: 13px; }
+.lg-table table { border-collapse: collapse; width: 100%; min-width: 720px; margin-top: 10px; }
+.lg-table th, .lg-table td { text-align: left; padding: 9px 14px 9px 0; border-bottom: 1px solid var(--ark-line); vertical-align: top; }
+.lg-table th { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
+.lg-table td { color: var(--ark-ink); }
+.table-wrap { overflow-x: auto; }
+.lg-foot { margin-top: 18px; font-size: 13px; }
+.lg-tip { position: fixed; z-index: 30; max-width: 320px; padding: 10px 12px; border-radius: 8px; font-size: 13px; line-height: 1.45; pointer-events: none;
+  background: var(--ark-ink); color: var(--ark-paper); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.lg-gh, .lg-what, .lg-value, .lg-pill, .lg-grid, .lg-tick, .lg-bar, .lg-lead, .lg-table td, .lg-table th {
+  transition: color var(--dusk) var(--ease), background-color var(--dusk) var(--ease), border-color var(--dusk) var(--ease);
+}
+@media (max-width: 760px) {
+  .lg-row { grid-template-columns: minmax(0,1fr) 7.5em; gap: 6px 12px; }
+  .lg-row .lg-label { grid-column: 1 / -1; }
+  .lg-row .lg-track { grid-column: 1; }
+  .lg-axis > div:first-child, .lg-axis > div:last-child { display: none; }
+  .lg-plot { --lg-left: 0px; --lg-right: calc(7.5em + 12px); }
+  .lg-plot > .lg-grid { display: none; }
+  .lg-gh { grid-template-columns: 1fr; } .lg-legend { grid-column: 1; grid-row: auto; justify-content: flex-start; margin-top: 8px; }
+  .lg-tuner { grid-template-columns: 1fr; }
+}
+
+/* the chart sits on a soft panel of the page colour, so the painting behind the page never runs through the bars */
+.lg { padding: clamp(20px, 3vw, 36px) clamp(18px, 3vw, 40px); border-radius: 18px;
+  background: color-mix(in srgb, var(--ark-paper) 94%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ark-line) 60%, transparent);
+  transition: background-color var(--dusk) var(--ease), box-shadow var(--dusk) var(--ease); }
+
+/* Theme switch on modest machines: where the browser supports View Transitions, the page swaps palette at once and the
+   GPU crossfades a single snapshot of the old look into the new one, instead of recolouring every element frame by
+   frame. Only the sun/moon icon animates live on top. Clicks and scrolling pass straight through the fade. */
+:root.swap *, :root.swap *::before, :root.swap *::after { transition: none !important; }
+:root.swap .theme svg, :root.swap .theme .bite, :root.swap .theme .rays, :root.swap .theme .disc { transition-property: transform, cx, cy, opacity, fill, stroke !important; transition-duration: 1.8s !important; transition-timing-function: var(--ease) !important; }
+::view-transition { pointer-events: none; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 2.4s; animation-timing-function: cubic-bezier(.55,0,.25,1); mix-blend-mode: normal; }
+.theme { view-transition-name: ak-theme-toggle; }
+::view-transition-old(ak-theme-toggle) { display: none; }
+::view-transition-new(ak-theme-toggle) { animation: none; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } }
+
+/* The bar melts into the page: no band and no rule at rest. While the page is scrolling, a paper-coloured veil fades
+   down from the top edge so the links stay readable over passing content; it fades away once scrolling stops. The
+   veil is a colour under a static mask, so it turns with the theme like everything else. */
+.ark-header { background: transparent !important; border-bottom-color: transparent !important; }
+.ark-header::before {
+  content: ''; position: absolute; inset: 0 0 -36px 0; z-index: -1; pointer-events: none;
+  background-color: var(--ark-paper); opacity: 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 55%, rgba(0,0,0,.6) 72%, rgba(0,0,0,.2) 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 55%, rgba(0,0,0,.6) 72%, rgba(0,0,0,.2) 88%, transparent 100%);
+  transition: opacity .6s var(--ease), background-color var(--dusk) var(--ease);
+}
+.ark-header.scrolled::before { opacity: .97; }
+:root.swap .ark-header::before { transition: opacity .6s var(--ease) !important; }
+
+/* Carousel arrows in the site's own hand: a hairline ring like the sun/moon switch, a slender drawn arrow with a
+   calligraphic head, and a gold arc on "next" that traces the time left on the current demo. */
+.ark-arrows button {
+  position: relative; width: 48px; height: 48px; flex-basis: 48px; border-radius: 50%; padding: 0;
+  border: 1px solid color-mix(in srgb, var(--ark-ink) 26%, transparent);
+  background: color-mix(in srgb, var(--ark-paper) 62%, transparent); color: var(--ark-ink);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--ark-ink) 7%, transparent);
+  transition: border-color .35s var(--ease), background-color .35s var(--ease), color var(--dusk) var(--ease), box-shadow .35s var(--ease);
+}
+.ark-arrows button:hover { background: color-mix(in srgb, var(--ark-paper) 88%, transparent); border-color: color-mix(in srgb, var(--ark-ink) 60%, transparent); box-shadow: 0 8px 22px color-mix(in srgb, var(--ark-ink) 11%, transparent); }
+.ark-arrows button:focus-visible { outline: 2px solid var(--ark-green); outline-offset: 3px; }
+.ark-arrow { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s var(--ease); }
+.ark-prev .ark-arrow { transform: scaleX(-1); }
+.ark-next:hover .ark-arrow { transform: translateX(3px); }
+.ark-prev:hover .ark-arrow { transform: scaleX(-1) translateX(3px); }
+.ark-timer { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); transform: rotate(-90deg); pointer-events: none; overflow: visible; }
+.ark-timer circle { fill: none; stroke: var(--gold); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 144.5; stroke-dashoffset: 144.5; opacity: 0; transition: opacity .3s ease; }
+.ark-next.timing .ark-timer circle { opacity: .95; animation: ark-timer var(--ark-slide-ms, 4200ms) linear forwards; }
+@keyframes ark-timer { from { stroke-dashoffset: 144.5; } to { stroke-dashoffset: 0; } }
+@media (max-width: 760px) { .ark-arrows button { width: 42px; height: 42px; flex-basis: 42px; } .ark-arrow { width: 19px; height: 19px; } }
+@media (prefers-reduced-motion: reduce) { .ark-timer { display: none; } }
+
+/* Buttons in the site's hand: the main one a solid ink pill with the drawn arrow, the second a hairline ring over a
+   soft paper glass, like the carousel arrows and the sun/moon switch. */
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 999px; font: 500 15px/1 var(--text); letter-spacing: .005em;
+  border: 1px solid var(--ark-ink); background: var(--ark-ink); color: var(--ark-paper);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ark-ink) 14%, transparent);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), background-color var(--dusk) var(--ease), color var(--dusk) var(--ease), border-color .35s var(--ease); }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 12px 30px color-mix(in srgb, var(--ark-ink) 20%, transparent); }
+.btn.ghost { background: color-mix(in srgb, var(--ark-paper) 55%, transparent); color: var(--ark-ink);
+  border-color: color-mix(in srgb, var(--ark-ink) 28%, transparent); box-shadow: none; }
+.btn.ghost:hover { border-color: color-mix(in srgb, var(--ark-ink) 65%, transparent); background: color-mix(in srgb, var(--ark-paper) 85%, transparent); }
+.btn:focus-visible { outline: 2px solid var(--ark-green); outline-offset: 3px; }
+.btn-arrow { width: 18px; height: 18px; margin-right: -4px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s var(--ease); }
+.btn:hover .btn-arrow { transform: translateX(3px); }
+.ark-cta { gap: 12px; }
+.ark-cta-home { margin-top: 36px; }
+@media (max-width: 760px) { .btn { padding: 12px 20px; font-size: 14.5px; } .ark-cta-home { margin-top: 28px; } }
+
+/* The fade above each painting carries the painting's own canvas grain (assets/canvas.grain.png, from
+   tools/sky_grain.py), laid over the strip at the painting's scale (the first layer of .ark-lead::before/::after
+   above), so grain and colour arrive together. */
+
+
+/* ── Projects page ──
+   Three cards to take in at a glance, then one calm section per product: what it is and the few facts that matter on
+   the left, four short points on what it does on the right. Built from the site's own pieces: the soft paper panel of
+   the ledger, hairlines mixed from the page colour, mono labels, the gold accent and the drawn arrow. */
+.pp-glance { padding-bottom: 64px; }
+.pp-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+.pp-card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: clamp(24px, 2.4vw, 34px);
+  border-radius: 18px; color: var(--ark-ink); text-decoration: none;
+  background: color-mix(in srgb, var(--ark-paper) 90%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ark-line) 70%, transparent);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease), background-color var(--dusk) var(--ease); }
+.pp-card:hover { transform: translateY(-2px);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ark-ink) 30%, transparent), 0 14px 34px color-mix(in srgb, var(--ark-ink) 9%, transparent); }
+.pp-card:focus-visible { outline: 2px solid var(--ark-green); outline-offset: 3px; }
+.pp-card h2 { font-size: clamp(36px, 3.2vw, 48px); line-height: 1; }
+.pp-card p { font-size: 15px; line-height: 1.55; }
+.kind { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ark-eyebrow); }
+.pp-status { align-self: flex-start; margin-top: auto; display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px;
+  border-radius: 999px; border: 1px solid var(--ark-line); font-size: 12.5px; color: var(--ark-ink);
+  background: color-mix(in srgb, var(--ark-paper), #fff 8%); }
+.pp-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); }
+.pp-status.open::before { background: var(--keep); } .pp-status.preview::before { background: var(--gold); }
+.pp-go { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--ark-green); }
+.pp-go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s var(--ease); }
+.pp-card:hover .pp-go svg { transform: translateX(3px); }
+
+.pp-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+.pp-intro h2 { font-size: clamp(44px, 4.6vw, 64px); line-height: 1; margin: 10px 0 0; }
+.pp-intro .lede { margin-top: 16px; font-size: 16.5px; }
+.pp-intro .ark-more { margin-top: 22px; }
+.pp-facts { margin: 26px 0 0; padding: 0; display: grid; }
+.pp-facts div { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--ark-line); }
+.pp-facts div:last-child { border-bottom: 1px solid var(--ark-line); }
+.pp-facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+.pp-facts dd { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--ark-ink); }
+.pp-feats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px clamp(24px, 3vw, 44px); }
+.pp-feats li { position: relative; padding-top: 18px; border-top: 1px solid var(--ark-line); }
+.pp-feats li::before { content: ''; position: absolute; top: -1px; left: 0; width: 28px; height: 2px; background: var(--gold); }
+.pp-feats h3 { font-family: var(--text); font-size: 18px; font-weight: 600; letter-spacing: 0; line-height: 1.3; }
+.pp-feats p { margin-top: 8px; font-size: 15px; line-height: 1.6; max-width: 38ch; }
+.pp-card, .pp-card p, .kind, .pp-status, .pp-go, .pp-facts div, .pp-facts dt, .pp-facts dd, .pp-feats li, .pp-feats h3, .pp-feats p {
+  transition-property: color, background-color, border-color, transform, box-shadow; transition-duration: var(--dusk), var(--dusk), var(--dusk), .45s, .45s;
+  transition-timing-function: var(--ease); }
+@media (max-width: 900px) {
+  .pp-trio { grid-template-columns: 1fr; }
+  .pp-grid { grid-template-columns: 1fr; gap: 34px; }
+}
+@media (max-width: 560px) {
+  .pp-feats { grid-template-columns: 1fr; gap: 24px; }
+  .pp-card h2 { font-size: 38px; }
+}
+/* the home headline breaks after "own," on wide screens; on phones it wraps on its own, balanced */
+.br-wide { display: inline; }
+@media (max-width: 560px) { .br-wide { display: none; } .ark-hero h1 { text-wrap: balance; } }
+/* four items in the bar: on small phones the wordmark shortens to "Arkaya", and to the mark alone on the narrowest */
+@media (max-width: 400px) { .ark-header nav { gap: 10px; } nav a { font-size: 11.5px; } .ark-brand > span:not(.mkw) { display: none; } }
+@media (max-width: 340px) { .ark-brand { font-size: 0; gap: 0; } }
