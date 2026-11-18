@@ -693,18 +693,18 @@ main { position: relative; z-index: 1; }
 ::view-transition-new(ak-theme-toggle) { animation: none; }
 @media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } }
 
-/* The bar melts into the page: no band and no rule at rest. While the page is scrolling, a paper-coloured veil fades
-   down from the top edge so the links stay readable over passing content; it fades away once scrolling stops. The
+/* The bar melts into the page at the very top: no band and no rule. Once the page is scrolled, a paper-coloured veil
+   fades down from the top edge and stays, so the links stay readable over passing content. The
    veil is a colour under a static mask, so it turns with the theme like everything else. */
 .ark-header { background: transparent !important; border-bottom-color: transparent !important; }
 .ark-header::before {
   content: ''; position: absolute; inset: 0 0 -36px 0; z-index: -1; pointer-events: none;
   background-color: var(--ark-paper); opacity: 0;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 55%, rgba(0,0,0,.6) 72%, rgba(0,0,0,.2) 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0, #000 55%, rgba(0,0,0,.6) 72%, rgba(0,0,0,.2) 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 66%, rgba(0,0,0,.6) 78%, rgba(0,0,0,.2) 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 66%, rgba(0,0,0,.6) 78%, rgba(0,0,0,.2) 90%, transparent 100%);
   transition: opacity .6s var(--ease), background-color var(--dusk) var(--ease);
 }
-.ark-header.scrolled::before { opacity: .97; }
+.ark-header.scrolled::before { opacity: 1; }
 :root.swap .ark-header::before { transition: opacity .6s var(--ease) !important; }
 
 /* Carousel arrows in the site's own hand: a hairline ring like the sun/moon switch, a slender drawn arrow with a

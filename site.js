@@ -23,15 +23,11 @@ const paint = () => {
 };
 const queue = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
 addEventListener('scroll', queue, { passive: true });
-/* The bar behind the nav shows only while the page is moving, and fades away whenever scrolling stops, anywhere on
-   the page. The logo, links and switch always stay. */
-let idle = null;
-addEventListener('scroll', () => {
-  if (!header) return;
-  header.classList.add('scrolled');
-  clearTimeout(idle);
-  idle = setTimeout(() => header.classList.remove('scrolled'), 700);
-}, { passive: true });
+/* The bar melts into the page only at the very top. Once the page has scrolled at all, a paper-coloured veil stays
+   behind the logo, links and switch so passing text never shows through them. */
+const veil = () => { if (header) header.classList.toggle('scrolled', viewport.scrollTop > 4); };
+addEventListener('scroll', veil, { passive: true });
+veil();
 addEventListener('resize', queue, { passive: true });
 paint();
 })();
