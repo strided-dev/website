@@ -173,8 +173,8 @@ phones narrower than 400 px the wordmark shortens to "Arkaya", and below 340 px 
   live. Older browsers fall back to the CSS fade on `--dusk`.
 - The background paintings have their blur baked into `*.small.webp` (no live CSS blur), the backdrop sits on its
   own GPU layer, and there is no frosted-glass blur under the header or the ledger panel.
-- The top bar has no band at rest: a soft veil appears behind the nav only while the page is scrolling and fades
-  0.7 s after it stops (the delay is in `site.js`).
+- The top bar has no band at the very top of the page. Once the page is scrolled, a soft paper-coloured veil sits
+  behind the nav and stays, so text never shows through the links (`veil` in `site.js`).
 
 - Home hero buttons: "Follow the project" (to the end of the Projects page) and "Explore the research". The demo carousel
   has no Pause motion button; it still stops for keyboard focus and reduced motion.
